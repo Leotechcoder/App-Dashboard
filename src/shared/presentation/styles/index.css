@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-brown-500 {
+  background-color: #b87b56;
+}
+.bg-brown-750 {
+  background-color: #c46f3a;
+}
+.hover\:bg-brown-600:hover {
+  background-color: #a66d4b;
+}
+
