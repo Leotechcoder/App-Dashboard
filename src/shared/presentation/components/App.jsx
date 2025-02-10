@@ -10,14 +10,10 @@ import { OrdersPage } from "../../../orders/presentation/pages/OrdersPage.js"
 
 const router = createBrowserRouter([
   {
-    path: `/`,
-    errorElement: <ErrorUrl />,
-    children: [
-      {
-        path: "/login",
+    path: "/",
         element: <LoginPage />,
         errorElement: <Error />,
-      },
+    children: [
       {
         path: "/admin",
         element: <RootLayout />,
