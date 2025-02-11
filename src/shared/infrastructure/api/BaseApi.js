@@ -1,5 +1,7 @@
+import { routeApi } from "../utils/routeApi";
+
 class BaseApi {
-  constructor(baseURL = "http://localhost:3000/api") {
+  constructor(baseURL = routeApi) {
     this.baseURL = baseURL;
   }
 

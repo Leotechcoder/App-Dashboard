@@ -1,8 +1,10 @@
 import BaseApi from "./BaseApi"
+import { routeApi } from "../utils/routeApi";
+
 
 class ItemApi extends BaseApi {
   constructor() {
-    super("http://localhost:3000/api")
+    super(routeApi)
   }
 
   getItems() {

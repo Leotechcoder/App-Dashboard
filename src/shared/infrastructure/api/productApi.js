@@ -1,8 +1,9 @@
 import BaseApi from "./BaseApi"
+import { routeApi } from "../utils/routeApi";
 
 class ProductApi extends BaseApi {
   constructor() {
-    super("http://localhost:3000/api")
+    super(routeApi)
   }
 
   getProducts() {

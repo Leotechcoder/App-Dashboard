@@ -1,7 +1,8 @@
 import BaseApi from "./BaseApi";
+import { routeApi } from "../utils/routeApi";
 
 class AuthApi extends BaseApi {
-  constructor(baseURL = "http://localhost:3000/api") {
+  constructor(baseURL = routeApi) {
     super(baseURL);
   }
 
