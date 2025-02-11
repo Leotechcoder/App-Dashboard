@@ -1,58 +1,50 @@
 class BaseApi {
-    constructor(baseURL) {
-      this.baseURL = baseURL
-    }
-  
-    async fetchData(endpoint, options = {}) {
-      const url = `${this.baseURL}${endpoint}`
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          "Content-Type": "application/json",
-          ...options.headers,
-        },
-        credentials: "include",
-      })
-  
+  constructor(baseURL = "http://localhost:3000/api") {
+    this.baseURL = baseURL;
+  }
+
+  async request(endpoint, method = "GET", data = null) {
+    const url = `${this.baseURL}${endpoint}`;
+    const options = {
+      method,
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    };
+
+    if (data) options.body = JSON.stringify(data);
+
+    try {
+      const response = await fetch(url, options);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Error ${response.status}`);
       }
-  
-      return response.json()
-    }
-  
-    get(endpoint) {
-      return this.fetchData(endpoint)
-    }
-  
-    post(endpoint, data) {
-      return this.fetchData(endpoint, {
-        method: "POST",
-        body: JSON.stringify(data),
-      })
-    }
-  
-    put(endpoint, data) {
-      return this.fetchData(endpoint, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      })
-    }
-  
-    patch(endpoint, data) {
-      return this.fetchData(endpoint, {
-        method: "PATCH",
-        body: JSON.stringify(data),
-      })
-    }
-  
-    delete(endpoint) {
-      return this.fetchData(endpoint, {
-        method: "DELETE",
-      })
+      return await response.json();
+    } catch (error) {
+      console.error(`❌ Error en ${method} ${url}:`, error);
+      throw error;
     }
   }
-  
-  export default BaseApi
-  
-  
+
+  get(endpoint) {
+    return this.request(endpoint);
+  }
+
+  post(endpoint, data) {
+    return this.request(endpoint, "POST", data);
+  }
+
+  put(endpoint, data) {
+    return this.request(endpoint, "PUT", data);
+  }
+
+  patch(endpoint, data) {
+    return this.request(endpoint, "PATCH", data);
+  }
+
+  delete(endpoint) {
+    return this.request(endpoint, "DELETE");
+  }
+}
+
+export default BaseApi;

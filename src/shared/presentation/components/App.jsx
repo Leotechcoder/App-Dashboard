@@ -13,22 +13,20 @@ const router = createBrowserRouter([
     path: "/",
         element: <LoginPage />,
         errorElement: <Error />,
+  },
+  {
+    path: "/admin",
+    element: <RootLayout />,
+    errorElement: <Error />,
     children: [
-      {
-        path: "/admin",
-        element: <RootLayout />,
-        errorElement: <Error />,
-        children: [
-          { path: "home", element: <Home /> },
-          { path: "contact", element: <Contact /> },
-          { path: "products", element: <Products /> },
-          { path: "orders", element: <OrdersPage /> },
-          { path: "*", element: <ErrorUrl /> },
-        ],
-      },
+      { path: "home", element: <Home /> },
+      { path: "contact", element: <Contact /> },
+      { path: "products", element: <Products /> },
+      { path: "orders", element: <OrdersPage /> },
       { path: "*", element: <ErrorUrl /> },
     ],
   },
+  { path: "*", element: <ErrorUrl /> },
 ])
 
 const App = () => {

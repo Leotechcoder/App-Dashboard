@@ -1,38 +1,35 @@
 import BaseApi from "./BaseApi";
 
 class AuthApi extends BaseApi {
-  constructor() {
-    super("http://localhost:3000/api");
-    this.baseURL = this.baseURL || "http://localhost:3000/api"; // Reafirmar que tiene valor
+  constructor(baseURL = "http://localhost:3000/api") {
+    super(baseURL);
   }
 
-  register(user) {
+  async register(user) {
     return this.post("/auth/register", user);
   }
 
-  login({ email, password }) {
+  async login({ email, password }) {
     return this.post("/auth/login", { email, password });
   }
 
-  logout() {
-    const url = `${this.baseURL}/logout`;
-    console.log("Redirigiendo a:", url);
-    window.location.href = url;
+  async logout() {
+    return this.get("/auth/logout");
   }
 
-  authUser() {
+  async authUser() {
     return this.get("/auth/authenticate");
   }
 
-  loginGoogle() {
-    const url = this.baseURL ? `${this.baseURL}/auth/google` : "http://localhost:3000/api/auth/google";
-    console.log("Redirigiendo a:", url);
+  async loginGoogle() {
+    const URL = this.baseURL? this.baseURL : 'http://localhost:3000/api'
+    const url = `${URL}/auth/google`;
     window.location.href = url;
   }
 
-  loginFacebook() {
-    const url = this.baseURL ? `${this.baseURL}/auth/facebook` : "http://localhost:3000/api/auth/facebook";
-    console.log("Redirigiendo a:", url);
+  async loginFacebook() {
+    const URL = this.baseURL? this.baseURL : 'http://localhost:3000/api'
+    const url = `${URL}/auth/facebook`;
     window.location.href = url;
   }
 }

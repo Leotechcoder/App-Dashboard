@@ -4,20 +4,20 @@ import { authApi } from "../../shared/infrastructure/api/authApi"
 import { paginacionUsers } from "../../shared/infrastructure/utils/stateInitial"
 import { idGenerator } from "../../shared/infrastructure/utils/idGenerator"
 
-export const getUserData = createAsyncThunk("user/getUserData", userApi.getUsers)
+export const getUserData = createAsyncThunk("user/getUserData", userApi.getUsers.bind(userApi))
 export const createUserData = createAsyncThunk("user/createUserData", async (user) => {
   const userWithId = { ...user, id_: idGenerator("Users") }
-  return await userApi.createUser(userWithId)
+  return await userApi.createUser(userWithId).bind(userApi)
 })
-export const updateUserData = createAsyncThunk("user/updateUserData", userApi.updateUser)
-export const deleteUserData = createAsyncThunk("user/deleteUserData", userApi.deleteUser)
+export const updateUserData = createAsyncThunk("user/updateUserData", userApi.updateUser.bind(userApi))
+export const deleteUserData = createAsyncThunk("user/deleteUserData", userApi.deleteUser.bind(userApi))
 
-export const registerUser = createAsyncThunk("user/registerUser", authApi.register)
-export const loginUser = createAsyncThunk("user/loginUser", authApi.login)
-export const getUserAuth = createAsyncThunk("user/getUserAuth", authApi.authUser)
-export const loginUserGoogle = createAsyncThunk("user/loginUserGoogle", authApi.loginGoogle)
-export const loginUserFacebook = createAsyncThunk("user/loginUserFacebook", authApi.loginFacebook)
-export const logOutUser = createAsyncThunk("user/logOutUser", authApi.logout)
+export const registerUser = createAsyncThunk("user/registerUser", authApi.register.bind(authApi))
+export const loginUser = createAsyncThunk("user/loginUser", authApi.login.bind(authApi))
+export const getUserAuth = createAsyncThunk("user/getUserAuth", authApi.authUser.bind(authApi))
+export const loginUserGoogle = createAsyncThunk("user/loginUserGoogle", authApi.loginGoogle.bind(authApi))
+export const loginUserFacebook = createAsyncThunk("user/loginUserFacebook", authApi.loginFacebook.bind(authApi))
+export const logOutUser = createAsyncThunk("user/logOutUser", authApi.logout.bind(authApi))
 
 const initialState = {
   username: null,
@@ -137,6 +137,7 @@ const userSlice = createSlice({
         state.loading = false
         state.error = "Error al obtener los datos del usuario"
       })
+    builder
       .addCase(loginUserGoogle.pending, (state) => {
         state.loading = true
       })
