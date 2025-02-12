@@ -16,7 +16,7 @@ const initialState = {
   address: "",
 }
 
-export const UserForm = () => {
+const UserForm = () => {
   const { isOpen, isLoading, error } = useSelector((store) => store.users)
   const [form, setForm] = useState(initialState)
   const [errors, setErrors] = useState({})

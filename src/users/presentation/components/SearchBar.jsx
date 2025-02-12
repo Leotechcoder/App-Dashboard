@@ -5,7 +5,7 @@ import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { setFilteredUser } from "../state/userSlice"
 
-export const SearchBar = ({ tipo }) => {
+const SearchBar = ({ tipo }) => {
   const datos = useSelector((store) => store.users.data)
   const [searchTerm, setSearchTerm] = useState("")
   const dispatch = useDispatch()
@@ -38,3 +38,4 @@ export const SearchBar = ({ tipo }) => {
   )
 }
 
+export default SearchBar;

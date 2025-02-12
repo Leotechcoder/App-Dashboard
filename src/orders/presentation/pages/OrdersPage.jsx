@@ -7,26 +7,21 @@ import { ButtonAddOrder } from "../components/Buttons"
 import OrdersTable from "../components/OrdersTable"
 import Pagination from "../../../shared/presentation/components/Pagination"
 import { SearchOrder } from "../components/SearchOrder"
-import {
-  getDataOrders,
-  setCurrentPageOrders,
-  selectOrders,
-  selectOrdersLoading,
-  selectOrdersError,
-  selectOrdersPagination,
-} from "../../application/orderSlice"
+import { getDataOrders, setCurrentPageOrders, setSelectedOrder } from "../../application/orderSlice"
 import { getData as getItemsData, voidItemSelected } from "../../application/itemSlice"
 import { voidSelectedProduct } from "../../../products/application/productSlice"
 
-export const OrdersPage = () => {
+const OrdersPage = () => {
   const dispatch = useDispatch()
-  const orders = useSelector(selectOrders)
-  const isLoading = useSelector(selectOrdersLoading)
-  const error = useSelector(selectOrdersError)
-  const pagination = useSelector(selectOrdersPagination)
-
+  const {
+    data: orders,
+    isLoading,
+    error,
+    paginationOrders,
+    selectedOrder,
+    filteredOrders,
+  } = useSelector((state) => state.orders)
   const [activeTab, setActiveTab] = useState("customer")
-  const [selectedOrder, setSelectedOrder] = useState(null)
   const [createOrder, setCreateOrder] = useState(false)
 
   useEffect(() => {
@@ -42,8 +37,12 @@ export const OrdersPage = () => {
     dispatch(voidSelectedProduct())
     dispatch(voidItemSelected())
     dispatch(getDataOrders())
+    dispatch(setSelectedOrder(null))
     setCreateOrder(false)
-    setSelectedOrder(null)
+  }
+
+  const handleSetSelectedOrder = (order) => {
+    dispatch(setSelectedOrder(order))
   }
 
   if (isLoading) {
@@ -61,6 +60,8 @@ export const OrdersPage = () => {
   if (createOrder) {
     return <OrderDetails onBack={handleBack} />
   }
+
+  const displayOrders = filteredOrders.length > 0 ? filteredOrders : orders
 
   return (
     <main className="p-5 pt-3">
@@ -90,10 +91,10 @@ export const OrdersPage = () => {
             <SearchOrder tipo="ordenes" />
           </div>
         </div>
-        <OrdersTable setSelectedOrder={setSelectedOrder} />
+        <OrdersTable setSelectedOrder={handleSetSelectedOrder} orders={displayOrders} />
         <Pagination
-          currentPage={pagination.currentPage}
-          totalPages={Math.ceil(orders.length / pagination.itemsPerPage)}
+          currentPage={paginationOrders.currentPage}
+          totalPages={Math.ceil(displayOrders.length / paginationOrders.itemsPerPage)}
           onPageChange={(page) => dispatch(setCurrentPageOrders(page))}
         />
       </div>
