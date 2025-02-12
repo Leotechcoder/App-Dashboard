@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { createUserData, getUserData, toggleOpenForm } from "../state/userSlice"
+import { createUserData, getUserData, toggleOpenForm } from "../../application/userSlice"
 import { FiX, FiLoader } from "react-icons/fi"
 import Button from "../../../shared/presentation/components/Button"
 import Input from "../../../shared/presentation/components/Input"
