@@ -4,7 +4,7 @@ import Error from "./Error.jsx"
 import ErrorUrl from "./ErrorUrl.jsx"
 import LoginPage from "../../../users/presentation/pages/LoginPage.jsx"
 import Home from "../pages/Home.jsx"
-import Contact from "../../../users/presentation/pages/Contact.js"
+import Contact from "../../../users/presentation/pages/Contact.jsx"
 import Products from "../../../products/presentation/pages/ProductsPage.jsx"
 import { OrdersPage } from "../../../orders/presentation/pages/OrdersPage.js"
 
