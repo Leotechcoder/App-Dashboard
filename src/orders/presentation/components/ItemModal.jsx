@@ -3,9 +3,9 @@
 import { useState } from "react"
 import { X } from "lucide-react"
 import { useDispatch, useSelector } from "react-redux"
-import { voidSelectedProduct } from "../../../products/presentation/state/productSlice"
+import { voidSelectedProduct } from "../../../products/application/productSlice"
 import { setItemSelected } from "../../application/itemSlice"
-import { idGenerator } from "../../../shared/infrastructure/idGenerator"
+import { idGenerator } from "../../../shared/infrastructure/utils/idGenerator"
 
 const formatPrice = (price) => {
   const scope1 = price.replace("$", "")

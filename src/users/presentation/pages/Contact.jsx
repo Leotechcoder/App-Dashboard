@@ -1,6 +1,6 @@
 import UserForm from "../components/UserForm.jsx"
 import UserList from "../components/UserList.jsx"
-import { SearchBar } from "../components/SearchBar.jsx"
+import SearchBar from "../components/SearchBar.jsx"
 import Pagination from "../components/Pagination.jsx"
 import { useDispatch } from "react-redux"
 import { toggleOpenForm } from "../../application/userSlice.js"

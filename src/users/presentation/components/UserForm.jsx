@@ -4,9 +4,9 @@ import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { createUserData, getUserData, toggleOpenForm } from "../state/userSlice"
 import { FiX, FiLoader } from "react-icons/fi"
-import { Button } from "./Button"
-import { Input } from "./Input"
-import { Label } from "./Label"
+import Button from "../../../shared/presentation/components/Button"
+import Input from "../../../shared/presentation/components/Input"
+// import { Label } from "./Label"
 
 const initialState = {
   username: "",
@@ -85,7 +85,7 @@ const UserForm = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="username">Nombre de usuario</Label>
+            {/* <Label htmlFor="username">Nombre de usuario</Label> */}
             <Input
               id="username"
               name="username"

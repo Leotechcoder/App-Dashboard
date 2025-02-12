@@ -3,7 +3,7 @@
 import { Search } from "lucide-react"
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { setFilteredUser } from "../state/userSlice"
+import { setFilteredUser } from "../../application/userSlice"
 
 const SearchBar = ({ tipo }) => {
   const datos = useSelector((store) => store.users.data)

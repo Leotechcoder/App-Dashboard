@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useSelector, useDispatch } from "react-redux"
-import { setCurrentPage } from "../../application/orderSlice"
+import { setCurrentPageOrders } from "../../application/orderSlice"
 
 const PaginationOrders = () => {
   const dispatch = useDispatch()
@@ -12,7 +12,7 @@ const PaginationOrders = () => {
 
   const handleChangePage = (page) => {
     if (page >= 1 && page <= totalPages) {
-      dispatch(setCurrentPage(page))
+      dispatch(setCurrentPageOrders(page))
     }
   }
 

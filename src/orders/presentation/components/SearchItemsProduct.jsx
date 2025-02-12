@@ -3,7 +3,7 @@
 import { Search } from "lucide-react"
 import { useSelector } from "react-redux"
 import { useState, useEffect } from "react"
-import { setSelectedProduct } from "../../../products/presentation/state/productSlice"
+import { setSelectedProduct } from "../../../products/application/productSlice"
 
 const SearchItemsProduct = ({ tipo, setIsModalOpen, isModalOpen }) => {
   const { data } = useSelector((store) => store.products)

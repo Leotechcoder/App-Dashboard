@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useSelector, useDispatch } from "react-redux"
-import { setCurrentPageUsers } from "../state/userSlice"
+import { setCurrentPageUsers } from "../../application/userSlice"
 
 const Pagination = () => {
   const dispatch = useDispatch()

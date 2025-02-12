@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { deleteUserData, getUserData, setFilteredUser, setCurrentPageUsers } from "../state/userSlice"
+import { deleteUserData, getUserData, setFilteredUser, setCurrentPageUsers } from "../../application/userSlice.js"
 import { Eye, Pencil, Trash } from "lucide-react"
-import EditUserForm from "./EditUserForm"
+import EditUserForm from "./EditUserForm.jsx"
 import Pagination from "../../../shared/presentation/components/Pagination.jsx"
 import SearchBar from "../../../shared/presentation/components/SearchBar.jsx"
-import { useTableData } from "../../../shared/hooks/useTableData.js"
+import { useTableData } from "../../../shared/hook/useTableData.js"
 
 const UserList = () => {
   const dispatch = useDispatch()

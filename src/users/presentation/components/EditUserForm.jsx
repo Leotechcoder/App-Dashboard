@@ -3,9 +3,9 @@
 import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { getUserData, updateUserData } from "../state/userSlice"
-import { Label } from "./Label"
-import { Input } from "./Input"
-import { Button } from "./Button"
+// import Label from "../../../shared/"
+import Input from "../../../shared/presentation/components/Input"
+import Button from "../../../shared/presentation/components/Button"
 
 const EditUserForm = ({ user, setEditModal }) => {
   const [form, setForm] = useState(user)
@@ -33,7 +33,7 @@ const EditUserForm = ({ user, setEditModal }) => {
         <h2 className="text-xl font-bold mb-4">Editar Usuario</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <Label htmlFor="username">Nombre de Usuario</Label>
+            {/* <Label htmlFor="username">Nombre de Usuario</Label> */}
             <Input
               id="username"
               name="username"
@@ -47,7 +47,7 @@ const EditUserForm = ({ user, setEditModal }) => {
             <Input id="phone" name="phone" value={form.phone} onChange={handleInputChange} placeholder="Teléfono" />
           </div>
           <div>
-            <Label htmlFor="address">Dirección</Label>
+            {/* <Label htmlFor="address">Dirección</Label> */}
             <Input
               id="address"
               name="address"

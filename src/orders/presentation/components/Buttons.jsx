@@ -1,5 +1,5 @@
 import { Plus, Search } from "lucide-react"
-import { Input } from "../../../shared/presentation/components/Input"
+import Input from "../../../shared/presentation/components/Input.jsx"
 
 export const ButtonAddOrder = ({ handleClick }) => (
   <button
