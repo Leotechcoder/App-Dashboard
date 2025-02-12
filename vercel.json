@@ -3,7 +3,7 @@
   "builds": [
     {
       "src": "src/shared/presentation/components/main.jsx", 
-      "use": "@vercel/react"
+      "use": "@vercel/static-build" 
     }
   ],
   "routes": [
