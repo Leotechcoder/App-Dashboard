@@ -98,7 +98,7 @@ const UserForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Correo electrónico</Label>
+            {/* <Label htmlFor="email">Correo electrónico</Label> */}
             <Input
               id="email"
               name="email"
@@ -112,7 +112,7 @@ const UserForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password_">Contraseña</Label>
+            {/* <Label htmlFor="password_">Contraseña</Label> */}
             <Input
               id="password_"
               name="password_"
@@ -126,7 +126,7 @@ const UserForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Teléfono</Label>
+            {/* <Label htmlFor="phone">Teléfono</Label> */}
             <Input
               id="phone"
               name="phone"
@@ -139,7 +139,7 @@ const UserForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="address">Dirección</Label>
+            {/* <Label htmlFor="address">Dirección</Label> */}
             <Input
               id="address"
               name="address"

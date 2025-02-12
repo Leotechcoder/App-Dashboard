@@ -7,10 +7,10 @@ import { idGenerator } from "../../shared/infrastructure/utils/idGenerator"
 export const getUserData = createAsyncThunk("user/getUserData", userApi.getUsers.bind(userApi))
 export const createUserData = createAsyncThunk("user/createUserData", async (user) => {
   const userWithId = { ...user, id_: idGenerator("Users") }
-  return await userApi.createUser(userWithId).bind(userApi)
+  return await userApi.createUser(userWithId)
 })
-export const updateUserData = createAsyncThunk("user/updateUserData", userApi.updateUser.bind(userApi))
-export const deleteUserData = createAsyncThunk("user/deleteUserData", userApi.deleteUser.bind(userApi))
+export const updateUserData = createAsyncThunk("user/updateUserData", userApi.updateUser)
+export const deleteUserData = createAsyncThunk("user/deleteUserData", userApi.deleteUser)
 
 export const registerUser = createAsyncThunk("user/registerUser", authApi.register.bind(authApi))
 export const loginUser = createAsyncThunk("user/loginUser", authApi.login.bind(authApi))

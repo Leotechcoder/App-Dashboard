@@ -5,7 +5,6 @@ import EditProductForm from "../components/EditProductForm.jsx"
 import SearchBar from "../components/SearchBar.jsx"
 import CategoryFilter from "../components/CategoryFilter.jsx"
 import TablaProductos from "../components/ProductList.jsx"
-import Paginacion from "../components/Pagination.jsx"
 
 const Products = () => {
   const { isFormView, isEditing } = useSelector((store) => store.products)
@@ -40,7 +39,6 @@ const Products = () => {
           </div>
           <CategoryFilter />
           <TablaProductos />
-          <Paginacion entidad={"products"} />
         </div>
       )}
     </div>

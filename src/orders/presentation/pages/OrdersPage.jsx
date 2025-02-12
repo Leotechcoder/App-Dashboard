@@ -1,11 +1,9 @@
-"use client"
 
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import OrderDetails from "../components/OrderDetails"
 import { ButtonAddOrder } from "../components/Buttons"
 import OrdersTable from "../components/OrdersTable"
-import Pagination from "../../../shared/presentation/components/Pagination"
 import { SearchOrder } from "../components/SearchOrder"
 import { getDataOrders, setCurrentPageOrders, setSelectedOrder } from "../../application/orderSlice"
 import { getData as getItemsData, voidItemSelected } from "../../application/itemSlice"
@@ -92,11 +90,6 @@ const OrdersPage = () => {
           </div>
         </div>
         <OrdersTable setSelectedOrder={handleSetSelectedOrder} orders={displayOrders} />
-        <Pagination
-          currentPage={paginationOrders.currentPage}
-          totalPages={Math.ceil(displayOrders.length / paginationOrders.itemsPerPage)}
-          onPageChange={(page) => dispatch(setCurrentPageOrders(page))}
-        />
       </div>
     </main>
   )

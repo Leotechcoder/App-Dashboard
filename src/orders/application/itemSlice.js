@@ -3,7 +3,7 @@ import { itemApi } from "../../shared/infrastructure/api/itemApi"
 import { idGenerator } from "../../shared/infrastructure/utils/idGenerator"
 import { formatPrice } from "../../shared/infrastructure/utils/formatPrice"
 
-export const getData = createAsyncThunk("items/getData", itemApi.getItems)
+export const getData = createAsyncThunk("items/getData", itemApi.getItems.bind(itemApi))
 export const getDataById = createAsyncThunk("items/getDataById", itemApi.getItemById)
 export const createDataItems = createAsyncThunk("items/createData", async (item) => {
   const formattedItem = {

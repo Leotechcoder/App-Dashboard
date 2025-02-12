@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useCallback } from "react"
 import { Pencil, Trash2, RefreshCw } from "lucide-react"
 import { deleteDataOrder, getDataOrders, setFilteredOrders, setCurrentPageOrders } from "../../application/orderSlice"
 import { useDispatch, useSelector } from "react-redux"
@@ -13,7 +13,7 @@ const OrdersTable = ({ setSelectedOrder }) => {
   const { data, isLoading, error, paginationOrders } = useSelector((store) => store.orders)
 
   const { searchTerm, setSearchTerm, currentPage, paginatedData, totalPages, handlePageChange } = useTableData({
-    data,
+    stateKey: "orders",
     itemsPerPage: paginationOrders.itemsPerPage,
     searchFields: ["id"],
     setFilteredData: setFilteredOrders,
@@ -24,22 +24,35 @@ const OrdersTable = ({ setSelectedOrder }) => {
     if (!data || data.length === 0) {
       dispatch(getDataOrders())
     }
-  }, [data, dispatch])
+  }, [dispatch, data])
 
-  const handleOrderSelect = (order) => {
-    setSelectedOrder(order)
+  const handleOrderSelect = useCallback(
+    (order) => {
+      setSelectedOrder(order)
+    },
+    [setSelectedOrder],
+  )
+
+  const handleDeleteOrder = useCallback(
+    async (id) => {
+      if (window.confirm("¿Estás seguro de que deseas eliminar esta orden?")) {
+        await dispatch(deleteDataOrder(id))
+        dispatch(getDataOrders())
+      }
+    },
+    [dispatch],
+  )
+
+  if (isLoading) {
+    return <div className="text-center py-4">Cargando...</div>
   }
 
-  const handleDeleteOrder = async (id) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar esta orden?")) {
-      await dispatch(deleteDataOrder(id))
-      await dispatch(getDataOrders())
-    }
+  if (error) {
+    return <div className="text-center py-4 text-red-500">{error}</div>
   }
 
   return (
     <>
-      <SearchBar value={searchTerm} onChange={setSearchTerm} placeholder="Buscar órdenes por ID..." />
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <table className="min-w-full">
           <thead className="bg-gray-50">
@@ -81,7 +94,7 @@ const OrdersTable = ({ setSelectedOrder }) => {
             ) : (
               <tr>
                 <td colSpan="7" className="text-center py-4">
-                  {isLoading ? "Cargando..." : error || "No hay órdenes para mostrar"}
+                  No hay órdenes para mostrar
                 </td>
               </tr>
             )}

@@ -27,7 +27,6 @@ const Contact = () => {
       <div className="px-6 mb-3">
         <UserList />
       </div>
-      <Pagination />
     </main>
   )
 }
