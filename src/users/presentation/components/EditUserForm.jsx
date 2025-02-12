@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useDispatch } from "react-redux"
-import { getUserData, updateUserData } from "../state/userSlice"
+import { getUserData, updateUserData } from "../../application/userSlice"
 // import Label from "../../../shared/"
 import Input from "../../../shared/presentation/components/Input"
 import Button from "../../../shared/presentation/components/Button"
