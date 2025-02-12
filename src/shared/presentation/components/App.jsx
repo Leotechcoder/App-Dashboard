@@ -3,7 +3,7 @@ import RootLayout from "../layouts/RootLayout.jsx"
 import Error from "./Error.jsx"
 import ErrorUrl from "./ErrorUrl.jsx"
 import LoginPage from "../../../users/presentation/pages/LoginPage.jsx"
-import Home from "../pages/Home.jsx"
+import Dashboard from "../pages/Home.jsx"
 import Contact from "../../../users/presentation/pages/Contact.jsx"
 import Products from "../../../products/presentation/pages/ProductsPage.jsx"
 import OrdersPage from "../../../orders/presentation/pages/OrdersPage.jsx"
@@ -19,7 +19,7 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     errorElement: <Error />,
     children: [
-      { path: "home", element: <Home /> },
+      { path: "home", element: <Dashboard /> },
       { path: "contact", element: <Contact /> },
       { path: "products", element: <Products /> },
       { path: "orders", element: <OrdersPage /> },
