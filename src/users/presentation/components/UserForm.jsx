@@ -98,9 +98,9 @@ const UserForm = () => {
           <X size={24} />
         </button>
 
-        <h2 className="text-3xl font-bold mb-3 text-gray-800 dark:text-white">Crear Usuario</h2>
+        <h2 className="text-3xl font-bold mb-2 text-gray-800 dark:text-white">Crear Usuario</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6 scale-90">
+        <form onSubmit={handleSubmit} className="space-y-5 scale-90">
           <div className="space-y-2">
             <Label htmlFor="username" className="text-gray-700 dark:text-gray-200">
               Nombre de usuario

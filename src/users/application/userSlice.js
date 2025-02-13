@@ -5,10 +5,7 @@ import { paginacionUsers } from "../../shared/infrastructure/utils/stateInitial"
 import { idGenerator } from "../../shared/infrastructure/utils/idGenerator"
 
 export const getUserData = createAsyncThunk("user/getUserData", userApi.getUsers)
-export const createUserData = createAsyncThunk("user/createUserData", async (user) => {
-  const userWithId = { ...user, id_: idGenerator("Users") }
-  return await userApi.createUser(userWithId)
-})
+export const createUserData = createAsyncThunk("user/createUserData", userApi.createUser)
 export const updateUserData = createAsyncThunk("user/updateUserData", userApi.updateUser)
 export const deleteUserData = createAsyncThunk("user/deleteUserData", userApi.deleteUser)
 
