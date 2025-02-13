@@ -1,11 +1,6 @@
-import dotenv from 'dotenv';
-
-if(process.env.FRONTEND_ENV !== 'production'){
-  dotenv.config(); 
-}
 
 class BaseApi {
-  constructor(baseURL = process.env.ROUTE_API) {
+  constructor(baseURL = import.meta.env.ROUTE_API) {
     this.baseURL = baseURL;
   }
 

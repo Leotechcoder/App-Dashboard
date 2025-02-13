@@ -1,13 +1,8 @@
 import BaseApi from "./BaseApi"
-import dotenv from 'dotenv';
-
-if(process.env.FRONTEND_ENV !== 'production'){
-  dotenv.config(); 
-}
 
 class ProductApi extends BaseApi {
   constructor() {
-    super(process.env.ROUTE_API)
+    super(import.meta.env.ROUTE_API)
   }
 
   getProducts() {
