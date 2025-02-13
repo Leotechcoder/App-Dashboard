@@ -10,7 +10,6 @@ import {
 } from "../../application/productSlice.js";
 import { Eye, Pencil, Trash } from "lucide-react";
 import Pagination from "../../../shared/presentation/components/Pagination.jsx";
-import SearchBar from "../../../shared/presentation/components/SearchBar.jsx";
 import { useTableData } from "../../../shared/hook/useTableData.js";
 
 const ProductList = () => {

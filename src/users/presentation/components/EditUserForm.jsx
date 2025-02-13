@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { getUserData, updateUserData } from "../../application/userSlice"
-// import Label from "../../../shared/"
+import Label from "../../../shared/presentation/components/Label"
 import Input from "../../../shared/presentation/components/Input"
 import Button from "../../../shared/presentation/components/Button"
 
@@ -33,27 +33,36 @@ const EditUserForm = ({ user, setEditModal }) => {
         <h2 className="text-xl font-bold mb-4">Editar Usuario</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            {/* <Label htmlFor="username">Nombre de Usuario</Label> */}
+            <Label htmlFor="username">Nombre de Usuario</Label>
             <Input
               id="username"
               name="username"
               value={form.username}
               onChange={handleInputChange}
               placeholder="Nombre de usuario"
+              className="w-full"
             />
           </div>
           <div>
             <Label htmlFor="phone">Teléfono</Label>
-            <Input id="phone" name="phone" value={form.phone} onChange={handleInputChange} placeholder="Teléfono" />
+            <Input
+              id="phone"
+              name="phone"
+              value={form.phone}
+              onChange={handleInputChange}
+              placeholder="Teléfono"
+              className="w-full"
+            />
           </div>
           <div>
-            {/* <Label htmlFor="address">Dirección</Label> */}
+            <Label htmlFor="address">Dirección</Label>
             <Input
               id="address"
               name="address"
               value={form.address}
               onChange={handleInputChange}
               placeholder="Dirección"
+              className="w-full"
             />
           </div>
           <div className="flex justify-end gap-2">

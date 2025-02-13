@@ -69,7 +69,8 @@ const ProductForm = () => {
     e.preventDefault()
     if (validateForm()) {
       try {
-        await dispatch(createData(form)).unwrap()
+        const stock = parseInt(form.stock)
+        await dispatch(createData({...form, stock})).unwrap()
         dispatch(getDataProducts())
         setForm(initialState)
         dispatch(setFormView())

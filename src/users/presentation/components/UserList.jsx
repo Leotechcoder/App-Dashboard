@@ -3,8 +3,8 @@ import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { deleteUserData, getUserData, setFilteredUser, setCurrentPageUsers } from "../../application/userSlice.js";
 import { Pencil, Trash } from "lucide-react";
 import Pagination from "../../../shared/presentation/components/Pagination.jsx";
-import SearchBar from "../../../shared/presentation/components/SearchBar.jsx";
 import { useTableData } from "../../../shared/hook/useTableData.js";
+import EditUserForm from "./EditUserForm.jsx";
 
 const UserList = () => {
   const dispatch = useDispatch();

@@ -10,7 +10,7 @@ export const createBaseSlice = (name, initialState, reducers, extraReducers) => 
       error: null,
       pagination: {
         currentPage: 1,
-        itemsPerPage: 10,
+        itemsPerPage: 5,
         total: 0,
       },
       ...initialState,

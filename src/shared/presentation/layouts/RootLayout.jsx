@@ -25,7 +25,7 @@ const RootLayout = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 ms-8 bg-gray-100 p-5">
+        <div className="flex-1 ms-8 bg-gray-200 p-5">
           <Outlet />
         </div>
       </div>

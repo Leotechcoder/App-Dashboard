@@ -5,19 +5,19 @@ class UserApi extends BaseApi {
     super(import.meta.env.VITE_ROUTE_API)
   }
 
-  getUsers() {
+  getUsers = async ()=> {
     return this.get("/users")
   }
 
-  createUser(user) {
+  createUser = async (user)=> {
     return this.post("/users", user)
   }
 
-  updateUser(user) {
+  updateUser = async (user)=> {
     return this.patch(`/users/${user.id_}`, user)
   }
 
-  deleteUser(id) {
+  deleteUser = async (id)=> {
     return this.delete(`/users/${id}`)
   }
 }

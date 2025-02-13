@@ -5,23 +5,23 @@ class ProductApi extends BaseApi {
     super(import.meta.env.VITE_ROUTE_API)
   }
 
-  getProducts() {
+  getProducts = async () => {
     return this.get("/products")
   }
 
-  getProductById(id) {
+  getProductById = async (id) => {
     return this.get(`/products/${id}`)
   }
 
-  createProduct(product) {
+  createProduct = async (product) => {
     return this.post("/products", product)
   }
 
-  updateProduct(product) {
+  updateProduct = async (product) => {
     return this.patch(`/products/${product.id_}`, product)
   }
 
-  deleteProduct(id) {
+  deleteProduct = async (id) => {
     return this.delete(`/products/${id}`)
   }
 }

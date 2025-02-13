@@ -4,7 +4,7 @@ import { categorias, paginacionProducts } from "../../shared/infrastructure/util
 import { formatPrice } from "../../shared/infrastructure/utils/formatPrice"
 import { createBaseSlice } from "../../shared/infrastructure/slices/baseSlice"
 
-export const getDataProducts = createAsyncThunk("products/getData", productApi.getProducts.bind(productApi))
+export const getDataProducts = createAsyncThunk("products/getData", productApi.getProducts)
 export const getDataById = createAsyncThunk("products/getDataById", productApi.getProductById)
 export const createData = createAsyncThunk("products/createData", async (product) => {
   const formattedProduct = { ...product, price: formatPrice(product.price) }
