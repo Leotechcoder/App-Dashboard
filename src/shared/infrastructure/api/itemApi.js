@@ -1,10 +1,14 @@
 import BaseApi from "./BaseApi"
-import { routeApi } from "../utils/routeApi";
+import dotenv from 'dotenv';
+
+if(process.env.FRONTEND_ENV !== 'production'){
+  dotenv.config(); 
+}
 
 
 class ItemApi extends BaseApi {
   constructor() {
-    super(routeApi)
+    super(process.env.ROUTE_API)
   }
 
   getItems() {
