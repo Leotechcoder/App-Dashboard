@@ -1,7 +1,7 @@
 import BaseApi from "./BaseApi";
 
 class AuthApi extends BaseApi {
-  constructor(baseURL = import.meta.env.ROUTE_API) {
+  constructor(baseURL = import.meta.env.VITE_ROUTE_API) {
     super(baseURL);
   }
 

@@ -1,6 +1,6 @@
 
 class BaseApi {
-  constructor(baseURL = import.meta.env.ROUTE_API) {
+  constructor(baseURL = import.meta.env.VITE_ROUTE_API) {
     this.baseURL = baseURL;
   }
 

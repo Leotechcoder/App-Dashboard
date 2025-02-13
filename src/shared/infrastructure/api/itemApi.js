@@ -2,7 +2,7 @@ import BaseApi from "./BaseApi"
 
 class ItemApi extends BaseApi {
   constructor() {
-    super(import.meta.env.ROUTE_API)
+    super(import.meta.env.VITE_ROUTE_API)
   }
 
   getItems() {

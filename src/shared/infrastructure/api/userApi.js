@@ -2,7 +2,7 @@ import BaseApi from "./BaseApi"
 
 class UserApi extends BaseApi {
   constructor() {
-    super(import.meta.env.ROUTE_API)
+    super(import.meta.env.VITE_ROUTE_API)
   }
 
   getUsers() {
