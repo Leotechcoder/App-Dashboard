@@ -30,6 +30,18 @@ export const deleteDataOrder = createAsyncThunk("order/deleteData", async (order
   return await orderApi.deleteOrder(orderId);
 });
 
+const orderEjemplo = {
+  id: "order123",
+  userId: "user456",
+  userName: "Ana García",
+  totalAmount: 99.75,
+  status: "Abonada",
+  itemsId: "item789,item101",
+  createdAt: "2024-10-27T10:00:00.000Z",
+  updatedAt: "2024-10-27T12:30:00.000Z",
+};
+
+
 const initialState = {
   data: [],
   selectedOrder: null,
@@ -64,10 +76,14 @@ const orderSlice = createSlice({
       })
       .addCase(getDataOrders.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.data = action.payload.map((order) => ({
+        if(action.payload.length === 0){
+          state.data = [orderEjemplo]
+        }else{
+          state.data = action.payload.map((order) => ({
           ...order,
           total_amount: formattedSubTotal(order.total_amount ?? 0), // ✅ Evita undefined
         }));
+        }
       })
       .addCase(getDataOrders.rejected, (state, action) => {
         state.isLoading = false;
@@ -103,6 +119,9 @@ const orderSlice = createSlice({
       })
       .addCase(deleteDataOrder.rejected, (state, action) => {
         state.isLoading = false;
+        if(action.error.message === "Orden no encontrada"){
+          return
+        }
         state.error = action.error.message;
       });
   },

@@ -5,7 +5,6 @@ import { Pencil, Trash2, RefreshCw } from "lucide-react"
 import { deleteDataOrder, getDataOrders, setFilteredOrders, setCurrentPageOrders } from "../../application/orderSlice"
 import { useDispatch, useSelector } from "react-redux"
 import Pagination from "../../../shared/presentation/components/Pagination.jsx"
-import SearchBar from "../../../shared/presentation/components/SearchBar.jsx"
 import { useTableData } from "../../../shared/hook/useTableData.js"
 
 const OrdersTable = ({ setSelectedOrder }) => {
@@ -74,7 +73,7 @@ const OrdersTable = ({ setSelectedOrder }) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.userId}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.itemsId}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${order.totalAmount}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.state}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.status}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.createdAt}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex items-center space-x-3">
