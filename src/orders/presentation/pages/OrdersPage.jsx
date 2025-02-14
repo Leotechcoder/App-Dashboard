@@ -1,16 +1,5 @@
-
-import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import OrderDetails from "../components/OrderDetails"
-import { ButtonAddOrder } from "../components/Buttons"
-import OrdersTable from "../components/OrdersTable"
-import { SearchOrder } from "../components/SearchOrder"
-import { getDataOrders, setCurrentPageOrders, setSelectedOrder } from "../../application/orderSlice"
-import { getData as getItemsData, voidItemSelected } from "../../application/itemSlice"
-import { voidSelectedProduct } from "../../../products/application/productSlice"
-
 const OrdersPage = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const {
     data: orders,
     isLoading,
@@ -18,48 +7,49 @@ const OrdersPage = () => {
     paginationOrders,
     selectedOrder,
     filteredOrders,
-  } = useSelector((state) => state.orders)
-  const [activeTab, setActiveTab] = useState("customer")
-  const [createOrder, setCreateOrder] = useState(false)
+  } = useSelector((state) => state.orders);
+  const [activeTab, setActiveTab] = useState("customer");
+  const [createOrder, setCreateOrder] = useState(false);
 
   useEffect(() => {
-    dispatch(getDataOrders())
-    dispatch(getItemsData())
-  }, [dispatch])
+    dispatch(getDataOrders());
+    dispatch(getItemsData());
+  }, [dispatch]);
 
   const handleCreateOrder = () => {
-    setCreateOrder(!createOrder)
-  }
+    setCreateOrder(!createOrder);
+  };
 
   const handleBack = () => {
-    dispatch(voidSelectedProduct())
-    dispatch(voidItemSelected())
-    dispatch(getDataOrders())
-    dispatch(setSelectedOrder(null))
-    setCreateOrder(false)
-  }
+    dispatch(voidSelectedProduct());
+    dispatch(voidItemSelected());
+    dispatch(getDataOrders());
+    dispatch(setSelectedOrder(null));
+    setCreateOrder(false);
+  };
 
   const handleSetSelectedOrder = (order) => {
-    dispatch(setSelectedOrder(order))
-  }
+    dispatch(setSelectedOrder(order));
+  };
 
   if (isLoading) {
-    return <div className="text-center">Cargando órdenes...</div>
+    return <div className="text-center">Cargando órdenes...</div>;
   }
 
   if (error) {
-    return <div className="text-center text-red-500">Error: {error}</div>
+    return <div className="text-center text-red-500">Error: {error}</div>;
   }
 
   if (selectedOrder) {
-    return <OrderDetails order={selectedOrder} onBack={handleBack} />
+    return <OrderDetails order={selectedOrder} onBack={handleBack} />;
   }
 
   if (createOrder) {
-    return <OrderDetails onBack={handleBack} />
+    return <OrderDetails onBack={handleBack} />;
   }
 
-  const displayOrders = filteredOrders.length > 0 ? filteredOrders : orders
+  // Asegurar que siempre haya un array válido
+  const displayOrders = filteredOrders.length > 0 ? filteredOrders : orders || [];
 
   return (
     <main className="p-5 pt-3">
@@ -89,11 +79,16 @@ const OrdersPage = () => {
             <SearchOrder tipo="ordenes" />
           </div>
         </div>
-        <OrdersTable setSelectedOrder={handleSetSelectedOrder} orders={displayOrders} />
+
+        {/* Mostrar mensaje si no hay órdenes */}
+        {displayOrders.length === 0 ? (
+          <div className="text-center text-gray-500 text-lg mt-6">
+            No hay órdenes registradas.
+          </div>
+        ) : (
+          <OrdersTable setSelectedOrder={handleSetSelectedOrder} orders={displayOrders} />
+        )}
       </div>
     </main>
-  )
-}
-
-export default OrdersPage;
-
+  );
+};
