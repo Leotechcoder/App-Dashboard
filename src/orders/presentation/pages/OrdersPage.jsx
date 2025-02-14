@@ -1,3 +1,14 @@
+
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import OrderDetails from "../components/OrderDetails"
+import { ButtonAddOrder } from "../components/Buttons"
+import OrdersTable from "../components/OrdersTable"
+import { SearchOrder } from "../components/SearchOrder"
+import { getDataOrders, setCurrentPageOrders, setSelectedOrder } from "../../application/orderSlice"
+import { getData as getItemsData, voidItemSelected } from "../../application/itemSlice"
+import { voidSelectedProduct } from "../../../products/application/productSlice"
+
 const OrdersPage = () => {
   const dispatch = useDispatch();
   const {
@@ -92,3 +103,7 @@ const OrdersPage = () => {
     </main>
   );
 };
+
+
+export default OrdersPage;
+
