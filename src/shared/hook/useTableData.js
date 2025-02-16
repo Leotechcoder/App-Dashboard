@@ -1,4 +1,3 @@
-"use client"
 
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { useDispatch, useSelector, shallowEqual } from "react-redux"

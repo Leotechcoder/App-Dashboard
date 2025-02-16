@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { deleteUserData, getUserData, setFilteredUser, setCurrentPageUsers } from "../../application/userSlice.js";
+import { deleteUserData, getUserData, setFilteredUser, setCurrentPageUsers, toggleOpenForm } from "../../application/userSlice.js";
 import { Pencil, Trash } from "lucide-react";
 import Pagination from "../../../shared/presentation/components/Pagination.jsx";
 import { useTableData } from "../../../shared/hook/useTableData.js";
 import EditUserForm from "./EditUserForm.jsx";
+import SearchBar from "../components/SearchBar.jsx"
 
 const UserList = () => {
   const dispatch = useDispatch();
@@ -36,9 +37,19 @@ const UserList = () => {
     }
   };
 
+  const handleOpenForm = () => {
+    dispatch(toggleOpenForm())
+  }
+
   return (
     <>
       {editModal && <EditUserForm user={selectedUser} setEditModal={setEditModal} />}
+      <div className="flex px-8 pb-4 flex-col md:flex-row justify-end gap-6 mb-6 border-b-2">
+        <button onClick={handleOpenForm} className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
+          + Nuevo Cliente
+        </button>
+        <SearchBar tipo={"clientes"} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      </div>
       <div className="bg-white rounded-lg shadow overflow-x-auto">
         <table className="min-w-full">
           <thead className="bg-gray-50 border-b">
