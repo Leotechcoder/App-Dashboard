@@ -34,15 +34,7 @@ const initialState = {
 
 const productSlice = createBaseSlice(
   "products",
-  {
-    selectedProduct: [],
-    isFormView: false,
-    isEditing: false,
-    filters: {
-      categoria: null,
-      busqueda: "",
-    },
-  },
+  initialState,
   {
     setFormView: (state) => {
       state.isFormView = !state.isFormView
@@ -63,7 +55,9 @@ const productSlice = createBaseSlice(
       state.filters.busqueda = action.payload || ""
     },
     setFilteredProduct: (state, action) => {
-      state.filteredProducts = action.payload;
+      if (state.filteredProducts !== action.payload) {
+        state.filteredProducts = action.payload;
+      }
     }
   },
   (builder) => {

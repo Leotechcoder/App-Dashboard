@@ -1,27 +1,10 @@
-"use client"
 
 import { Search } from "lucide-react"
-import { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { setFilteredUser } from "../../application/userSlice"
-
-const SearchBar = ({ tipo }) => {
-  const datos = useSelector((store) => store.users.data)
-  const [searchTerm, setSearchTerm] = useState("")
-  const dispatch = useDispatch()
+const SearchBar = ({ tipo, searchTerm, setSearchTerm }) => {
 
   const handleSearch = (e) => {
     const value = e.target.value.trim().toLowerCase()
     setSearchTerm(value)
-
-    if (value) {
-      const filtered = datos.filter(
-        (user) => user?.id?.toString().toLowerCase().includes(value) || user?.username?.toLowerCase().includes(value),
-      )
-      dispatch(setFilteredUser(filtered))
-    } else {
-      dispatch(setFilteredUser([]))
-    }
   }
 
   return (
