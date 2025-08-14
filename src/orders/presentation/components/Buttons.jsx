@@ -7,7 +7,7 @@ export const ButtonAddOrder = ({ handleClick }) => (
     className="flex items-center gap-2 bg-brown-750 hover:bg-brown-600 text-slate-300 border border-gray-300 px-4 py-2 rounded"
   >
     <Plus className="w-4 h-4" />
-    Agregar Orden
+    Nueva Orden
   </button>
 )
 

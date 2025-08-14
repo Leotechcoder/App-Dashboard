@@ -1,43 +1,61 @@
-"use client"
-
-import { Search } from "lucide-react"
-import { useSelector } from "react-redux"
-import { useState, useEffect } from "react"
-import { setSelectedProduct } from "../../../products/application/productSlice"
+import { Search } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { useState, useEffect, useRef } from "react";
+import { setSelectedProduct } from "../../../products/application/productSlice";
 
 const SearchItemsProduct = ({ tipo, setIsModalOpen, isModalOpen }) => {
-  const { data } = useSelector((store) => store.products)
-  const [filteredResults, setFilteredResults] = useState([])
-  const [buscadorTerm, setBuscadorTerm] = useState("")
+  const { data } = useSelector((store) => store.products);
+  const dispatch = useDispatch();
 
+  const [filteredResults, setFilteredResults] = useState([]);
+  const [buscadorTerm, setBuscadorTerm] = useState("");
+  const wrapperRef = useRef(null);
+
+  // Filtrar resultados en tiempo real
   useEffect(() => {
-    const searchTerm = buscadorTerm?.toLowerCase() || ""
-    if (searchTerm.length) {
-      setFilteredResults(data.filter((item) => item.name?.toLowerCase().includes(searchTerm)))
+    const searchTerm = buscadorTerm.trim().toLowerCase();
+    if (searchTerm) {
+      setFilteredResults(
+        data.filter((item) =>
+          item.name?.toLowerCase().includes(searchTerm)
+        )
+      );
     } else {
-      setFilteredResults([])
+      setFilteredResults([]);
     }
-  }, [buscadorTerm, data])
+  }, [buscadorTerm, data]);
 
+  // Cierra lista si clic fuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+        setFilteredResults([]);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Manejar escritura
   const handleSearch = (e) => {
-    const value = (e.target.value || "").trim().toLowerCase()
-    setBuscadorTerm(value)
-  }
+    setBuscadorTerm(e.target.value || "");
+  };
 
+  // Seleccionar producto
   const handleSelectItem = (item) => {
-    setSelectedProduct(item)
-    setIsModalOpen(!isModalOpen)
-    setBuscadorTerm("")
-    setFilteredResults([])
-  }
+    dispatch(setSelectedProduct(item)); // Guardamos producto seleccionado
+    setIsModalOpen(!isModalOpen);
+    setBuscadorTerm("");
+    setFilteredResults([]);
+  };
 
   return (
-    <div className="relative mb-4">
+    <div className="relative mb-4" ref={wrapperRef}>
       <input
         type="text"
         placeholder={`Buscar ${tipo}...`}
         className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-        value={buscadorTerm || ""}
+        value={buscadorTerm}
         onChange={handleSearch}
       />
       <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
@@ -56,8 +74,7 @@ const SearchItemsProduct = ({ tipo, setIsModalOpen, isModalOpen }) => {
         </ul>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default SearchItemsProduct
-
+export default SearchItemsProduct;

@@ -9,7 +9,7 @@ export const createDataItems = createAsyncThunk("items/createData", async (item)
   const formattedItem = {
     ...item,
     id_: idGenerator("Items"),
-    unit_price: formatPrice(item.unit_price),
+    unit_price: formatPrice(item.price),
   }
   return await itemApi.addItem(formattedItem)
 })

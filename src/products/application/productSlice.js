@@ -18,7 +18,7 @@ export const deleteData = createAsyncThunk("products/deleteData", productApi.del
 
 const initialState = {
   data: [],
-  selectedProduct: [],
+  selectedProduct: null,
   filteredProducts: [],
   isLoading: false,
   error: null,
@@ -43,10 +43,10 @@ const productSlice = createBaseSlice(
       state.isEditing = action.payload
     },
     setSelectedProduct: (state, action) => {
-      state.selectedProduct.push(action.payload)
+      state.selectedProduct = action.payload;
     },
     voidSelectedProduct: (state) => {
-      state.selectedProduct = []
+      state.selectedProduct = null;
     },
     setSelectedCategory: (state, action) => {
       state.filters.categoria = action.payload

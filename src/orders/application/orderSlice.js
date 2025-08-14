@@ -2,7 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { orderApi } from "../../shared/infrastructure/api/orderApi";
 import { paginacionOrders } from "../../shared/infrastructure/utils/stateInitial";
 import { idGenerator } from "../../shared/infrastructure/utils/idGenerator";
-import { formatPrice, formattedSubTotal } from "../../shared/infrastructure/utils/formatPrice";
+import { formattedSubTotal } from "../../shared/infrastructure/utils/formatPrice";
+import { formatPrice } from "../../shared/utils/formatPriceOrders";
 
 // ✅ Elimina .bind(orderApi) y usa funciones async
 export const getDataOrders = createAsyncThunk("order/getData", async () => {
@@ -10,12 +11,7 @@ export const getDataOrders = createAsyncThunk("order/getData", async () => {
 });
 
 export const createDataOrder = createAsyncThunk("order/createData", async (order) => {
-  const formattedOrder = {
-    ...order,
-    id_: idGenerator("Orders"),
-    total_amount: formatPrice(order.total_amount ?? 0), // ✅ Evita undefined
-  };
-  return await orderApi.createOrder(formattedOrder);
+  return await orderApi.createOrder(order);
 });
 
 export const updateDataOrder = createAsyncThunk("order/updateDataOrder", async (order) => {
