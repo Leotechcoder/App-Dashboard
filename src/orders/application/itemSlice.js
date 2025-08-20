@@ -6,12 +6,7 @@ import { formatPrice } from "../../shared/infrastructure/utils/formatPrice"
 export const getData = createAsyncThunk("items/getData", itemApi.getItems.bind(itemApi))
 export const getDataById = createAsyncThunk("items/getDataById", itemApi.getItemById)
 export const createDataItems = createAsyncThunk("items/createData", async (item) => {
-  const formattedItem = {
-    ...item,
-    id_: idGenerator("Items"),
-    unit_price: formatPrice(item.price),
-  }
-  return await itemApi.addItem(formattedItem)
+  return await itemApi.addItem(item)
 })
 
 const initialState = {

@@ -16,8 +16,6 @@ const OrderDetails = ({ order, onBack }) => {
   const dispatch = useDispatch();
 
   const initialOrder = {
-    id_: idGenerator("Orders"),
-    orderDate: fecha,
     user_id: idGenerator("Users"),
     user_name: "invitado",
   };
@@ -35,7 +33,7 @@ const OrderDetails = ({ order, onBack }) => {
         setOrderDetails(order);
         dispatch(getData());
 
-        const filtered = data.filter((dato) => dato.order_id === order.id_);
+        const filtered = data.filter((dato) => dato.order_id === orderDetails.id_);
         combinedItems = itemSelected.length > 0 ? [...filtered, ...itemSelected] : filtered;
       } else if (itemSelected.length > 0) {
         combinedItems = itemSelected;
@@ -52,58 +50,40 @@ const OrderDetails = ({ order, onBack }) => {
     }
   }, [order, data, persuit, dispatch, itemSelected]);
 
+  //Funcion para eliminar producto
   const removeProduct = (id) => {
     const newItems = items.filter((i) => i.id_ !== id);
     setItems(newItems);
   };
 
-  const subTotal = items.reduce(
-    (total, item) => total + formatPrice(item.price) * Number(item.quantity || 1),
-    0
-  );
+  //Funcion para calcular subtotal
+  const calculateSubTotal = items.reduce(
+      (total, item) => total + formatPrice(item.unit_price) * Number(item.quantity || 1),
+      0
+    );
+
+//Manejador de creacion de orden
 
 const handleOrderSave = async () => {
   if (!items.length) return;
 
-  // Normaliza items
-  const normalizedItems = items.map((item) => ({
-    ...item,
-    unit_price:
-      typeof item.unit_price === "number"
-        ? item.unit_price
-        : formatPrice(item.unit_price ?? item.price ?? 0),
-    quantity: Number(item.quantity || 1),
-  }));
-
   // Calcula subtotal
-  const subTotal = normalizedItems.reduce(
-    (total, item) => total + item.unit_price * item.quantity,
+  const subTotal = items.reduce(
+    (total, item) => total + Number(item.unit_price ?? 0) * Number(item.quantity ?? 1),
     0
   );
 
+ 
   // Construye nueva orden
-  const newOrder = order
-    ? { ...orderDetails, total_amount: subTotal, status: "Cobrada" }
-    : { ...orderDetails, total_amount: subTotal };
+  const newOrder = { ...orderDetails, items, total_amount: subTotal };
 
-  // Ejecuta creación/actualización de orden y items en paralelo
+  // Ejecuta creación o actualización de orden 
   try {
     const orderPromise = order
-      ? dispatch(updateDataOrder(newOrder))
-      : dispatch(createDataOrder(newOrder));
+      ? dispatch(updateDataOrder(newOrder)) //Si existe la orden actualiza
+      : dispatch(createDataItems(newOrder)); //Sino crea una orden nueva en el backend
 
-    const itemsToCreate =
-      normalizedItems.length > 0
-        ? normalizedItems.map((item) => ({
-            ...item,
-            order_id: orderDetails.id_,
-          }))
-        : [];
-
-    const itemsPromise =
-      itemsToCreate.length > 0 ? dispatch(createDataItems(itemsToCreate)) : Promise.resolve();
-
-    await Promise.all([orderPromise, itemsPromise]);
+    await Promise.all(orderPromise);
   } catch (err) {
     console.error("Error al guardar la orden:", err);
   }
@@ -155,10 +135,10 @@ const handleOrderSave = async () => {
                       <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{item.id_}</td>
                       <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{item.product_name}</td>
                       <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{item.description}</td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{formatPrice(item.price)}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{formatPrice(item.unit_price)}</td>
                       <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{item.quantity}</td>
                       <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                        {formatPrice(item.price) * Number(item.quantity || 1)}
+                        {formatPrice(item.unit_price) * Number(item.quantity || 1)}
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <button
@@ -178,7 +158,7 @@ const handleOrderSave = async () => {
               <div className="flex justify-between gap-4 mx-4">
                 <span className="text-lg font-semibold">Net Total</span>
                 <span className="text-2xl font-normal">
-                  $ {subTotal !== 0 ? subTotal.toFixed(2) : "0000.00"}
+                  $ {calculateSubTotal !== 0 ? calculateSubTotal.toFixed(2) : "0000.00"}
                 </span>
               </div>
             </div>
@@ -189,10 +169,10 @@ const handleOrderSave = async () => {
               <h2 className="text-lg font-semibold mb-3">DETALLES DE LA ORDEN</h2>
               <div className="grid gap-3">
                 <div className="flex justify-between">
-                  <div>
+                  {/* <div>
                     <label className="block text-sm font-medium text-gray-800 mb-1">ID Orden</label>
                     <span>{order?.id_ || orderDetails.id_}</span>
-                  </div>
+                  </div> */}
                   <div>
                     <label className="block text-sm font-medium text-gray-800 mb-1">Fecha de Emisión</label>
                     <Fecha />

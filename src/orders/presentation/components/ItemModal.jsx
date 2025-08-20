@@ -52,8 +52,8 @@ const ItemModal = ({ setModal, setPersuit }) => {
       product_id: selectedProduct.id,
       product_name: selectedProduct.name,
       description,
-      price: formatPrice(selectedProduct.price),
-      quantity,
+      unit_price: selectedProduct.unit_price,
+      quantity: String(quantity),
     };
 
     dispatch(setItemSelected(newProduct));
@@ -83,7 +83,7 @@ const ItemModal = ({ setModal, setPersuit }) => {
         </div>
 
         {/* Body */}
-        <div key={selectedProduct.id} className="p-6 space-y-4">
+        <div key={selectedProduct.id_} className="p-6 space-y-4">
           <div>
             <label className="block text-base font-medium text-gray-700">
               Nombre
@@ -98,7 +98,7 @@ const ItemModal = ({ setModal, setPersuit }) => {
               Precio
             </label>
             <span className="ml-2 text-base font-normal">
-              ${formatPrice(selectedProduct.price)}
+              ${formatPrice(selectedProduct.unit_price)}
             </span>
           </div>
 

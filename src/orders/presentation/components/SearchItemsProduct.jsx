@@ -41,9 +41,18 @@ const SearchItemsProduct = ({ tipo, setIsModalOpen, isModalOpen }) => {
     setBuscadorTerm(e.target.value || "");
   };
 
-  // Seleccionar producto
+  // Al seleccionar producto lo guarda en el campo selectedProduct del store
   const handleSelectItem = (item) => {
-    dispatch(setSelectedProduct(item)); // Guardamos producto seleccionado
+    const unit_price = String(item.price)
+      .split(",")[0]        // toma solo la parte antes de la coma
+      .replace(/\./g, "")   // quita puntos de miles
+      .replace(/\$/g, "")   // quita símbolo $
+      .trim();
+    const newItem = {  
+        id: item.id,
+        name: item.name,
+        unit_price };
+    dispatch(setSelectedProduct(newItem)); // Guardamos producto seleccionado
     setIsModalOpen(!isModalOpen);
     setBuscadorTerm("");
     setFilteredResults([]);
