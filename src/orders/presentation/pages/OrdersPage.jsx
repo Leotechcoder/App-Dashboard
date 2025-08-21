@@ -12,7 +12,7 @@ import { voidSelectedProduct } from "../../../products/application/productSlice"
 const OrdersPage = () => {
     const dispatch = useDispatch();
     const { isLoading, error, selectedOrder } = useSelector((state) => state.orders); // Destructura solo lo necesario
-    const [activeTab, setActiveTab] = useState("customer");
+    const [activeTab, setActiveTab] = useState("pending");
     const [createOrder, setCreateOrder] = useState(false);
 
     useEffect(() => {
@@ -43,13 +43,13 @@ const OrdersPage = () => {
                     <div className="flex space-x-2">
                         <TabButton
                             label="Pendientes de Entrega"
-                            isActive={activeTab === "customer"}
-                            onClick={() => setActiveTab("customer")}
+                            isActive={activeTab === "charged"}
+                            onClick={() => setActiveTab("charged")}
                         />
                         <TabButton
                             label="Cobro Pendiente"
-                            isActive={activeTab === "supplier"}
-                            onClick={() => setActiveTab("supplier")}
+                            isActive={activeTab === "pending"}
+                            onClick={() => setActiveTab("pending")}
                         />
                     </div>
                     <div className="flex space-x-4">
@@ -57,7 +57,7 @@ const OrdersPage = () => {
                         <SearchOrder tipo="ordenes" />
                     </div>
                 </div>
-                <OrdersTable setSelectedOrder={handleSetSelectedOrder} /> {/* No pasa orders como prop */}
+                <OrdersTable setSelectedOrder={handleSetSelectedOrder} activeTab={activeTab} /> {/* No pasa orders como prop */}
             </div>
         </main>
     );

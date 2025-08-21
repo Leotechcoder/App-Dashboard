@@ -44,6 +44,7 @@ const ItemModal = ({ setModal, setPersuit }) => {
     setDescription("");
   };
 
+  //Funcion para agregar producto
   const handleAddProduct = () => {
     if (!selectedProduct) return;
 
