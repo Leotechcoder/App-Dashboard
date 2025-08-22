@@ -1,9 +1,10 @@
+// OrderDetails.jsx
 import { useEffect, useState } from "react";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import Button from "../../../shared/presentation/components/Button";
 import { idGenerator } from "../../../shared/infrastructure/utils/idGenerator";
 import { useDispatch, useSelector } from "react-redux";
-import Fecha from "./Date";
+import DateTime from "./DateTime";
 import { createDataItems, getData } from "../../application/itemSlice";
 import ItemModal from "./ItemModal";
 import { createDataOrder, updateDataOrder } from "../../application/orderSlice";
@@ -11,21 +12,85 @@ import SearchItemsProduct from "./SearchItemsProduct";
 import { formatPrice } from "../../../shared/utils/formatPriceOrders";
 
 const OrderDetails = ({ order, onBack }) => {
-  const { data, isloading, error, itemSelected } = useSelector(
-    (store) => store.items
-  );
-  const selectedOrder = useSelector((store) => store.orders.selectedOrder);
+  const { data, itemSelected } = useSelector((store) => store.items); // Datos de los items
+  const selectedOrder = useSelector((store) => store.orders.selectedOrder); // Datos de la orden seleccionada
+  const users = useSelector((store) => store.users.data); // <-- lista de usuarios
   const dispatch = useDispatch();
 
+  // Datos por defecto de la orden
   const initialOrder = {
     user_id: idGenerator("Users"),
-    user_name: "invitado",
+    user_name: "Invitado",
   };
 
+  // Estado para el modo de búsqueda
   const [persuit, setPersuit] = useState(false);
+  // Estado para el array de items de la orden
   const [items, setItems] = useState(selectedOrder?.items || []);
+  // Estado para los detalles de la orden
   const [orderDetails, setOrderDetails] = useState(initialOrder);
+  // Estado para el modal de items
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // Estado para el tipo de entrega
+  const [deliveryType, setDeliveryType] = useState("local");
+
+  // Autocomplete de clientes
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Estado de pagos
+  const [payments, setPayments] = useState({
+    efectivo: false,
+    credito: false,
+    debito: false,
+  });
+
+  // Estados de los montos
+  const [amounts, setAmounts] = useState({
+    efectivo: "",
+    credito: "",
+    debito: "",
+  });
+
+
+  {/*Manejador del metodo de pago */}
+  const handleTogglePayment = (method) => {
+    setPayments((prev) => ({ ...prev, [method]: !prev[method] }));
+    if (payments[method]) {
+      setAmounts((prev) => ({ ...prev, [method]: "" }));
+    }
+  };
+
+  {/*Manejador del monto */}
+  const handleAmountChange = (method, value) => {
+    setAmounts((prev) => ({ ...prev, [method]: value }));
+  };
+
+  // Filtrar usuarios al escribir
+  const handleUserInput = (e) => {
+    const value = e.target.value;
+    setOrderDetails({ ...orderDetails, user_name: value });
+
+    if (value.length > 0) {
+      const filtered = users.filter((user) =>
+        user.username.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredUsers(filtered);
+      setShowSuggestions(true);
+    } else {
+      setShowSuggestions(false);
+    }
+  };
+
+  // Seleccionar usuario de la lista
+  const handleSelectUser = (user) => {
+    setOrderDetails({
+      ...orderDetails,
+      user_name: user.username,
+      user_id: user.id,
+    });
+    setShowSuggestions(false);
+  };
 
   useEffect(() => {
     if (!persuit) {
@@ -47,10 +112,7 @@ const OrderDetails = ({ order, onBack }) => {
       }
 
       setItems((prevItems) => {
-        const uniqueItems = [
-          ...prevItems,
-          ...combinedItems
-        ].filter(
+        const uniqueItems = [...prevItems, ...combinedItems].filter(
           (item, index, self) =>
             index === self.findIndex((i) => i.id_ === item.id_)
         );
@@ -61,39 +123,45 @@ const OrderDetails = ({ order, onBack }) => {
     }
   }, [order, data, persuit, dispatch, itemSelected, selectedOrder]);
 
-  //Funcion para eliminar producto
+  // Funcion para eliminar un producto
   const removeProduct = (id) => {
-    const newItems = items.filter((i) => i.id_ !== id);
-    setItems(newItems);
+    setItems(items.filter((i) => i.id_ !== id));
   };
 
-  //Funcion para calcular subtotal
+  // Funcion para calcular el subtotal
   const calculateSubTotal = items.reduce(
     (total, item) =>
       total + formatPrice(item.unit_price) * Number(item.quantity || 1),
     0
   );
 
-  //Manejador de creacion de orden
-
+  // Funcion para guardar la orden
   const handleOrderSave = async () => {
     if (!items.length) return;
 
-    // Calcula subtotal
     const subTotal = items.reduce(
       (total, item) =>
         total + Number(item.unit_price ?? 0) * Number(item.quantity ?? 1),
       0
     );
 
-    // Construye nueva orden
-    const newOrder = { ...orderDetails, items, total_amount: subTotal };
+    const paymentInfo = {
+      methods: Object.keys(payments).filter((m) => payments[m]),
+      amounts,
+    };
 
-    // Ejecuta creación o actualización de orden
+    const newOrder = {
+      ...orderDetails,
+      items,
+      total_amount: subTotal,
+      paymentInfo,
+      deliveryType,
+    };
+
     try {
       const orderPromise = order
-        ? dispatch(updateDataOrder(newOrder)) //Si existe la orden actualiza
-        : dispatch(createDataItems(newOrder)); //Sino crea una orden nueva en el backend
+        ? dispatch(updateDataOrder(newOrder))
+        : dispatch(createDataItems(newOrder));
 
       await Promise.all(orderPromise);
     } catch (err) {
@@ -118,9 +186,10 @@ const OrderDetails = ({ order, onBack }) => {
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100%-48px)] lg:scale-95">
+          {/* Tabla de productos */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow overflow-hidden flex flex-col">
             <div className="p-4">
-              <h2 className="text-lg font-semibold mb-4">Items de Productos</h2>
+              <h2 className="text-lg font-semibold mb-2">Items de Productos</h2>
               <h4 className="text-base font-medium ml-3 mb-2">
                 Agregar Producto
               </h4>
@@ -132,55 +201,39 @@ const OrderDetails = ({ order, onBack }) => {
             </div>
 
             <div className="flex-1 overflow-auto">
-              <table className="min-w-full border-t border-gray-200">
-                <thead className="bg-gray-50 sticky top-0">
+              <table className="min-w-full border-t border-gray-200 text-sm">
+                <thead className="bg-gray-50 sticky top-0 text-xs">
                   <tr>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                      ID
-                    </th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                      Producto
-                    </th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                      Descripción
-                    </th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                      Precio Unitario
-                    </th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                      Cantidad
-                    </th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                      Total
-                    </th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                      Acción
-                    </th>
+                    {[
+                      "ID",
+                      "Producto",
+                      "Descripción",
+                      "Precio Unitario",
+                      "Cantidad",
+                      "Total",
+                      "Acción",
+                    ].map((h) => (
+                      <th
+                        key={h}
+                        className="px-3 py-2 text-left font-medium text-gray-500 uppercase"
+                      >
+                        {h}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {items.map((item) => (
                     <tr key={item.id_} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                        {item.id_}
+                      <td className="px-3 py-2">{item.id_}</td>
+                      <td className="px-3 py-2">{item.product_name}</td>
+                      <td className="px-3 py-2">{item.description}</td>
+                      <td className="px-3 py-2">{formatPrice(item.unit_price)}</td>
+                      <td className="px-3 py-2">{item.quantity}</td>
+                      <td className="px-3 py-2">
+                        {formatPrice(item.unit_price) * Number(item.quantity || 1)}
                       </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                        {item.product_name}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                        {item.description}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                        {formatPrice(item.unit_price)}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                        {item.quantity}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                        {formatPrice(item.unit_price) *
-                          Number(item.quantity || 1)}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap">
+                      <td className="px-3 py-2">
                         <button
                           onClick={() => removeProduct(item.id_)}
                           className="text-gray-600 hover:text-red-600"
@@ -194,45 +247,135 @@ const OrderDetails = ({ order, onBack }) => {
               </table>
             </div>
 
-            <div className="p-4 border-t border-gray-200 bg-white">
-              <div className="flex justify-between gap-4 mx-4">
-                <span className="text-lg font-semibold">Net Total</span>
-                <span className="text-2xl font-normal">
-                  ${" "}
-                  {calculateSubTotal !== 0
-                    ? calculateSubTotal.toFixed(2)
-                    : "0000.00"}
+            <div className="p-3 border-t border-gray-200 bg-white">
+              <div className="flex justify-between gap-4 mx-2">
+                <span className="text-base font-semibold">Net Total</span>
+                <span className="text-xl font-bold">
+                  ${calculateSubTotal !== 0 ? calculateSubTotal.toFixed(2) : "0000.00"}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow lg:h-full">
-            <div className="p-4">
-              <h2 className="text-lg font-semibold mb-3">
-                DETALLES DE LA ORDEN
-              </h2>
-              <div className="grid gap-3">
-                <div className="flex justify-between">
-                  {/* <div>
-                    <label className="block text-sm font-medium text-gray-800 mb-1">ID Orden</label>
-                    <span>{order?.id_ || orderDetails.id_}</span>
-                  </div> */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-800 mb-1">
-                      Fecha de Emisión
-                    </label>
-                    <Fecha />
-                  </div>
+          {/* Detalles de la Orden */}
+          
+          <div className="bg-white rounded-lg shadow-lg flex flex-col overflow-hidden">
+            <div className="bg-orange-600 text-white p-3">
+              <h2 className="text-base font-semibold">DETALLES DE LA ORDEN</h2>
+            </div>
+
+            <div className="flex-1 overflow-y-auto">
+              <div className="p-4 grid gap-3 text-sm">
+                <div className="relative">
+                  <label className="block text-gray-600">Cliente</label>
+                  {selectedOrder?.user_name ? (
+                    <span className="font-medium">{selectedOrder.user_name}</span>
+                  ) : (
+                    <>
+                      <input
+                        type="text"
+                        value={orderDetails.user_name || ""}
+                        onChange={handleUserInput}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        placeholder="Nombre del cliente"
+                      />
+                      {showSuggestions && filteredUsers.length > 0 && (
+                        <ul className="border rounded mt-1 max-h-40 overflow-auto bg-white absolute z-10 w-full">
+                          {filteredUsers.map((user) => (
+                            <li
+                              key={user.id}
+                              className="px-3 py-2 hover:bg-gray-200 cursor-pointer"
+                              onClick={() => handleSelectUser(user)}
+                            >
+                              {user.username}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </>
+                  )}
                 </div>
 
-                <Button
-                  onClick={handleOrderSave}
-                  className="w-full mt-4 text-white"
-                >
-                  {order ? `Cobrar Orden` : `Guardar Orden`}
-                </Button>
+                <div className="grid grid-cols-2 gap-1">
+                  <div>
+                    <label className="block text-gray-600">Orden N°</label>
+                    <span className="font-medium">
+                      {selectedOrder?.items[0]?.order_id || "Pendiente"}
+                    </span>
+                  </div>
+                  <div>
+                    <label className="block text-gray-600">Fecha de Emisión</label>
+                    <DateTime />
+                  </div>
+                  <div>
+                    <label className="block text-gray-600">Estado de la Orden</label>
+                    <span className="font-medium">
+                      {selectedOrder?.status || "Pendiente"}
+                    </span>
+                  </div>
+                </div>
               </div>
+
+              {/* Tipo de Pago */}
+              <div className="bg-gray-50">
+                <div className="p-2 font-semibold text-gray-800 border-b-slate-800 bg-gray-300 rounded rounded-t-lg">
+                  PAGO
+                </div>
+                <div className="p-3 space-y-2 text-sm">
+                  {["efectivo", "credito", "debito"].map((method) => (
+                    <div key={method} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id={method}
+                        checked={payments[method]}
+                        onChange={() => handleTogglePayment(method)}
+                      />
+                      <label htmlFor={method} className="capitalize flex-1">
+                        {method === "efectivo"
+                          ? "Efectivo"
+                          : method === "credito"
+                          ? "Tarjeta Crédito"
+                          : "Tarjeta Débito"}
+                      </label>
+                      {payments[method] && (
+                        <input
+                          type="number"
+                          className="border rounded px-2 py-1 w-24 text-right"
+                          placeholder="$"
+                          value={amounts[method]}
+                          onChange={(e) => handleAmountChange(method, e.target.value)}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tipo de Entrega */}
+              <div className="bg-gray-50 border-b border-gray-200">
+                <div className="p-2 font-semibold text-gray-800 bg-gray-300 rounded rounded-t-lg">
+                  ENTREGA
+                </div>
+                <div className="p-3">
+                  <select
+                    className="border rounded p-2 w-full text-sm"
+                    value={deliveryType}
+                    onChange={(e) => setDeliveryType(e.target.value)}
+                  >
+                    <option value="local">Retira en Local</option>
+                    <option value="delivery">Delivery</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 border-t bg-white">
+              <Button
+                onClick={handleOrderSave}
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+              >
+                {order ? `Actualizar Orden` : `Guardar Orden`}
+              </Button>
             </div>
           </div>
         </div>
