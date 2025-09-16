@@ -17,9 +17,9 @@ const Products = () => {
         )
       ) : (
         <div className="p-8">
-          <div className="flex justify-between items-center">
+          {/* <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-gray-800">Productos</h1>
-          </div>
+          </div> */}
         
           <TablaProductos/>
         </div>

@@ -5,4 +5,6 @@ export const PATH = {
     contact: '/admin/contact', //ruta componente contacto
     products: '/admin/products',
     orders: '/admin/orders',
+    ventas: '/admin/ventas',
+    login: '/',
 };

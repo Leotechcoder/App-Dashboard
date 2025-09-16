@@ -85,7 +85,7 @@ const UserForm = () => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-end p-4 z-50">
      <div
-        className={`bg-gray-200 dark:bg-gray-600 rounded-lg shadow-xl w-full max-w-md p-6 relative transition-transform duration-300 transform ${
+        className={`bg-gray-200 dark:bg-gray-600 rounded-lg shadow-xl w-full max-w-md p-8 relative transition-transform duration-300 transform ${
           animate ? "translate-x-0" : "translate-x-full"
         } max-h-[100vh] overflow-y-auto no-scrollbar`}
       >
@@ -98,9 +98,9 @@ const UserForm = () => {
           <X size={24} />
         </button>
 
-        <h2 className="text-3xl font-bold mb-2 text-gray-800 dark:text-white">Crear Usuario</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Crear Usuario</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-5 scale-90">
+        <form onSubmit={handleSubmit} className="space-y-3 scale-90">
           <div className="space-y-2">
             <Label htmlFor="username" className="text-gray-700 dark:text-gray-200">
               Nombre de usuario

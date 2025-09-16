@@ -14,7 +14,7 @@ class UserApi extends BaseApi {
   }
 
   updateUser = async (user)=> {
-    return this.patch(`/users/${user.id_}`, user)
+    return this.patch(`/users/${user.id}`, user)
   }
 
   deleteUser = async (id)=> {

@@ -38,7 +38,7 @@ const OrdersPage = () => {
     return (
         <main className="p-5 pt-3">
             <div className="p-5">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Órdenes</h2>
+                {/* <h2 className="text-2xl font-bold text-gray-800 mb-4">Órdenes</h2> */}
                 <div className="flex justify-between items-center mb-6">
                     <div className="flex space-x-2">
                         <TabButton

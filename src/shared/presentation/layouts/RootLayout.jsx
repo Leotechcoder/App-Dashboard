@@ -20,7 +20,7 @@ const RootLayout = () => {
     <>
       <div className="flex flex-col lg:flex-row min-h-screen">
         {/* Sidebar */}
-        <div className=" p-4">
+        <div className="w-64 p-4">
           <Sidebar />
         </div>
 
