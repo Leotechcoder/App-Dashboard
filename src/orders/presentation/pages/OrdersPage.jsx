@@ -36,7 +36,7 @@ const OrdersPage = () => {
     if (selectedOrder || createOrder) return <OrderDetails order={selectedOrder} onBack={handleBack} />;
 
     return (
-        <main className="p-5 pt-3">
+        <main className="p-5 pt-3 w-full max-w-screen-lg">
             <div className="p-5">
                 {/* <h2 className="text-2xl font-bold text-gray-800 mb-4">Órdenes</h2> */}
                 <div className="flex justify-between items-center mb-6">

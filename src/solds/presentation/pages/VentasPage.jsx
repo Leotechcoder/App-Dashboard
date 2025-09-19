@@ -9,7 +9,7 @@ const VentasPage = () => {
         className="w-64 h-64 mb-6 rounded-lg shadow-lg"
       />
       <h1 className="text-4xl font-bold mb-1">Ventas</h1>
-      <p className="text-lg text-gray-500">Todavía estamos armando esta sección 👨‍💻</p>
+      <p className="text-lg text-gray-500">Todavía estoy armando esta sección 👨‍💻</p>
     </div>
   )
 }
