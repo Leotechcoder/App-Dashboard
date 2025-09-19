@@ -23,7 +23,7 @@ export const filtros = {
   }
   
   export const categorias = {
-    data: ["Hamburguesas", "Pizzas", "Pastas", "Cervezas"],
+    data: ["Pizzas", "Hamburguesas", "Empanadas", "Lomos", "Bebidas"],
     isLoading: false,
     error: null,
   }

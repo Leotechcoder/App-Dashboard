@@ -1,6 +1,6 @@
-// ProductList.jsx (Refactorizado para manejar el estado de filteredData con useState)
+// ProductList.jsx (Refactorizado con filtros por categoría)
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import {
   deleteData,
@@ -13,7 +13,7 @@ import { Pencil, Trash } from "lucide-react";
 import Pagination from "../../../shared/presentation/components/Pagination.jsx";
 import SearchBar from "../../../shared/presentation/components/SearchBar.jsx";
 import { useTableData } from "../../../shared/hook/useTableDataP.js";
-import CategoryFilter from "../components/CategoryFilter.jsx";
+import { FiltrosCategorias } from "../components/CategoryFilter.jsx";
 
 const ProductList = () => {
   const dispatch = useDispatch();
@@ -27,8 +27,16 @@ const ProductList = () => {
   );
 
   const [filteredData, setFilteredData] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const { searchTerm, setSearchTerm, currentPage, paginatedData, totalPages, handlePageChange } = useTableData({
+  const {
+    searchTerm,
+    setSearchTerm,
+    currentPage,
+    paginatedData,
+    totalPages,
+    handlePageChange,
+  } = useTableData({
     stateKey: "products",
     itemsPerPage: pagination.itemsPerPage,
     searchFields: ["name", "category"],
@@ -37,15 +45,23 @@ const ProductList = () => {
     externalFilteredData: filteredData,
   });
 
+  // 🚀 Traer productos al cargar
   useEffect(() => {
     if (!isLoading && data.length === 0) {
       dispatch(getDataProducts());
     }
   }, [dispatch, isLoading, data.length]);
 
+  // 🚀 Aplicar filtros (categoría + data de redux)
   useEffect(() => {
-    setFilteredData(data);
-  }, [data]);
+    let result = data;
+
+    if (selectedCategory) {
+      result = result.filter((item) => item.category === selectedCategory);
+    }
+
+    setFilteredData(result);
+  }, [data, selectedCategory]);
 
   const handleEditar = (product) => {
     dispatch(setEditingProduct(product));
@@ -77,15 +93,28 @@ const ProductList = () => {
         >
           <span className="font-normal text-lg">+</span> Nuevo Producto
         </button>
-        <SearchBar tipo="producto" searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <SearchBar
+          tipo="producto"
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
       </div>
-      <CategoryFilter />
+
+      {/* 🔥 Filtros por categoría */}
+      <FiltrosCategorias
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+      />
+
       <div className="bg-white rounded-lg shadow overflow-x-auto">
         <table className="min-w-full">
           <thead className="bg-gray-50 border-b">
             <tr>
               {["ID", "Producto", "Categoría", "Acciones"].map((header) => (
-                <th key={header} className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th
+                  key={header}
+                  className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
                   {header}
                 </th>
               ))}
@@ -94,15 +123,27 @@ const ProductList = () => {
           <tbody className="divide-y divide-gray-200">
             {paginatedData.map((product) => (
               <tr key={product.id} className="hover:bg-gray-50">
-                <td className="px-2 py-4 text-sm text-gray-500">{product.id}</td>
-                <td className="px-2 py-4 text-sm text-gray-500">{product.name}</td>
-                <td className="px-2 py-4 text-sm text-gray-500">{product.category}</td>
+                <td className="px-2 py-4 text-sm text-gray-500">
+                  {product.id}
+                </td>
+                <td className="px-2 py-4 text-sm text-gray-500">
+                  {product.name}
+                </td>
+                <td className="px-2 py-4 text-sm text-gray-500">
+                  {product.category}
+                </td>
                 <td className="px-2 py-4">
                   <div className="flex gap-2">
-                    <button onClick={() => handleEditar(product)} className="p-1 hover:bg-gray-100 rounded">
+                    <button
+                      onClick={() => handleEditar(product)}
+                      className="p-1 hover:bg-gray-100 rounded"
+                    >
                       <Pencil className="h-4 w-4 text-gray-500" />
                     </button>
-                    <button onClick={() => handleEliminar(product.id)} className="p-1 hover:bg-gray-100 rounded">
+                    <button
+                      onClick={() => handleEliminar(product.id)}
+                      className="p-1 hover:bg-gray-100 rounded"
+                    >
                       <Trash className="h-4 w-4 text-gray-500" />
                     </button>
                   </div>
@@ -112,7 +153,12 @@ const ProductList = () => {
           </tbody>
         </table>
       </div>
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </>
   );
 };

@@ -1,11 +1,8 @@
+// CategoryFilter.jsx
 import { useSelector } from "react-redux"
 
 export const FiltrosCategorias = ({ onCategoryChange, selectedCategory }) => {
   const categorias = useSelector((store) => store.products.categorias)
-
-  const handleCategory = (categoria) => {
-    onCategoryChange(categoria === selectedCategory ? null : categoria)
-  }
 
   return (
     <div className="flex gap-4 border-b mb-6 overflow-x-auto">
@@ -13,7 +10,7 @@ export const FiltrosCategorias = ({ onCategoryChange, selectedCategory }) => {
         className={`px-4 py-2 whitespace-nowrap ${
           !selectedCategory ? "border-b-2 border-orange-600 text-orange-600" : "text-gray-500"
         }`}
-        onClick={() => handleCategory(null)}
+        onClick={() => onCategoryChange(null)}
       >
         Todos
       </button>
@@ -22,9 +19,11 @@ export const FiltrosCategorias = ({ onCategoryChange, selectedCategory }) => {
             <button
               key={categoria}
               className={`px-4 py-2 whitespace-nowrap ${
-                selectedCategory === categoria ? "border-b-2 border-orange-600 text-orange-600" : "text-gray-500"
+                selectedCategory === categoria
+                  ? "border-b-2 border-orange-600 text-orange-600"
+                  : "text-gray-500"
               }`}
-              onClick={() => handleCategory(categoria)}
+              onClick={() => onCategoryChange(categoria)}
             >
               {categoria}
             </button>
@@ -35,4 +34,3 @@ export const FiltrosCategorias = ({ onCategoryChange, selectedCategory }) => {
 }
 
 export default FiltrosCategorias
-
