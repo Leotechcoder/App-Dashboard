@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { loginUser, loginUserFacebook, loginUserGoogle, registerUser } from "../../application/userSlice.js"
 import { Eye, EyeOff, Mail, Lock, User, Facebook, Github } from "lucide-react"
+import { useNavigate } from "react-router-dom";
 
 const estadoInicialLog = {
   email: "",
@@ -17,19 +18,25 @@ const initialState = {
 }
 
 export const FormLogin = ({ onExpandChange, isExpanded }) => {
-  const { error } = useSelector((store) => store.users)
+  const { error, user} = useSelector((store) => store.users)
   const [formLog, setFormLog] = useState(estadoInicialLog)
   const [formReg, setFormReg] = useState(initialState)
   const [esInicioSesion, setEsInicioSesion] = useState(true)
   const [mostrarPassword, setMostrarPassword] = useState(false)
   const [errores, setErrores] = useState({})
-  const dispatch = useDispatch()
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (error) {
       setErrores({ general: error })
+      return;
     }
-  }, [error])
+    if (user) {
+        navigate("/admin/home")
+    }
+  }, [error, user, navigate]);
 
   const validarFormulario = () => {
     const nuevosErrores = {}
@@ -90,6 +97,7 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
       onExpandChange(true)
     }
   }
+
 
   return (
     <div className="w-full max-w-md">

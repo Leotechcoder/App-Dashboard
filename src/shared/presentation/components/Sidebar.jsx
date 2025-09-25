@@ -1,8 +1,8 @@
 "use client";
 
-import { Link, NavLink } from "react-router-dom";
+import {useNavigate, Link, NavLink } from "react-router-dom";
 import { PATH } from "../../../shared/infrastructure/utils/PATH.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logOutUser } from "../../../users/application/userSlice.js";
 import {
   FingerprintIcon as FiHome,
@@ -12,18 +12,30 @@ import {
   LogOutIcon as FiLogOut,
 } from "lucide-react";
 import { CheckCheckIcon as CiMoneyCheck1 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
+  const { user, loading } = useSelector((store) => store.users);
   const [isExpanded, setIsExpanded] = useState(true);
 
   const handleMouseEnter = () => setIsExpanded(true);
   const handleMouseLeave = () => setIsExpanded(false);
 
+  const navigate = useNavigate();
+  useEffect(() => {
+    if(!user){
+      setTimeout(() => {
+      navigate("/");
+    }, 1000);
+    }
+  }, [user, navigate]);
+  
+
   const handleClick = () => {
-    dispatch(logOutUser());
+    dispatch(logOutUser())
   };
+
 
   return (
     <div

@@ -1,20 +1,22 @@
 import BaseApi from "./BaseApi";
 
 class AuthApi extends BaseApi {
-  constructor(baseURL = import.meta.env.VITE_ROUTE_API) {
-    super(baseURL);
+  constructor(
+    baseURL = import.meta.env.VITE_ROUTE_API) {
+      super(baseURL);
   }
 
   async register(user) {
-    return this.post("/auth/register", user);
+    return this.post("/auth/local/register", user);
   }
 
   async login({ email, password }) {
-    return this.post("/auth/login", { email, password });
+    const response = await this.post("/auth/local/login", { email, password });
+    return response;
   }
 
   async logout() {
-    return this.get("/auth/logout");
+    return this.get("/auth/local/logout");
   }
 
   async authUser() {

@@ -18,9 +18,10 @@ export const logOutUser = createAsyncThunk("user/logOutUser", authApi.logout.bin
 
 const initialState = {
   username: null,
+  user: null,
   data: [],
   filteredUser: [],
-  loading: true,
+  loading: null,
   error: false,
   get: false,
   isOpen: false,
@@ -106,8 +107,9 @@ const userSlice = createSlice({
       .addCase(loginUser.pending, (state) => {
         state.loading = true
       })
-      .addCase(loginUser.fulfilled, (state) => {
+      .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false
+        state.user = action.payload
       })
       .addCase(loginUser.rejected, (state) => {
         state.loading = false
@@ -116,8 +118,9 @@ const userSlice = createSlice({
       .addCase(logOutUser.pending, (state) => {
         state.loading = true
       })
-      .addCase(logOutUser.fulfilled, (state) => {
+      .addCase(logOutUser.fulfilled, (state, action) => {
         state.loading = false
+        state.user = null
       })
       .addCase(logOutUser.rejected, (state) => {
         state.loading = false
@@ -129,6 +132,7 @@ const userSlice = createSlice({
       .addCase(getUserAuth.fulfilled, (state, action) => {
         state.loading = false
         state.username = action.payload.username
+        state.user = action.payload.username
       })
       .addCase(getUserAuth.rejected, (state) => {
         state.loading = false

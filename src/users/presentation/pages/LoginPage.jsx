@@ -1,12 +1,16 @@
 "use client"
 
-import { Logo } from "../../../shared/presentation/components/Logo"
+// import { Logo } from "../../../shared/presentation/components/Logo"
+import Logo from "../../../shared/presentation/components/Logo"
 import { FormLogin } from "../components/FormLogin"
+import LoadingScreen from "../../../shared/presentation/components/LoadingScreen.jsx"
 import { useState, useCallback, useEffect } from "react"
 import { X } from "lucide-react"
+import { useSelector } from "react-redux"
 
 export const LoginPage = () => {
   const [isFormExpanded, setIsFormExpanded] = useState(false)
+  const { loading } = useSelector((store) => store.users);
 
   const handleFormExpand = useCallback((expanded) => {
     const isSmallScreen = window.matchMedia("(max-width: 1024px)").matches
@@ -39,27 +43,39 @@ export const LoginPage = () => {
     }
   }, [isFormExpanded])
 
+  
+  if(loading) return <LoadingScreen />
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-100 flex flex-col lg:flex-row">
+    <div
+      className="min-h-screen flex flex-col lg:flex-row bg-no-repeat relative"
+      style={{ 
+        backgroundImage: "url('/imagen-paredon.jpg')",
+        backgroundSize: '100% 100%'
+      }}
+    >
+      {/* Overlay para mejorar legibilidad */}
+      <div className="absolute inset-0 bg-white/30 backdrop-blur-none"></div>
+
       <div
-        className={`lg:flex-1 lg:scale-95 flex flex-col justify-center items-center p-8 lg:p-12 ${
+        className={`lg:flex-1 lg:scale-95 flex flex-col justify-center items-center p-8 lg:p-12 relative z-10 ${
           isFormExpanded ? "hidden lg:flex" : ""
         }`}
       >
-        <Logo className="h-16 w-auto mb-8" />
-        <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">Bienvenido a Cangre Burger</h1>
-        <p className="text-xl text-gray-600 mb-8 text-center max-w-md">
+        <Logo />
+        <h1 className="text-6xl font-semibold text-gray-800 mb-3 text-center">
+          Cangre Burger
+        </h1>
+        <h1 className="text-2xl font-medium text-gray-800 mb-4 text-center">
+          Web Dashboard
+        </h1>
+        <p className="text-xl text-gray-800 mb-8 text-center max-w-md">
           Descubre la mejor experiencia en comida rápida y gestión de restaurantes
         </p>
-        <img
-          src="/placeholder.svg?height=400&width=600"
-          alt="Imagen de bienvenida"
-          className="rounded-lg shadow-xl max-w-full h-auto"
-        />
       </div>
 
       <div
-        className={`lg:flex-1 lg:scale-90 flex justify-center items-center p-8 lg:p-12 transition-all duration-300 ease-in-out ${
+        className={`lg:flex-1 lg:scale-90 flex justify-center items-center p-8 lg:p-12 transition-all duration-300 ease-in-out relative z-10 ${
           isFormExpanded ? "fixed inset-0 z-50 bg-white" : ""
         }`}
       >
@@ -73,6 +89,7 @@ export const LoginPage = () => {
           </div>
         </div>
       </div>
+
       {isFormExpanded && (
         <button
           className="fixed top-4 right-4 z-50 p-2 bg-gray-800 text-white rounded-full lg:hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800"
