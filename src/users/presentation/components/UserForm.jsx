@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { createUserData, getUserData, toggleOpenForm } from "../../application/userSlice"
-import { X, Loader2, User, Mail, Lock, Phone, MapPin } from "lucide-react"
+import { X, User, Mail, Lock, Phone, MapPin } from "lucide-react"
 import Button from "../../../shared/presentation/components/Button"
 import Input from "../../../shared/presentation/components/Input"
 import Label from "../../../shared/presentation/components/Label"
@@ -197,18 +197,12 @@ const UserForm = () => {
 
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors duration-200"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={loading}
           >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Guardando...
-              </>
-            ) : (
-              "Guardar"
-            )}
+            Guardar
           </Button>
+
         </form>
       </div>
     </div>
