@@ -1,10 +1,9 @@
-"use client"
+
 
 import { useState, useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { loginUser, loginUserFacebook, loginUserGoogle, registerUser } from "../../application/userSlice.js"
 import { Eye, EyeOff, Mail, Lock, User, Facebook, Github } from "lucide-react"
-import { useNavigate } from "react-router-dom";
 
 const estadoInicialLog = {
   email: "",
@@ -17,26 +16,24 @@ const initialState = {
   password: "",
 }
 
-export const FormLogin = ({ onExpandChange, isExpanded }) => {
-  const { error, user} = useSelector((store) => store.users)
+export const FormLogin = ({ onExpandChange, isExpanded, setLoginUser }) => {
+  const { error } = useSelector((store) => store.users)
   const [formLog, setFormLog] = useState(estadoInicialLog)
   const [formReg, setFormReg] = useState(initialState)
   const [esInicioSesion, setEsInicioSesion] = useState(true)
   const [mostrarPassword, setMostrarPassword] = useState(false)
   const [errores, setErrores] = useState({})
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const dispatch = useDispatch()
+
+  // Mostrar errores del servidor
 
   useEffect(() => {
     if (error) {
       setErrores({ general: error })
       return;
     }
-    if (user) {
-        navigate("/admin/home")
-    }
-  }, [error, user, navigate]);
+  }, [error]);
 
   const validarFormulario = () => {
     const nuevosErrores = {}
@@ -58,6 +55,7 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
     if (validarFormulario()) {
       if (esInicioSesion) {
         dispatch(loginUser(formLog))
+        setLoginUser(true)
       } else {
         dispatch(registerUser(formReg))
         if (!error) {

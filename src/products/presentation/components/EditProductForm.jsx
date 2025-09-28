@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { updateData, getDataProducts, setFormView } from "../../application/productSlice"
+import { updateData, setFormView } from "../../application/productSlice"
 import { ArrowLeft, Image } from "lucide-react"
+import { toast } from "sonner"
 
 const EditProductForm = () => {
   const dispatch = useDispatch()
@@ -19,12 +20,14 @@ const EditProductForm = () => {
 
   const validateForm = () => {
     const newErrors = {}
-    if (!form.name.trim()) newErrors.name = "El nombre del producto es requerido"
+    if (!form.name_.trim()) newErrors.name_ = "El nombre del producto es requerido"
     if (!form.description.trim()) newErrors.description = "La descripción es requerida"
     if (!form.price || Number(form.price) <= 0) newErrors.price = "El precio debe ser un número positivo"
     if (!form.category.trim()) newErrors.category = "La categoría es requerida"
     if (!form.stock || Number(form.stock) < 0) newErrors.stock = "El stock debe ser un número no negativo"
-    if (!form.state) newErrors.state = "El estado es requerido"
+    if (form.available === null || form.available === undefined) {
+      newErrors.available = "El estado es requerido"
+    }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -56,19 +59,31 @@ const EditProductForm = () => {
     e.preventDefault()
     if (validateForm()) {
       try {
-        await dispatch(updateData(form)).unwrap()
-        dispatch(getDataProducts())
+        const newForm = {
+          id_: form.id_,
+          name_: form.name_,
+          price: Number(form.price),
+          category: form.category,
+          stock: Number(form.stock),
+          image_url: form.image_url,
+          description: form.description,
+          available: form.available, // ahora siempre boolean
+        }
+        await dispatch(updateData(newForm)).unwrap()
         dispatch(setFormView(false))
-        alert("Producto actualizado exitosamente")
       } catch (error) {
-        alert(error.message || "Ha ocurrido un error al actualizar el producto")
+        toast.error(error.message || "Ha ocurrido un error al actualizar el producto")
       }
     }
   }
 
   const handleInput = (e) => {
     const { name, value } = e.target
-    setForm({ ...form, [name]: value })
+    setForm({
+      ...form,
+      [name]: name === "available" ? value === "true" : value, // 👈 conversión automática
+    })
+
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" })
     }
@@ -115,11 +130,11 @@ const EditProductForm = () => {
             <label className="block text-sm font-medium text-gray-700">Nombre del producto</label>
             <input
               name="name_"
-              value={form.name}
+              value={form.name_}
               onChange={handleInput}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             />
-            {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name}</p>}
+            {errors.name_ && <p className="text-sm text-red-500 mt-1">{errors.name_}</p>}
           </div>
 
           <div>
@@ -173,15 +188,15 @@ const EditProductForm = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700">Estado</label>
             <select
-              name="state"
-              value={form.state}
+              name="available"
+              value={String(form.available)} // 👈 importante: forzar string para que el select se sincronice
               onChange={handleInput}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             >
-              <option value="Disponible">Disponible</option>
-              <option value="No Disponible">No Disponible</option>
+              <option value="true">Disponible</option>
+              <option value="false">No Disponible</option>
             </select>
-            {errors.state && <p className="text-sm text-red-500 mt-1">{errors.state}</p>}
+            {errors.available && <p className="text-sm text-red-500 mt-1">{errors.available}</p>}
           </div>
 
           <button
@@ -197,4 +212,3 @@ const EditProductForm = () => {
 }
 
 export default EditProductForm
-

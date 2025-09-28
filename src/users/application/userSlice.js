@@ -22,10 +22,11 @@ const initialState = {
   data: [],
   filteredUser: [],
   loading: null,
-  error: false,
+  error: null,          // 👈 en vez de false
   get: false,
   isOpen: false,
   paginationUsers: paginacionUsers,
+  message: null,
 }
 
 const userSlice = createSlice({
@@ -37,6 +38,10 @@ const userSlice = createSlice({
     },
     removeUser: (state, action) => {
       state.data = state.data.filter((user) => user.id !== action.payload)
+    },
+    removeMessage: (state) => {
+      state.message = null
+      state.error = null       // 👈 limpiar ambos
     },
     toggleOpenForm: (state) => {
       state.isOpen = !state.isOpen
@@ -53,78 +58,105 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // GET USERS
       .addCase(getUserData.pending, (state) => {
         state.loading = true
       })
       .addCase(getUserData.fulfilled, (state, action) => {
         state.loading = false
-        state.data = action.payload
+        state.data = action.payload.users
       })
-      .addCase(getUserData.rejected, (state) => {
+      .addCase(getUserData.rejected, (state, action) => {
         state.loading = false
-        state.error = "Error al obtener los datos del usuario"
+        state.error = action.payload || "Error al obtener usuarios"
       })
+
+      // CREATE
       .addCase(createUserData.pending, (state) => {
         state.loading = true
       })
       .addCase(createUserData.fulfilled, (state) => {
         state.loading = false
+        state.message = "Usuario creado exitosamente ✅"
       })
-      .addCase(createUserData.rejected, (state) => {
+      .addCase(createUserData.rejected, (state, action) => {
         state.loading = false
-        state.error = "Error al crear el usuario"
+        state.error = action.payload || "Error al crear el usuario"
       })
+
+      // UPDATE
       .addCase(updateUserData.pending, (state) => {
         state.loading = true
       })
       .addCase(updateUserData.fulfilled, (state) => {
         state.loading = false
+        state.message = "Usuario actualizado ✅"   // 👈 añade mensaje
       })
       .addCase(updateUserData.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload
+        state.error = action.payload || "Error al actualizar usuario"
       })
+
+      // DELETE
       .addCase(deleteUserData.pending, (state) => {
         state.loading = true
       })
       .addCase(deleteUserData.fulfilled, (state) => {
         state.loading = false
+        state.message = "Eliminado exitosamente ✅"
       })
       .addCase(deleteUserData.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload
+        state.error = action.payload.error || "Error al eliminar usuario"
       })
+
+      // REGISTER
       .addCase(registerUser.pending, (state) => {
         state.loading = true
+        state.message = null
+        state.error = null
       })
-      .addCase(registerUser.fulfilled, (state) => {
+      .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false
+        state.user = action.payload.user
+        state.message = "Usuario registrado"
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload
+        state.error = action.payload || "Error al registrar usuario"
       })
+
+      // LOGIN
       .addCase(loginUser.pending, (state) => {
         state.loading = true
+        state.message = null
+        state.error = null
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false
-        state.user = action.payload
+        state.user = action.payload.user
+        state.message = "Sesión iniciada exitosamente!"
       })
-      .addCase(loginUser.rejected, (state) => {
+      .addCase(loginUser.rejected, (state, action) => {
         state.loading = false
-        state.error = "Error al iniciar sesión"
+        state.error = action.payload || "Error al iniciar sesión"
       })
+
+      // LOGOUT
       .addCase(logOutUser.pending, (state) => {
         state.loading = true
+        state.message = null
+        state.error = null
       })
-      .addCase(logOutUser.fulfilled, (state, action) => {
+      .addCase(logOutUser.fulfilled, (state) => {
         state.loading = false
+        state.username = null
         state.user = null
+        state.message = "Sesión cerrada exitosamente!"
       })
-      .addCase(logOutUser.rejected, (state) => {
+      .addCase(logOutUser.rejected, (state, action) => {
         state.loading = false
-        state.error = "Error al cerrar sesión"
+        state.error = action.payload || "Error al cerrar sesión"
       })
       .addCase(getUserAuth.pending, (state) => {
         state.loading = true
@@ -141,9 +173,11 @@ const userSlice = createSlice({
     builder
       .addCase(loginUserGoogle.pending, (state) => {
         state.loading = true
+        state.message = null
       })
       .addCase(loginUserGoogle.fulfilled, (state) => {
         state.loading = false
+        state.message = "Sesion iniciada exitosamente!"
       })
       .addCase(loginUserGoogle.rejected, (state) => {
         state.loading = false
@@ -151,9 +185,11 @@ const userSlice = createSlice({
       })
       .addCase(loginUserFacebook.pending, (state) => {
         state.loading = true
+        state.message = null
       })
       .addCase(loginUserFacebook.fulfilled, (state) => {
         state.loading = false
+        state.message = "Sesion iniciada exitosamente!"
       })
       .addCase(loginUserFacebook.rejected, (state) => {
         state.loading = false
@@ -162,7 +198,7 @@ const userSlice = createSlice({
   },
 })
 
-export const { toggleGet, removeUser, toggleOpenForm, setFilteredUser, setCurrentPageUsers, setTotalItemsUsers } =
+export const { toggleGet, removeUser, removeMessage, toggleOpenForm, setFilteredUser, setCurrentPageUsers, setTotalItemsUsers } =
   userSlice.actions
 
 export default userSlice.reducer

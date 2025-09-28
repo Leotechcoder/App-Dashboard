@@ -1,6 +1,6 @@
-// ProductList.jsx (Refactorizado con filtros por categoría)
+// ProductList.jsx
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import {
   deleteData,
@@ -8,20 +8,24 @@ import {
   setFormView,
   setEditingProduct,
   setCurrentPage,
+  clearMessage, // 👈 importamos para limpiar
 } from "../../application/productSlice.js";
 import { Pencil, Trash } from "lucide-react";
 import Pagination from "../../../shared/presentation/components/Pagination.jsx";
 import SearchBar from "../../../shared/presentation/components/SearchBar.jsx";
 import { useTableData } from "../../../shared/hook/useTableDataP.js";
 import { FiltrosCategorias } from "../components/CategoryFilter.jsx";
+import { toast } from "sonner"; // 👈 usamos sonner
 
 const ProductList = () => {
   const dispatch = useDispatch();
-  const { pagination, isLoading, data } = useSelector(
+  const shownMessageRef = useRef("");
+  const { pagination, isLoading, data, message } = useSelector(
     (store) => ({
       pagination: store.products.pagination,
       isLoading: store.products.isLoading,
       data: store.products.data,
+      message: store.products.message,
     }),
     shallowEqual
   );
@@ -55,16 +59,25 @@ const ProductList = () => {
   // 🚀 Aplicar filtros (categoría + data de redux)
   useEffect(() => {
     let result = data;
-
     if (selectedCategory) {
       result = result.filter((item) => item.category === selectedCategory);
     }
-
     setFilteredData(result);
   }, [data, selectedCategory]);
 
+  // 🚀 Mostrar toast cuando haya message
+  useEffect(() => {
+    if (message && shownMessageRef.current !== message) {
+      toast(message); // dispara toast
+      shownMessageRef.current = message;
+      dispatch(clearMessage()); // limpia para evitar repetición
+    }
+  }, [message, dispatch]);
+
   const handleEditar = (product) => {
-    dispatch(setEditingProduct(product));
+    const price = parseFloat(product.price);
+    const stock = parseInt(product.stock);
+    dispatch(setEditingProduct({ ...product, price, stock }));
     dispatch(setFormView(true));
   };
 
@@ -110,7 +123,7 @@ const ProductList = () => {
         <table className="min-w-full">
           <thead className="bg-gray-50 border-b">
             <tr>
-              {["ID", "Producto", "Categoría", "Acciones"].map((header) => (
+              {["ID", "Producto", "Categoría", "Stock", "Disponible", "Acciones"].map((header) => (
                 <th
                   key={header}
                   className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase"
@@ -122,15 +135,21 @@ const ProductList = () => {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {paginatedData.map((product) => (
-              <tr key={product.id} className="hover:bg-gray-50">
+              <tr key={product.id_} className="hover:bg-gray-50">
                 <td className="px-2 py-4 text-sm text-gray-500">
-                  {product.id}
+                  {product.id_}
                 </td>
                 <td className="px-2 py-4 text-sm text-gray-500">
-                  {product.name}
+                  {product.name_}
                 </td>
                 <td className="px-2 py-4 text-sm text-gray-500">
                   {product.category}
+                </td>
+                <td className="px-2 py-4 text-sm text-gray-500">
+                  {product.stock}
+                </td>
+                <td className="px-2 py-4 text-sm text-gray-500">
+                  {product.available ? "Sí" : "No"}
                 </td>
                 <td className="px-2 py-4">
                   <div className="flex gap-2">
@@ -141,7 +160,7 @@ const ProductList = () => {
                       <Pencil className="h-4 w-4 text-gray-500" />
                     </button>
                     <button
-                      onClick={() => handleEliminar(product.id)}
+                      onClick={() => handleEliminar(product.id_)}
                       className="p-1 hover:bg-gray-100 rounded"
                     >
                       <Trash className="h-4 w-4 text-gray-500" />

@@ -9,6 +9,8 @@ import Products from "../../../products/presentation/pages/ProductsPage.jsx"
 import OrdersPage from "../../../orders/presentation/pages/OrdersPage.jsx"
 import VentasPage from "../../../solds/presentation/pages/VentasPage.jsx"
 
+
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -31,8 +33,11 @@ const router = createBrowserRouter([
   { path: "*", element: <ErrorUrl /> },
 ])
 
+
 const App = () => {
-  return <RouterProvider router={router} />
+  return (    
+    <RouterProvider router={router} />
+  )
 }
 
 export default App

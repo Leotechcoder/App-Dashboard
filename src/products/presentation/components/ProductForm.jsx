@@ -4,15 +4,15 @@ import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { createData, getDataProducts, setFormView } from "../../application/productSlice"
 import { ArrowLeft, Image } from "lucide-react"
+import { toast } from "sonner"
 
 const initialState = {
   name_: "",
-  description: "",
   price: "",
   category: "",
   stock: "",
-  state: "Disponible",
   image_url: "",
+  description: "",
 }
 
 const ProductForm = () => {
@@ -37,7 +37,6 @@ const ProductForm = () => {
     if (!form.price || Number(form.price) <= 0) newErrors.price = "El precio debe ser un número positivo"
     if (!form.category.trim()) newErrors.category = "La categoría es requerida"
     if (!form.stock || Number(form.stock) < 0) newErrors.stock = "El stock debe ser un número no negativo"
-    if (!form.state) newErrors.state = "El estado es requerido"
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -70,13 +69,13 @@ const ProductForm = () => {
     if (validateForm()) {
       try {
         const stock = parseInt(form.stock)
-        await dispatch(createData({...form, stock})).unwrap()
-        dispatch(getDataProducts())
+        const price = parseFloat(form.price)
+        const available = stock > 0
+        await dispatch(createData({...form, stock, price, available})).unwrap()
         setForm(initialState)
         dispatch(setFormView())
-        alert("Producto creado exitosamente")
       } catch (error) {
-        alert(`Ha ocurrido un error ${error} al crear el producto`)
+        toast.error(error.message || "Error al guardar el producto")
       }
     }
   }

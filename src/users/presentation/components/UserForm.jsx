@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { createUserData, getUserData, toggleOpenForm } from "../../application/userSlice"
-import { X, Loader2, CheckCircle, AlertCircle, User, Mail, Lock, Phone, MapPin } from "lucide-react"
+import { X, Loader2, User, Mail, Lock, Phone, MapPin } from "lucide-react"
 import Button from "../../../shared/presentation/components/Button"
 import Input from "../../../shared/presentation/components/Input"
 import Label from "../../../shared/presentation/components/Label"
@@ -17,10 +17,9 @@ const initialState = {
 }
 
 const UserForm = () => {
-  const { isOpen, isLoading, error } = useSelector((store) => store.users)
+  const { isOpen, loading } = useSelector((store) => store.users)
   const [form, setForm] = useState(initialState)
   const [errors, setErrors] = useState({})
-  const [notification, setNotification] = useState(null)
   const [animate, setAnimate] = useState(false)
   const dispatch = useDispatch()
 
@@ -60,9 +59,8 @@ const UserForm = () => {
         dispatch(getUserData())
         setForm(initialState)
         handleClose()
-        showNotification("Usuario creado exitosamente", "success")
       } catch (error) {
-        showNotification(error.message || "Ha ocurrido un error al crear el usuario", "error")
+        const msg = error?.response?.data?.message || error.message || "Ha ocurrido un error ❌"
       }
     }
   }
@@ -75,21 +73,15 @@ const UserForm = () => {
     }
   }
 
-  const showNotification = (message, type) => {
-    setNotification({ message, type })
-    setTimeout(() => setNotification(null), 3000)
-  }
-
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-end p-4 z-50">
-     <div
+      <div
         className={`bg-gray-200 dark:bg-gray-600 rounded-lg shadow-xl w-full max-w-md p-8 relative transition-transform duration-300 transform ${
           animate ? "translate-x-0" : "translate-x-full"
         } max-h-[100vh] overflow-y-auto no-scrollbar`}
       >
-
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100 transition-colors duration-200"
@@ -101,6 +93,7 @@ const UserForm = () => {
         <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Crear Usuario</h2>
 
         <form onSubmit={handleSubmit} className="space-y-3 scale-90">
+          {/* Nombre de usuario */}
           <div className="space-y-2">
             <Label htmlFor="username" className="text-gray-700 dark:text-gray-200">
               Nombre de usuario
@@ -120,6 +113,7 @@ const UserForm = () => {
             {errors.username && <p className="text-sm text-red-500 dark:text-red-400">{errors.username}</p>}
           </div>
 
+          {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email" className="text-gray-700 dark:text-gray-200">
               Correo electrónico
@@ -140,6 +134,7 @@ const UserForm = () => {
             {errors.email && <p className="text-sm text-red-500 dark:text-red-400">{errors.email}</p>}
           </div>
 
+          {/* Password */}
           <div className="space-y-2">
             <Label htmlFor="password_" className="text-gray-700 dark:text-gray-200">
               Contraseña
@@ -160,6 +155,7 @@ const UserForm = () => {
             {errors.password_ && <p className="text-sm text-red-500 dark:text-red-400">{errors.password_}</p>}
           </div>
 
+          {/* Teléfono */}
           <div className="space-y-2">
             <Label htmlFor="phone" className="text-gray-700 dark:text-gray-200">
               Teléfono
@@ -179,6 +175,7 @@ const UserForm = () => {
             {errors.phone && <p className="text-sm text-red-500 dark:text-red-400">{errors.phone}</p>}
           </div>
 
+          {/* Dirección */}
           <div className="space-y-2">
             <Label htmlFor="address" className="text-gray-700 dark:text-gray-200">
               Dirección
@@ -198,14 +195,12 @@ const UserForm = () => {
             {errors.address && <p className="text-sm text-red-500 dark:text-red-400">{errors.address}</p>}
           </div>
 
-          {error && <p className="text-sm text-red-500 dark:text-red-400">{error}</p>}
-
           <Button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors duration-200"
-            disabled={isLoading}
+            disabled={loading}
           >
-            {isLoading ? (
+            {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Guardando...
@@ -215,25 +210,9 @@ const UserForm = () => {
             )}
           </Button>
         </form>
-
-        {notification && (
-          <div
-            className={`fixed bottom-4 right-4 p-4 rounded-md shadow-md ${
-              notification.type === "success" ? "bg-green-500" : "bg-red-500"
-            } text-white flex items-center transition-all duration-300 transform translate-y-0`}
-          >
-            {notification.type === "success" ? (
-              <CheckCircle className="mr-2" size={20} />
-            ) : (
-              <AlertCircle className="mr-2" size={20} />
-            )}
-            {notification.message}
-          </div>
-        )}
       </div>
     </div>
   )
 }
 
 export default UserForm
-

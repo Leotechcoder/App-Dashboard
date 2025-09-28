@@ -1,9 +1,9 @@
 "use client";
 
-import {useNavigate, Link, NavLink } from "react-router-dom";
-import { PATH } from "../../../shared/infrastructure/utils/PATH.js";
 import { useDispatch, useSelector } from "react-redux";
 import { logOutUser } from "../../../users/application/userSlice.js";
+import { NavLink } from "react-router-dom";
+import { PATH } from "../../../shared/infrastructure/utils/PATH.js";
 import {
   FingerprintIcon as FiHome,
   MailIcon as FiMail,
@@ -12,41 +12,27 @@ import {
   LogOutIcon as FiLogOut,
 } from "lucide-react";
 import { CheckCheckIcon as CiMoneyCheck1 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-const Sidebar = () => {
+const Sidebar = ({ setLogOutUser }) => {
   const dispatch = useDispatch();
-  const { user, loading } = useSelector((store) => store.users);
+  const { username } = useSelector((store) => store.users);
   const [isExpanded, setIsExpanded] = useState(true);
 
-  const handleMouseEnter = () => setIsExpanded(true);
-  const handleMouseLeave = () => setIsExpanded(false);
-
-  const navigate = useNavigate();
-  useEffect(() => {
-    if(!user){
-      setTimeout(() => {
-      navigate("/");
-    }, 1000);
-    }
-  }, [user, navigate]);
-  
-
   const handleClick = () => {
-    dispatch(logOutUser())
+    dispatch(logOutUser());
+    setLogOutUser(true);
   };
-
 
   return (
     <div
       className={`fixed z-10 top-0 left-0 h-full transition-all duration-300 bg-gray-800 text-white shadow-lg ${
         isExpanded ? "w-72" : "w-16"
       }`}
-      // onMouseEnter={handleMouseEnter}
-      // onMouseLeave={handleMouseLeave}
     >
       <nav className="flex flex-col h-full">
         <ul className="flex-grow my-auto">
+          {/* Header */}
           <li className="flex items-center gap-4 p-2">
             <div
               className={`bg-slate-700 rounded-full flex items-center justify-center my-6 ${
@@ -56,11 +42,7 @@ const Sidebar = () => {
               <span className="text-white text-xl font-bold">CB</span>
             </div>
             {isExpanded && (
-              <span
-                className={`text-xl font-light sm:inline w-full mt-1 ml-4 ${
-                  isExpanded ? "" : "-translate-x-full"
-                }`}
-              >
+              <span className="text-xl font-light sm:inline w-full mt-1 ml-4">
                 Cangre Burger
               </span>
             )}
@@ -68,6 +50,7 @@ const Sidebar = () => {
 
           <hr className="border-gray-700 w-3/4 mx-auto mb-4" />
 
+          {/* Links */}
           {isExpanded && (
             <NavLink
               to={PATH.home}
@@ -92,7 +75,7 @@ const Sidebar = () => {
               }
             >
               <FiMail size={25} />
-              Clientes 
+              Clientes
             </NavLink>
           )}
 
@@ -139,6 +122,7 @@ const Sidebar = () => {
           )}
         </ul>
 
+        {/* Log out */}
         <button
           onClick={handleClick}
           className="flex items-center gap-4 py-4 pl-6 w-full hover:bg-red-600"
