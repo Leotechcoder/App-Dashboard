@@ -128,7 +128,7 @@ const Sidebar = ({ setLogOutUser }) => {
           className="flex items-center gap-4 py-4 pl-6 w-full hover:bg-red-600"
         >
           <FiLogOut size={24} />
-          {isExpanded && <span className="text-lg">Log Out</span>}
+          {isExpanded && <span className="text-lg">Cerrar Sesión</span>}
         </button>
       </nav>
     </div>
