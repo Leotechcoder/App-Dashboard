@@ -18,8 +18,13 @@ const EditUserForm = ({ user, setEditModal }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await dispatch(updateUserData(form))
-    await dispatch(getUserData())
+    const refactorForm = {
+      id: form.id,
+      username: form.username,
+      phone: form.phone,
+      address: form.address
+    }
+    await dispatch(updateUserData(refactorForm))
     setEditModal(false)
   }
 

@@ -16,8 +16,8 @@ const initialState = {
   password: "",
 }
 
-export const FormLogin = ({ onExpandChange, isExpanded, setLoginUser }) => {
-  const { error } = useSelector((store) => store.users)
+export const FormLogin = ({ onExpandChange, isExpanded }) => {
+  const { error, user } = useSelector((store) => store.users)
   const [formLog, setFormLog] = useState(estadoInicialLog)
   const [formReg, setFormReg] = useState(initialState)
   const [esInicioSesion, setEsInicioSesion] = useState(true)
@@ -55,12 +55,8 @@ export const FormLogin = ({ onExpandChange, isExpanded, setLoginUser }) => {
     if (validarFormulario()) {
       if (esInicioSesion) {
         dispatch(loginUser(formLog))
-        setLoginUser(true)
       } else {
         dispatch(registerUser(formReg))
-        if (!error) {
-          cambiarFormulario()
-        }
       }
       setFormLog(estadoInicialLog)
       setFormReg(initialState)
@@ -95,6 +91,17 @@ export const FormLogin = ({ onExpandChange, isExpanded, setLoginUser }) => {
       onExpandChange(true)
     }
   }
+
+  useEffect(() => {
+
+    setTimeout(() => {
+      if(user){
+      cambiarFormulario()
+    }
+    }, 700);
+    
+  }, [user])
+  
 
 
   return (
@@ -186,7 +193,7 @@ export const FormLogin = ({ onExpandChange, isExpanded, setLoginUser }) => {
           {esInicioSesion ? "Iniciar Sesión" : "Registrarse"}
         </button>
       </form>
-      {errores.general && <p className="mt-2 text-center text-sm text-red-500">{errores.general}</p>}
+      {/* {errores.general && <p className="mt-2 text-center text-sm text-red-500">{errores.general}</p>} */}
       {esInicioSesion && (
         <div className="mt-6">
           <div className="relative">

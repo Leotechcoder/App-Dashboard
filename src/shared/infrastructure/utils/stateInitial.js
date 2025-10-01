@@ -6,19 +6,19 @@ export const filtros = {
   
   export const paginacionProducts = {
     currentPage: 1,
-    itemsPerPage: 4,
+    itemsPerPage: 8,
     total: 0,
   }
   
   export const paginacionUsers = {
     currentPage: 1,
-    itemsPerPage: 5,
+    itemsPerPage: 7,
     total: 0,
   }
   
   export const paginacionOrders = {
     currentPage: 1,
-    itemsPerPage: 6,
+    itemsPerPage: 7,
     total: 0,
   }
   

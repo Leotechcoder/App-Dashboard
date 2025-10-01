@@ -90,7 +90,7 @@ const UserForm = () => {
           <X size={24} />
         </button>
 
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Crear Usuario</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Crear cliente online</h2>
 
         <form onSubmit={handleSubmit} className="space-y-3 scale-90">
           {/* Nombre de usuario */}

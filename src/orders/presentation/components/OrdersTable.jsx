@@ -56,7 +56,6 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
     async (id) => {
       if (window.confirm("¿Estás seguro de que deseas eliminar esta orden?")) {
         dispatch(deleteDataOrder(id));
-        dispatch(getDataOrders());
       }
     },
     [dispatch]

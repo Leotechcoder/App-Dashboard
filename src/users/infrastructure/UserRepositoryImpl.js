@@ -1,29 +1,30 @@
-import { UserRepository } from "../application/UserRepository"
+// infra/UserRepositoryImpl.js
+import { UserRepository } from "../domain/userRepository.js"
+import { userApi } from "../../shared/infrastructure/api/userApi.js"
 
 export class UserRepositoryImpl extends UserRepository {
-  constructor(api) {
+  constructor(api = userApi) {
     super()
     this.api = api
   }
 
   async getAll() {
-    // Implement API call to get all users
+    return await this.api.getUsers()
   }
 
   async getById(id) {
-    // Implement API call to get a user by id
+    return await this.api.getUserById(id)
   }
 
   async create(user) {
-    // Implement API call to create a user
+    return await this.api.createUser(user)
   }
 
   async update(user) {
-    // Implement API call to update a user
+    return await this.api.updateUser(user)
   }
 
   async delete(id) {
-    // Implement API call to delete a user
+    return await this.api.deleteUser(id)
   }
 }
-

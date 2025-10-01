@@ -16,8 +16,8 @@ import KpisClientes from "./KpisClientes.jsx";
 
 const UserList = () => {
   const dispatch = useDispatch();
-  const pagination = useSelector(
-    (store) => store.users.paginationUsers,
+  const { paginationUsers, data } = useSelector(
+    (store) => store.users,
     shallowEqual
   );
   const [editModal, setEditModal] = useState(false);
@@ -32,7 +32,7 @@ const UserList = () => {
     handlePageChange,
   } = useTableData({
     stateKey: "users",
-    itemsPerPage: pagination.itemsPerPage,
+    itemsPerPage: paginationUsers.itemsPerPage,
     searchFields: ["id", "username"],
     setFilteredData: setFilteredUser,
     setCurrentPage: setCurrentPageUsers,

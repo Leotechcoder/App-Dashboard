@@ -1,14 +1,37 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { productApi } from "../../shared/infrastructure/api/productApi"
 import { categorias, paginacionProducts } from "../../shared/infrastructure/utils/stateInitial"
-import { formatPrice } from "../../shared/infrastructure/utils/formatPrice"
 import { createBaseSlice } from "../../shared/infrastructure/slices/baseSlice"
+//Capas de la arquitectura limpia products
+import { ProductService } from "./ProductService"
+import { ProductRepositoryImpl } from "../infrastructure/ProductRepositoryImpl"
 
-export const getDataProducts = createAsyncThunk("products/getData", productApi.getProducts)
-export const getDataById = createAsyncThunk("products/getDataById", productApi.getProductById)
-export const createData = createAsyncThunk("products/createData", productApi.createProduct)
-export const updateData = createAsyncThunk("products/updateData", productApi.updateProduct)
-export const deleteData = createAsyncThunk("products/deleteData", productApi.deleteProduct)
+// 🔹 Inyectamos dependencia
+const productRepo = new ProductRepositoryImpl()
+const productService = new ProductService(productRepo)
+
+//Helper para aplanar instancia de products
+const toPlainProducts = (p) => ({ ...p })
+
+export const getDataProducts = createAsyncThunk("products/getData", async ()=>{
+  const products = await productService.getAllProducts()
+  return products.map(toPlainProducts)
+})
+export const getDataById = createAsyncThunk("products/getDataById", async (id)=>{
+  const product = await productService.getProductById(id)
+  return toPlainProducts(product)
+})
+export const createData = createAsyncThunk("products/createData", async (product)=>{
+  const { createdProduct, message } = await productService.createProduct(product)
+  return {data: toPlainProducts(createdProduct), message}
+})
+export const updateData = createAsyncThunk("products/updateData", async (product)=>{
+  const {updateProduct, message} = await productService.updateProduct(product)
+  return {data: toPlainProducts(updateProduct), message}
+})
+export const deleteData = createAsyncThunk("products/deleteData", async(id)=>{
+  await productService.deleteProduct(id)
+  return id
+})
 
 const initialState = {
   data: [],
@@ -23,7 +46,7 @@ const initialState = {
   },
   pagination: paginacionProducts,
   isFormView: false,
-  isEditing: false,
+  isEditing: null,
   message: null,
 }
 
@@ -67,7 +90,7 @@ const productSlice = createBaseSlice(
       })
       .addCase(getDataProducts.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.data = action.payload.data;
+        state.data = action.payload;
       })
       .addCase(getDataProducts.rejected, (state, action) => {
         state.isLoading = false;
@@ -110,9 +133,9 @@ const productSlice = createBaseSlice(
       })
       .addCase(updateData.fulfilled, (state, action) => {
         state.isLoading = false;
-        const updated = action.payload.data; // ⚠️ antes estaba action.payload.product
+        const updatedProduct = action.payload.data; 
         state.data = state.data.map((p) =>
-          p.id_ === updated.id_ ? updated : p // usar id_ porque tu objeto usa id_
+          p.id === updatedProduct.id ? updatedProduct : p
         );
         state.message = action.payload.message; // opcional: usar mensaje del backend
       })
@@ -128,7 +151,7 @@ const productSlice = createBaseSlice(
       })
       .addCase(deleteData.fulfilled, (state, action) => {
         state.isLoading = false;
-        const deletedId = action.payload.deletedId;
+        const deletedId = action.payload;
         state.data = state.data.filter((p) => p.id !== deletedId);
         state.message = "Producto eliminado correctamente 🗑️";
       })

@@ -1,29 +1,30 @@
 import { ProductRepository } from "../application/ProductRepository"
+import { productApi } from "../../shared/infrastructure/api/productApi"
 
 export class ProductRepositoryImpl extends ProductRepository {
-  constructor(api) {
+  constructor(api = productApi) {
     super()
     this.api = api
   }
 
   async getAll() {
-    // Implement API call to get all products
+    return await this.api.getProducts()
   }
 
   async getById(id) {
-    // Implement API call to get a product by id
+    return await this.api.getProductById(id)
   }
 
   async create(product) {
-    // Implement API call to create a product
+    return await this.api.createProduct(product)
   }
 
   async update(product) {
-    // Implement API call to update a product
+    return await this.api.updateProduct(product)
   }
 
   async delete(id) {
-    // Implement API call to delete a product
+    return await this.api.deleteProduct(id)
   }
 }
 

@@ -15,7 +15,6 @@ const initialState = {
   itemsOrder: [],
   isLoading: false,
   error: null,
-  lastUpdated: null,
 }
 
 const itemSlice = createSlice({
@@ -39,8 +38,7 @@ const itemSlice = createSlice({
       })
       .addCase(getData.fulfilled, (state, action) => {
         state.isLoading = false
-        state.data = action.payload
-        state.lastUpdated = new Date().toISOString()
+        state.data = action.payload.items
       })
       .addCase(getData.rejected, (state, action) => {
         state.isLoading = false

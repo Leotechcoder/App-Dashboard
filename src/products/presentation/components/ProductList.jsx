@@ -84,7 +84,6 @@ const ProductList = () => {
   const handleEliminar = async (id) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este producto?")) {
       await dispatch(deleteData(String(id)));
-      dispatch(getDataProducts());
     }
   };
 
@@ -135,12 +134,12 @@ const ProductList = () => {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {paginatedData.map((product) => (
-              <tr key={product.id_} className="hover:bg-gray-50">
+              <tr key={product.id} className="hover:bg-gray-50">
                 <td className="px-2 py-4 text-sm text-gray-500">
-                  {product.id_}
+                  {product.id}
                 </td>
                 <td className="px-2 py-4 text-sm text-gray-500">
-                  {product.name_}
+                  {product.name}
                 </td>
                 <td className="px-2 py-4 text-sm text-gray-500">
                   {product.category}
@@ -160,7 +159,7 @@ const ProductList = () => {
                       <Pencil className="h-4 w-4 text-gray-500" />
                     </button>
                     <button
-                      onClick={() => handleEliminar(product.id_)}
+                      onClick={() => handleEliminar(product.id)}
                       className="p-1 hover:bg-gray-100 rounded"
                     >
                       <Trash className="h-4 w-4 text-gray-500" />

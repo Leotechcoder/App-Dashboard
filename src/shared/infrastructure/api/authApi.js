@@ -11,16 +11,15 @@ class AuthApi extends BaseApi {
   }
 
   async login({ email, password }) {
-    const response = await this.post("/auth/local/login", { email, password });
-    return response;
+    return await this.post("/auth/local/login", { email, password });
   }
 
   async logout() {
-    return this.get("/auth/local/logout");
+    return await this.post("/auth/local/logout");
   }
 
   async authUser() {
-    return this.get("/auth/authenticate");
+    return await this.get("/auth/authenticate");
   }
 
   async loginGoogle() {

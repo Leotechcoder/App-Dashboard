@@ -12,8 +12,6 @@ import { useNavigate } from "react-router-dom"
 
 export const LoginPage = () => {
   const [isFormExpanded, setIsFormExpanded] = useState(false)
-  //Estado para saber si se registro o inicio sesion
-  const [loginUser, setLoginUser] = useState(false)
   
   // Referencia para el toast de carga
   const toastId = useRef(null)
@@ -25,13 +23,13 @@ export const LoginPage = () => {
   // Manejar redirección al dashboard después del login
   useEffect(() => {
     let timer
-    if (loginUser) {
+    if (message && message === "Sesión iniciada exitosamente!") {
       timer = setTimeout(() => {
         navigate("/admin/home", { replace: true })
       }, 2000) // <- 2 segundos
     }
     return () => clearTimeout(timer)
-  }, [loginUser, navigate])
+  }, [message, navigate])
 
   // Manejar la expansion del formulario en pantallas pequeñas
   const handleFormExpand = useCallback((expanded) => {
@@ -78,7 +76,7 @@ useEffect(() => {
         toastId.current = null;
       }
 
-      if (message && message !== "Sesión iniciada exitosamente!") {
+      if (message && message === "Sesión cerrada exitosamente!") {
           toast.success(message);
         // Limpio el mensaje con un poco de delay para que sí se vea
         setTimeout(() => {
@@ -95,7 +93,7 @@ useEffect(() => {
   return () => clearTimeout(timer);
 }, [loading, message, error, dispatch]);
 
-if(loginUser){
+if(message === "Sesión iniciada exitosamente!"){
   return <LoadingScreen />
 }
 
@@ -139,7 +137,7 @@ if(loginUser){
             }`}
           >
             <div className="p-8 h-full overflow-y-auto">
-              <FormLogin onExpandChange={handleFormExpand} isExpanded={isFormExpanded} setLoginUser={setLoginUser}/>
+              <FormLogin onExpandChange={handleFormExpand} isExpanded={isFormExpanded} />
             </div>
           </div>
         </div>

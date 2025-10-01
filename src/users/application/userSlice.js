@@ -1,34 +1,85 @@
+// application/userSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import { userApi } from "../../shared/infrastructure/api/userApi"
-import { authApi } from "../../shared/infrastructure/api/authApi"
-import { paginacionUsers } from "../../shared/infrastructure/utils/stateInitial"
-import { idGenerator } from "../../shared/infrastructure/utils/idGenerator"
 
-export const getUserData = createAsyncThunk("user/getUserData", userApi.getUsers)
-export const createUserData = createAsyncThunk("user/createUserData", userApi.createUser)
-export const updateUserData = createAsyncThunk("user/updateUserData", userApi.updateUser)
-export const deleteUserData = createAsyncThunk("user/deleteUserData", userApi.deleteUser)
+// Capas de la arquitectura limpia users
+import { UserService } from "./userService"
+import { UserRepositoryImpl } from "../infrastructure/userRepositoryImpl"
+// Capas de la arquitectura limpia auth
+import { AuthService } from "../application/authService.js"
+import { AuthRepositoryImpl } from "../infrastructure/authRepositoryImpl.js"
 
-export const registerUser = createAsyncThunk("user/registerUser", authApi.register.bind(authApi))
-export const loginUser = createAsyncThunk("user/loginUser", authApi.login.bind(authApi))
-export const getUserAuth = createAsyncThunk("user/getUserAuth", authApi.authUser.bind(authApi))
-export const loginUserGoogle = createAsyncThunk("user/loginUserGoogle", authApi.loginGoogle.bind(authApi))
-export const loginUserFacebook = createAsyncThunk("user/loginUserFacebook", authApi.loginFacebook.bind(authApi))
-export const logOutUser = createAsyncThunk("user/logOutUser", authApi.logout.bind(authApi))
+import { paginacionUsers } from "../../shared/infrastructure/utils/stateInitial.js"
 
+// 🔹 Inyectamos dependencias
+const userRepo = new UserRepositoryImpl()
+const userService = new UserService(userRepo)
+
+const authRepo = new AuthRepositoryImpl()
+const authService = new AuthService(authRepo)
+
+// 🔹 Helper para aplanar instancias de User
+const toPlainUser = (u) => ({ ...u })
+
+// 🔹 Thunks de users (usan UserService)
+export const getUserData = createAsyncThunk("user/getUserData", async () => {
+  const {users, message} = await userService.getAllUsers()
+  return ({users: users.map(toPlainUser), message})
+})
+
+export const createUserData = createAsyncThunk("user/createUserData", async (u) => {
+  const {createdUser, message} = await userService.createUser(u)
+  return ({createdUser: toPlainUser(createdUser), message})
+})
+
+export const updateUserData = createAsyncThunk("user/updateUserData", async (u) => {
+  const {updatedUser, message} = await userService.updateUser(u)
+  return ({updatedUser: toPlainUser(updatedUser), message})
+})
+
+export const deleteUserData = createAsyncThunk("user/deleteUserData", async (id) => {
+  return await userService.deleteUser(id)
+})
+
+// 🔹 Thunks de auth (usan AuthService)
+export const registerUser = createAsyncThunk("user/registerUser", async (u) => {
+  return await authService.register(u)
+})
+
+export const loginUser = createAsyncThunk("user/loginUser", async ({ email, password }) => {
+  return await authService.login({ email, password })
+})
+
+export const getUserAuth = createAsyncThunk("user/getUserAuth", async () => {
+  return await authService.authUser()
+})
+
+export const loginUserGoogle = createAsyncThunk("user/loginUserGoogle", async () => {
+  return await authService.loginGoogle()
+})
+
+export const loginUserFacebook = createAsyncThunk("user/loginUserFacebook", async () => {
+  return await authService.loginFacebook()
+})
+
+export const logOutUser = createAsyncThunk("user/logOutUser", async () => {
+  return await authService.logout()
+})
+
+// 🔹 Estado inicial
 const initialState = {
   username: null,
   user: null,
   data: [],
   filteredUser: [],
   loading: null,
-  error: null,          // 👈 en vez de false
+  error: null,
   get: false,
   isOpen: false,
   paginationUsers: paginacionUsers,
   message: null,
 }
 
+// 🔹 Slice
 const userSlice = createSlice({
   name: "usuarios",
   initialState,
@@ -37,11 +88,11 @@ const userSlice = createSlice({
       state.get = !state.get
     },
     removeUser: (state, action) => {
-      state.data = state.data.filter((user) => user.id !== action.payload)
+      state.data = state.data.filter((u) => u.id !== action.payload)
     },
     removeMessage: (state) => {
       state.message = null
-      state.error = null       // 👈 limpiar ambos
+      state.error = null
     },
     toggleOpenForm: (state) => {
       state.isOpen = !state.isOpen
@@ -64,50 +115,55 @@ const userSlice = createSlice({
       })
       .addCase(getUserData.fulfilled, (state, action) => {
         state.loading = false
-        state.data = action.payload.users
+        state.data = action.payload.users // Y ya guardo objeto plano
       })
       .addCase(getUserData.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload || "Error al obtener usuarios"
+        state.error = action.error.message || "Error al obtener usuarios"
       })
 
       // CREATE
       .addCase(createUserData.pending, (state) => {
         state.loading = true
       })
-      .addCase(createUserData.fulfilled, (state) => {
+      .addCase(createUserData.fulfilled, (state, action) => {
         state.loading = false
-        state.message = "Usuario creado exitosamente ✅"
+        state.data.push(action.payload.createdUser) // Y ya guardo objeto plano
+        state.message = action.payload.message 
       })
       .addCase(createUserData.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload || "Error al crear el usuario"
+        state.error = action.error.message || "Error al crear el usuario"
       })
 
       // UPDATE
       .addCase(updateUserData.pending, (state) => {
         state.loading = true
       })
-      .addCase(updateUserData.fulfilled, (state) => {
+      .addCase(updateUserData.fulfilled, (state, action) => {
         state.loading = false
-        state.message = "Usuario actualizado ✅"   // 👈 añade mensaje
+        const index = state.data.findIndex((u) => u.id === action.payload.updatedUser.id)
+        if (index !== -1) {
+          state.data[index] = action.payload.updatedUser // Y ya guardo objeto plano
+        }
+        state.message = action.payload.message
       })
       .addCase(updateUserData.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload || "Error al actualizar usuario"
+        state.error = action.error.message || "Error al actualizar usuario"
       })
 
       // DELETE
       .addCase(deleteUserData.pending, (state) => {
         state.loading = true
       })
-      .addCase(deleteUserData.fulfilled, (state) => {
+      .addCase(deleteUserData.fulfilled, (state, action) => {
         state.loading = false
-        state.message = "Eliminado exitosamente ✅"
+        state.message = action.payload.message
       })
       .addCase(deleteUserData.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload.error || "Error al eliminar usuario"
+        state.error = action.error.message || "Error al eliminar usuario"
       })
 
       // REGISTER
@@ -123,7 +179,7 @@ const userSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload || "Error al registrar usuario"
+        state.error = action.error.message || "Error al registrar usuario"
       })
 
       // LOGIN
@@ -139,7 +195,11 @@ const userSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload || "Error al iniciar sesión"
+        if (action.error.message === "Invalid email or password") {
+          state.error = "Email o contraseña invalidos!"
+        } else {
+          state.error = "Error al iniciar sesión"
+        }
       })
 
       // LOGOUT
@@ -156,8 +216,10 @@ const userSlice = createSlice({
       })
       .addCase(logOutUser.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload || "Error al cerrar sesión"
+        state.error = action.error.message || "Error al cerrar sesión"
       })
+
+      // GET AUTH USER
       .addCase(getUserAuth.pending, (state) => {
         state.loading = true
       })
@@ -166,30 +228,33 @@ const userSlice = createSlice({
         state.username = action.payload.username
         state.user = action.payload.username
       })
-      .addCase(getUserAuth.rejected, (state) => {
+      .addCase(getUserAuth.rejected, (state, action) => {
         state.loading = false
-        state.error = "Error al obtener los datos del usuario"
+        state.error = action.error.message || "Error al cargar el usuario"
       })
-    builder
+
+      // LOGIN GOOGLE
       .addCase(loginUserGoogle.pending, (state) => {
         state.loading = true
         state.message = null
       })
       .addCase(loginUserGoogle.fulfilled, (state) => {
         state.loading = false
-        state.message = "Sesion iniciada exitosamente!"
+        state.message = "Sesión iniciada exitosamente!"
       })
       .addCase(loginUserGoogle.rejected, (state) => {
         state.loading = false
         state.error = "Error al iniciar sesión con Google"
       })
+
+      // LOGIN FACEBOOK
       .addCase(loginUserFacebook.pending, (state) => {
         state.loading = true
         state.message = null
       })
       .addCase(loginUserFacebook.fulfilled, (state) => {
         state.loading = false
-        state.message = "Sesion iniciada exitosamente!"
+        state.message = "Sesión iniciada exitosamente!"
       })
       .addCase(loginUserFacebook.rejected, (state) => {
         state.loading = false
@@ -198,8 +263,14 @@ const userSlice = createSlice({
   },
 })
 
-export const { toggleGet, removeUser, removeMessage, toggleOpenForm, setFilteredUser, setCurrentPageUsers, setTotalItemsUsers } =
-  userSlice.actions
+export const {
+  toggleGet,
+  removeUser,
+  removeMessage,
+  toggleOpenForm,
+  setFilteredUser,
+  setCurrentPageUsers,
+  setTotalItemsUsers,
+} = userSlice.actions
 
 export default userSlice.reducer
-

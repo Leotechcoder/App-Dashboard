@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useMemo, useCallback } from "react"
+import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { useDispatch, useSelector, shallowEqual } from "react-redux"
 
 export function useTableData({ stateKey, itemsPerPage, searchFields, setFilteredData, setCurrentPage }) {
@@ -33,9 +33,14 @@ export function useTableData({ stateKey, itemsPerPage, searchFields, setFiltered
   }, [reduxCurrentPage])
 
   // Solo actualiza Redux si los datos realmente cambian
+  const prevFiltered = useRef([]);
+
   useEffect(() => {
-    dispatch(setFilteredData(filteredData))
-  }, [dispatch, setFilteredData, filteredData])
+    if (JSON.stringify(prevFiltered.current) !== JSON.stringify(filteredData)) {
+      dispatch(setFilteredData(filteredData));
+      prevFiltered.current = filteredData;
+    }
+  }, [dispatch, setFilteredData, filteredData]);
 
   // Manejo optimizado del cambio de página
   const handlePageChange = useCallback(

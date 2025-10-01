@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { orderApi } from "../../shared/infrastructure/api/orderApi";
 import { paginacionOrders } from "../../shared/infrastructure/utils/stateInitial";
-import { idGenerator } from "../../shared/infrastructure/utils/idGenerator";
 import { formattedSubTotal } from "../../shared/infrastructure/utils/formatPrice";
 import { formatPrice } from "../../shared/utils/formatPriceOrders";
 
@@ -75,10 +74,7 @@ const orderSlice = createSlice({
         if(action.payload.length === 0){
           state.data = [orderEjemplo]
         }else{
-          state.data = action.payload.map((order) => ({
-          ...order,
-          total_amount: formattedSubTotal(order.total_amount ?? 0), // ✅ Evita undefined
-        }));
+          state.data = action.payload.orders
         }
       })
       .addCase(getDataOrders.rejected, (state, action) => {

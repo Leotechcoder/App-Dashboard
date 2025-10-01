@@ -20,7 +20,7 @@ const EditProductForm = () => {
 
   const validateForm = () => {
     const newErrors = {}
-    if (!form.name_.trim()) newErrors.name_ = "El nombre del producto es requerido"
+    if (!form.name.trim()) newErrors.name = "El nombre del producto es requerido"
     if (!form.description.trim()) newErrors.description = "La descripción es requerida"
     if (!form.price || Number(form.price) <= 0) newErrors.price = "El precio debe ser un número positivo"
     if (!form.category.trim()) newErrors.category = "La categoría es requerida"
@@ -60,8 +60,8 @@ const EditProductForm = () => {
     if (validateForm()) {
       try {
         const newForm = {
-          id_: form.id_,
-          name_: form.name_,
+          id: form.id,
+          name: form.name,
           price: Number(form.price),
           category: form.category,
           stock: Number(form.stock),
@@ -130,7 +130,7 @@ const EditProductForm = () => {
             <label className="block text-sm font-medium text-gray-700">Nombre del producto</label>
             <input
               name="name_"
-              value={form.name_}
+              value={form.name}
               onChange={handleInput}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             />

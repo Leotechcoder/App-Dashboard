@@ -9,6 +9,7 @@ class BaseApi {
       method,
       headers: { "Content-Type": "application/json" },
       credentials: "include",
+      withCredentials: true,
     };
 
     if (data) {
