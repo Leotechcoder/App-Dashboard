@@ -2,8 +2,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
 // Capas de la arquitectura limpia users
-import { UserService } from "./userService"
-import { UserRepositoryImpl } from "../infrastructure/userRepositoryImpl"
+import { UserService } from "./userService.js"
+import { UserRepositoryImpl } from "../infrastructure/userRepositoryImpl.js"
 // Capas de la arquitectura limpia auth
 import { AuthService } from "../application/authService.js"
 import { AuthRepositoryImpl } from "../infrastructure/authRepositoryImpl.js"
