@@ -23,13 +23,13 @@ export const LoginPage = () => {
   // Manejar redirección al dashboard después del login
   useEffect(() => {
     let timer
-    if (message && message === "Sesión iniciada exitosamente!") {
+    if (!loading && message && message === "Sesión iniciada exitosamente!") {
       timer = setTimeout(() => {
         navigate("/admin/home", { replace: true })
       }, 2000) // <- 2 segundos
     }
     return () => clearTimeout(timer)
-  }, [message, navigate])
+  }, [message, loading, navigate])
 
   // Manejar la expansion del formulario en pantallas pequeñas
   const handleFormExpand = useCallback((expanded) => {
