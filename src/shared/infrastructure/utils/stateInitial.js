@@ -12,13 +12,13 @@ export const filtros = {
   
   export const paginacionUsers = {
     currentPage: 1,
-    itemsPerPage: 7,
+    itemsPerPage: 8,
     total: 0,
   }
   
   export const paginacionOrders = {
     currentPage: 1,
-    itemsPerPage: 7,
+    itemsPerPage: 8,
     total: 0,
   }
   

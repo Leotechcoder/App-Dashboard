@@ -16,6 +16,10 @@ class ItemApi extends BaseApi {
   addItem(item) {
     return this.post("/items", item)
   }
+
+  updateItem(id, data){
+    return this.patch(`/items/${id}`, data)
+  }
 }
 
 export const itemApi = new ItemApi()

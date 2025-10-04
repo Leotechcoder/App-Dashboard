@@ -1,77 +1,106 @@
-
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import OrderDetails from "../components/OrderDetails";
 import { ButtonAddOrder } from "../components/Buttons";
 import OrdersTable from "../components/OrdersTable";
 import { SearchOrder } from "../components/SearchOrder";
-import { getDataOrders, setSelectedOrder } from "../../application/orderSlice"; // Importa solo lo necesario
-import { getData as getItemsData, voidItemSelected } from "../../application/itemSlice";
+import { getDataOrders, setSelectedOrder } from "../../application/orderSlice";
+import {
+  getData as getItemsData,
+  voidItemSelected,
+} from "../../application/itemSlice";
 import { voidSelectedProduct } from "../../../products/application/productSlice";
 
 const OrdersPage = () => {
-    const dispatch = useDispatch();
-    const { isLoading, error, selectedOrder } = useSelector((state) => state.orders); // Destructura solo lo necesario
-    const [activeTab, setActiveTab] = useState("pending");
-    const [createOrder, setCreateOrder] = useState(false);
+  const dispatch = useDispatch();
+  const { data, isLoading, error, selectedOrder, filteredOrders } = useSelector(
+    (state) => state.orders
+  );
 
-    useEffect(() => {
-        dispatch(getDataOrders());
-        dispatch(getItemsData());
-    }, [dispatch]);
+  const [activeTab, setActiveTab] = useState("pending");
+  const [createOrder, setCreateOrder] = useState(false);
 
-    const handleCreateOrder = () => setCreateOrder(true);
+  // Cargar órdenes al montar
+  useEffect(() => {
+    if (!data?.length) dispatch(getDataOrders());
+  }, [dispatch]);
 
-    const handleBack = () => {
-        dispatch(voidSelectedProduct());
-        dispatch(voidItemSelected());
-        dispatch(setSelectedOrder(null)); // No es necesario volver a cargar las órdenes aquí
-        setCreateOrder(false);
-    };
+  // Crear nueva orden
+  const handleCreateOrder = () => setCreateOrder(true);
 
-    const handleSetSelectedOrder = (order) => dispatch(setSelectedOrder(order));
+  // Volver desde detalles o creación
+  const handleBack = () => {
+    dispatch(voidSelectedProduct());
+    dispatch(voidItemSelected());
+    dispatch(setSelectedOrder(null));
+    setCreateOrder(false);
+  };
 
-    if (isLoading) return <div className="text-center">Cargando órdenes...</div>;
-    if (error) return <div className="text-center text-red-500">Error: {error}</div>;
-    if (selectedOrder || createOrder) return <OrderDetails order={selectedOrder} onBack={handleBack} />;
+  // Seleccionar orden de la tabla
+  const handleSetSelectedOrder = (order) => dispatch(setSelectedOrder(order));
 
+  // Estados de carga y error
+  if (isLoading) {
     return (
-        <main className="p-5 pt-3 w-full max-w-screen-lg">
-            <div className="p-5">
-                {/* <h2 className="text-2xl font-bold text-gray-800 mb-4">Órdenes</h2> */}
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex space-x-2">
-                        <TabButton
-                            label="Pendientes de Entrega"
-                            isActive={activeTab === "charged"}
-                            onClick={() => setActiveTab("charged")}
-                        />
-                        <TabButton
-                            label="Cobro Pendiente"
-                            isActive={activeTab === "pending"}
-                            onClick={() => setActiveTab("pending")}
-                        />
-                    </div>
-                    <div className="flex space-x-4">
-                        <ButtonAddOrder handleClick={handleCreateOrder} />
-                        <SearchOrder tipo="ordenes" />
-                    </div>
-                </div>
-                <OrdersTable setSelectedOrder={handleSetSelectedOrder} activeTab={activeTab} /> {/* No pasa orders como prop */}
-            </div>
-        </main>
+      <div className="text-center text-gray-600 py-10">Cargando órdenes...</div>
     );
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500 py-10">Error: {error}</div>;
+  }
+
+  // Vista detalle o creación
+  if (selectedOrder || createOrder) {
+    return <OrderDetails order={selectedOrder} onBack={handleBack} />;
+  }
+
+  return (
+    <main className="p-5 pt-3 w-full max-w-screen-lg">
+      <div className="p-5">
+        {/* Header con Tabs y Acciones */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex space-x-2">
+            <TabButton
+              label="Pendientes de Entrega"
+              isActive={activeTab === "charged"}
+              onClick={() => setActiveTab("charged")}
+            />
+            <TabButton
+              label="Cobro Pendiente"
+              isActive={activeTab === "pending"}
+              onClick={() => setActiveTab("pending")}
+            />
+          </div>
+
+          <div className="flex space-x-4">
+            <ButtonAddOrder handleClick={handleCreateOrder} />
+            <SearchOrder tipo="ordenes" />
+          </div>
+        </div>
+
+        {/* Tabla de órdenes */}
+        <OrdersTable
+          setSelectedOrder={handleSetSelectedOrder}
+          activeTab={activeTab}
+        />
+      </div>
+    </main>
+  );
 };
 
+// Botón para Tabs
 const TabButton = ({ label, isActive, onClick }) => (
-    <button
-        className={`px-4 py-2 rounded-full ${
-            isActive ? "bg-brown-750 text-white" : "bg-gray-100 text-gray-600"
-        }`}
-        onClick={onClick}
-    >
-        {label}
-    </button>
+  <button
+    className={`px-4 py-2 rounded-full transition-colors ${
+      isActive
+        ? "bg-brown-750 text-white"
+        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+    }`}
+    onClick={onClick}
+  >
+    {label}
+  </button>
 );
 
 export default OrdersPage;

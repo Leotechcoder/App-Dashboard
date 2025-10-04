@@ -1,41 +1,36 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { orderApi } from "../../shared/infrastructure/api/orderApi";
-import { paginacionOrders } from "../../shared/infrastructure/utils/stateInitial";
-import { formattedSubTotal } from "../../shared/infrastructure/utils/formatPrice";
-import { formatPrice } from "../../shared/utils/formatPriceOrders";
+import { OrderRepository } from "../infrastructure/orderRepository.js";
+import { OrderService } from "../application/orderService.js"
+import { paginacionOrders } from "../../shared/infrastructure/utils/stateInitial.js";
 
-// ✅ Elimina .bind(orderApi) y usa funciones async
+const orderService = new OrderService(new OrderRepository());
+
 export const getDataOrders = createAsyncThunk("order/getData", async () => {
-  return await orderApi.getOrders();
+  const orders = await orderService.getOrders();
+  return orders.map(o => ({
+    id: o.id,
+    userId: o.userId,
+    userName: o.userName,
+    totalAmount: o.totalAmount,
+    status: o.status,
+    itemsId: o.itemsId,
+    createdAt: o.createdAt,
+    updatedAt: o.updatedAt,
+  }));
 });
 
-export const createDataOrder = createAsyncThunk("order/createData", async (order) => {
-  return await orderApi.createOrder(order);
+
+export const createDataOrder = createAsyncThunk("orders/createData", async (order) => {
+  return await orderService.createOrder(order);
 });
 
-export const updateDataOrder = createAsyncThunk("order/updateDataOrder", async (order) => {
-  const formattedOrder = {
-    ...order,
-    total_amount: formatPrice(order.total_amount ?? 0), // ✅ Evita undefined
-  };
-  return await orderApi.updateOrder(formattedOrder);
+export const updateDataOrder = createAsyncThunk("orders/updateData", async (order) => {
+  return await orderService.updateOrder(order);
 });
 
-export const deleteDataOrder = createAsyncThunk("order/deleteData", async (orderId) => {
-  return await orderApi.deleteOrder(orderId);
+export const deleteDataOrder = createAsyncThunk("orders/deleteData", async (id) => {
+  return await orderService.deleteOrder(id);
 });
-
-const orderEjemplo = {
-  id: "order123",
-  userId: "user456",
-  userName: "Ana García",
-  totalAmount: 99.75,
-  status: "Abonada",
-  itemsId: "item789,item101",
-  createdAt: "2024-10-27T10:00:00.000Z",
-  updatedAt: "2024-10-27T12:30:00.000Z",
-};
-
 
 const initialState = {
   data: [],
@@ -43,7 +38,7 @@ const initialState = {
   filteredOrders: [],
   isLoading: false,
   error: null,
-  date: new Date().toISOString(), // ✅ Usa formato seguro para fechas
+  date: new Date().toISOString(),
   paginationOrders: paginacionOrders,
 };
 
@@ -51,9 +46,6 @@ const orderSlice = createSlice({
   name: "orders",
   initialState,
   reducers: {
-    updateDate: (state) => {
-      state.date = new Date().toISOString();
-    },
     setSelectedOrder: (state, action) => {
       state.selectedOrder = action.payload;
     },
@@ -71,54 +63,20 @@ const orderSlice = createSlice({
       })
       .addCase(getDataOrders.fulfilled, (state, action) => {
         state.isLoading = false;
-        if(action.payload.length === 0){
-          state.data = [orderEjemplo]
-        }else{
-          state.data = action.payload.orders
-        }
+        state.data = action.payload;
       })
       .addCase(getDataOrders.rejected, (state, action) => {
         state.isLoading = false;
-        if (action.error.message !== "No se encontraron órdenes") {
-          state.error = action.error.message;
-        }
-      })
-      .addCase(createDataOrder.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(createDataOrder.fulfilled, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(createDataOrder.rejected, (state, action) => {
-        state.isLoading = false;
         state.error = action.error.message;
       })
-      .addCase(updateDataOrder.pending, (state) => {
-        state.isLoading = true;
+      .addCase(createDataOrder.fulfilled, (state, action) => {
+        state.data.unshift(action.payload);
       })
-      .addCase(updateDataOrder.fulfilled, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(updateDataOrder.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message;
-      })
-      .addCase(deleteDataOrder.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(deleteDataOrder.fulfilled, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(deleteDataOrder.rejected, (state, action) => {
-        state.isLoading = false;
-        if(action.error.message === "Orden no encontrada"){
-          return
-        }
-        state.error = action.error.message;
+      .addCase(deleteDataOrder.fulfilled, (state, action) => {
+        state.data = state.data.filter(o => o.id !== action.payload);
       });
   },
 });
 
-export const { updateDate, setSelectedOrder, setFilteredOrders, setCurrentPageOrders } = orderSlice.actions;
-
+export const { setSelectedOrder, setFilteredOrders, setCurrentPageOrders } = orderSlice.actions;
 export default orderSlice.reducer;

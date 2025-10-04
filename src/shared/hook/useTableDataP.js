@@ -32,10 +32,18 @@ export function useTableData({
 
   const totalPages = useMemo(() => Math.ceil(filteredData.length / itemsPerPage), [filteredData, itemsPerPage]);
 
+  // Sincronizar página local con Redux
   useEffect(() => {
     setLocalCurrentPage(reduxCurrentPage);
   }, [reduxCurrentPage]);
 
+  // Cuando cambia el searchTerm o los datos filtrados externos, resetear página a 1
+  useEffect(() => {
+    setLocalCurrentPage(1);
+    dispatch(setCurrentPage(1));
+  }, [searchTerm, externalFilteredData, dispatch, setCurrentPage]);
+
+  // Manejar cambio de página
   const handlePageChange = useCallback(
     (page) => {
       if (page !== localCurrentPage) {

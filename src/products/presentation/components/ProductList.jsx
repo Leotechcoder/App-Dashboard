@@ -10,7 +10,7 @@ import {
   setCurrentPage,
   clearMessage, // 👈 importamos para limpiar
 } from "../../application/productSlice.js";
-import { Pencil, Trash } from "lucide-react";
+import { Pencil, Trash, AlertCircle } from "lucide-react";
 import Pagination from "../../../shared/presentation/components/Pagination.jsx";
 import SearchBar from "../../../shared/presentation/components/SearchBar.jsx";
 import { useTableData } from "../../../shared/hook/useTableDataP.js";
@@ -122,7 +122,7 @@ const ProductList = () => {
         <table className="min-w-full">
           <thead className="bg-gray-50 border-b">
             <tr>
-              {["ID", "Producto", "Categoría", "Stock", "Disponible", "Acciones"].map((header) => (
+              {["ID", "Producto", "Descripción", "Categoría", "Stock", "Disponible", "Precio", "Acciones"].map((header) => (
                 <th
                   key={header}
                   className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase"
@@ -133,41 +133,56 @@ const ProductList = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {paginatedData.map((product) => (
-              <tr key={product.id} className="hover:bg-gray-50">
-                <td className="px-2 py-4 text-sm text-gray-500">
-                  {product.id}
-                </td>
-                <td className="px-2 py-4 text-sm text-gray-500">
-                  {product.name}
-                </td>
-                <td className="px-2 py-4 text-sm text-gray-500">
-                  {product.category}
-                </td>
-                <td className="px-2 py-4 text-sm text-gray-500">
-                  {product.stock}
-                </td>
-                <td className="px-2 py-4 text-sm text-gray-500">
-                  {product.available ? "Sí" : "No"}
-                </td>
-                <td className="px-2 py-4">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEditar(product)}
-                      className="p-1 hover:bg-gray-100 rounded"
-                    >
-                      <Pencil className="h-4 w-4 text-gray-500" />
-                    </button>
-                    <button
-                      onClick={() => handleEliminar(product.id)}
-                      className="p-1 hover:bg-gray-100 rounded"
-                    >
-                      <Trash className="h-4 w-4 text-gray-500" />
-                    </button>
+            {paginatedData.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={8} // 👈 ajustá al número de columnas
+                  className="px-4 py-6 text-center"
+                >
+                  <div className="flex items-center justify-center gap-2 text-blue-600 bg-blue-50 border border-blue-200 rounded-lg p-3 max-w-md mx-auto">
+                    <AlertCircle className="h-5 w-5" />
+                    <span className="font-medium">
+                      Agrega un producto a esta categoría
+                    </span>
                   </div>
                 </td>
               </tr>
-            ))}
+            ) : (
+              paginatedData.map((product) => (
+                <tr key={product.id} className="hover:bg-gray-50">
+                  <td className="px-2 py-4 text-sm text-gray-500">{product.id}</td>
+                  <td className="px-2 py-4 text-sm text-gray-500">{product.name}</td>
+                  <td className="px-2 py-4 text-sm text-gray-500">{product.description}</td>
+                  <td className="px-2 py-4 text-sm text-gray-500">{product.category}</td>
+                  <td className="px-2 py-4 text-sm text-center text-gray-500">
+                    {product.stock}
+                  </td>
+                  <td
+                    className={`px-2 py-4 text-base text-center 
+                      ${product.available ? "text-green-600" : "text-red-700"} rounded-lg`}
+                  >
+                    {product.available ? "Sí" : "No"}
+                  </td>
+                  <td className="px-2 py-4 text-sm text-gray-500">{product.price}</td>
+                  <td className="px-2 py-4">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEditar(product)}
+                        className="p-1 hover:bg-gray-100 rounded"
+                      >
+                        <Pencil className="h-4 w-4 text-gray-500" />
+                      </button>
+                      <button
+                        onClick={() => handleEliminar(product.id)}
+                        className="p-1 hover:bg-gray-100 rounded"
+                      >
+                        <Trash className="h-4 w-4 text-gray-500" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

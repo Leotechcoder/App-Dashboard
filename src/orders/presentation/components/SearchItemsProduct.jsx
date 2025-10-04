@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect, useRef } from "react";
-import { setSelectedProduct } from "../../../products/application/productSlice";
+import { getDataProducts, setSelectedProduct } from "../../../products/application/productSlice";
 
 const SearchItemsProduct = ({ tipo, setIsModalOpen, isModalOpen }) => {
   const { data } = useSelector((store) => store.products);
@@ -13,6 +13,9 @@ const SearchItemsProduct = ({ tipo, setIsModalOpen, isModalOpen }) => {
 
   // Filtrar resultados en tiempo real
   useEffect(() => {
+    if(data.length === 0){
+      dispatch(getDataProducts());
+    }
     const searchTerm = buscadorTerm.trim().toLowerCase();
     if (searchTerm) {
       setFilteredResults(
@@ -51,7 +54,9 @@ const SearchItemsProduct = ({ tipo, setIsModalOpen, isModalOpen }) => {
     const newItem = {  
         id: item.id,
         name: item.name,
-        unit_price };
+        unit_price,
+        quantity: 1,
+        description: "" };
     dispatch(setSelectedProduct(newItem)); // Guardamos producto seleccionado
     setIsModalOpen(!isModalOpen);
     setBuscadorTerm("");

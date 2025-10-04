@@ -57,11 +57,11 @@ export const SearchOrder = ({ tipo }) => {
         <ul className="absolute z-10 bg-white border border-gray-300 rounded-lg shadow-md mt-2 w-full max-h-40 overflow-y-auto">
           {filteredOrders.map((order) => (
             <li
-              key={order.id_}
+              key={order.id}
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
               onClick={() => handleSelectOrder(order)}
             >
-              {order.id_}
+              {order.id}
             </li>
           ))}
         </ul>

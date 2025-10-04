@@ -1,40 +1,40 @@
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 
-import { useState, useEffect, useMemo, useCallback, useRef } from "react"
-import { useDispatch, useSelector, shallowEqual } from "react-redux"
+export function useTableData({ stateKey, itemsPerPage, searchFields, setFilteredData, setCurrentPage, initialData }) {
+  const dispatch = useDispatch();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [localCurrentPage, setLocalCurrentPage] = useState(1);
 
-export function useTableData({ stateKey, itemsPerPage, searchFields, setFilteredData, setCurrentPage }) {
-  const dispatch = useDispatch()
-  const [searchTerm, setSearchTerm] = useState("")
-  const [localCurrentPage, setLocalCurrentPage] = useState(1)
+  const data = useSelector((state) => state[stateKey].data, shallowEqual);
+  const reduxCurrentPage = useSelector((state) => state[stateKey].pagination?.currentPage || 1);
 
-  // Usamos shallowEqual para evitar renders innecesarios
-  const data = useSelector((state) => state[stateKey].data, shallowEqual)
-  const reduxCurrentPage = useSelector((state) => state[stateKey].pagination?.currentPage || 1)
+  const sortedData = useMemo(() => {
+    const arr = initialData || data || [];
+    return [...arr].sort(
+      (a, b) => new Date(b.update_at || b.createdAt) - new Date(a.update_at || a.createdAt)
+    );
+  }, [data, initialData]);
 
-  // Filtrar datos solo si cambia el término de búsqueda o la data
   const filteredData = useMemo(() => {
-    if (!searchTerm) return data
-    return data.filter((item) =>
+    if (!searchTerm) return sortedData;
+    return sortedData.filter((item) =>
       searchFields.some((field) => item[field]?.toString().toLowerCase().includes(searchTerm.toLowerCase()))
-    )
-  }, [data, searchFields, searchTerm])
+    );
+  }, [sortedData, searchFields, searchTerm]);
 
-  // Paginación optimizada con useMemo
   const paginatedData = useMemo(() => {
-    const startIndex = (localCurrentPage - 1) * itemsPerPage
-    return filteredData.slice(startIndex, startIndex + itemsPerPage)
-  }, [filteredData, localCurrentPage, itemsPerPage])
+    const startIndex = (localCurrentPage - 1) * itemsPerPage;
+    return filteredData.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredData, localCurrentPage, itemsPerPage]);
 
-  const totalPages = useMemo(() => Math.ceil(filteredData.length / itemsPerPage), [filteredData, itemsPerPage])
+  const totalPages = useMemo(() => Math.ceil(filteredData.length / itemsPerPage), [filteredData, itemsPerPage]);
 
-  // Sincronizar la página local con Redux
   useEffect(() => {
-    setLocalCurrentPage(reduxCurrentPage)
-  }, [reduxCurrentPage])
+    setLocalCurrentPage(reduxCurrentPage);
+  }, [reduxCurrentPage]);
 
-  // Solo actualiza Redux si los datos realmente cambian
   const prevFiltered = useRef([]);
-
   useEffect(() => {
     if (JSON.stringify(prevFiltered.current) !== JSON.stringify(filteredData)) {
       dispatch(setFilteredData(filteredData));
@@ -42,28 +42,26 @@ export function useTableData({ stateKey, itemsPerPage, searchFields, setFiltered
     }
   }, [dispatch, setFilteredData, filteredData]);
 
-  // Manejo optimizado del cambio de página
   const handlePageChange = useCallback(
     (page) => {
       if (page !== localCurrentPage) {
-        setLocalCurrentPage(page)
-        dispatch(setCurrentPage(page))
+        setLocalCurrentPage(page);
+        dispatch(setCurrentPage(page));
       }
     },
     [dispatch, setCurrentPage, localCurrentPage]
-  )
+  );
 
-  // Manejo optimizado del cambio de búsqueda
   const handleSearchChange = useCallback(
     (newSearchTerm) => {
       if (newSearchTerm !== searchTerm) {
-        setSearchTerm(newSearchTerm)
-        setLocalCurrentPage(1)
-        dispatch(setCurrentPage(1))
+        setSearchTerm(newSearchTerm);
+        setLocalCurrentPage(1);
+        dispatch(setCurrentPage(1));
       }
     },
     [dispatch, setCurrentPage, searchTerm]
-  )
+  );
 
   return {
     searchTerm,
@@ -72,5 +70,5 @@ export function useTableData({ stateKey, itemsPerPage, searchFields, setFiltered
     paginatedData,
     totalPages,
     handlePageChange,
-  }
+  };
 }

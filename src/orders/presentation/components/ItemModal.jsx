@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { voidSelectedProduct } from "../../../products/application/productSlice";
-import { setItemSelected } from "../../application/itemSlice";
+import { setItemSelected, updateDataItems } from "../../application/itemSlice";
 import { idGenerator } from "../../../shared/infrastructure/utils/idGenerator";
 
 const formatPrice = (price) => {
@@ -14,7 +14,7 @@ const formatPrice = (price) => {
   return Number.parseFloat(cleaned) || 0;
 };
 
-const ItemModal = ({ setModal, setPersuit }) => {
+const ItemModal = ({ setModal, setPersuit, setUpdateItem, updateItem, setItems, items }) => {
   const dispatch = useDispatch();
   const selectedProduct = useSelector(
     (store) => store.products.selectedProduct
@@ -27,6 +27,8 @@ const ItemModal = ({ setModal, setPersuit }) => {
   // Cierra modal al retroceder en el historial
   useEffect(() => {
     if (selectedProduct) {
+      setQuantity(selectedProduct.quantity)
+      setDescription(selectedProduct.description)
       window.history.pushState({ modalOpen: true }, "");
       const handlePopState = () => {
         handleClose();
@@ -40,40 +42,45 @@ const ItemModal = ({ setModal, setPersuit }) => {
     dispatch(voidSelectedProduct());
     setModal(false);
     setPersuit(false);
+    setUpdateItem(false);
     setQuantity(1);
     setDescription("");
   };
 
   //Funcion para agregar producto
-  const handleAddProduct = () => {
+  const handleSubmit = () => {
     if (!selectedProduct) return;
 
-    const newProduct = {
-      id_: idGenerator("Items"),
+    const newItem = {
+      id_: updateItem ? selectedProduct.id_ : idGenerator("Items"),
       product_id: selectedProduct.id,
       product_name: selectedProduct.name,
       description,
       unit_price: selectedProduct.unit_price,
       quantity: String(quantity),
     };
-
-    dispatch(setItemSelected(newProduct));
-    dispatch(voidSelectedProduct());
-    setModal(false);
-    setPersuit(false);
-    setQuantity(1);
-    setDescription("");
+    if(updateItem){
+      // dispatch(updateDataItems(newItem));
+      const actualizar = items.map((i) =>
+          i.id_ === newItem.id_ ? newItem : i
+        );
+      setItems(actualizar)
+      handleClose();
+      return;
+    }
+    dispatch(setItemSelected(newItem));
+    handleClose();
   };
 
   if (!selectedProduct) return null;
 
-  return (
+ return (
     <div className="fixed z-10 inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b">
           <h2 className="text-xl font-semibold text-gray-900">
-            Detalles del Producto
+            {updateItem ? "Actualizar Producto" : "Agregar Producto"}
           </h2>
           <button
             onClick={handleClose}
@@ -138,10 +145,10 @@ const ItemModal = ({ setModal, setPersuit }) => {
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50 border-t flex justify-end">
           <button
-            onClick={handleAddProduct}
+            onClick={handleSubmit}
             className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
           >
-            Agregar Producto
+            {updateItem ? "Actualizar Producto" : "Agregar Producto"}
           </button>
         </div>
       </div>
