@@ -9,6 +9,7 @@ import RevenueDisplay from "../components/home/RevenueDisplay"
 import RecentOrdersTimeline from "../components/home/RecentOrdersTimeline"
 import TopProductsTable from "../components/home/TopProductsTable"
 import WelcomeHeader from "../components/home/WelcomeHeader.jsx"
+import HomeInProduction from "../components/home/HomeInProduction.jsx"
 
 const Dashboard = () => {
   const username = useSelector(store=>store.users.username)
@@ -23,14 +24,15 @@ useEffect(() => {
   return (
     <div className="container mx-auto p-8">
       <WelcomeHeader/>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-4">
+      <HomeInProduction/>
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-4">
         <SalesChart />
         <RevenueDisplay />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
         <RecentOrdersTimeline />
         <TopProductsTable />
-      </div>
+      </div> */}
     </div>
   )
 }

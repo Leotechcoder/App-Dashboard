@@ -98,7 +98,7 @@ const ProductList = () => {
 
   return (
     <>
-      <div className="flex justify-end gap-3 mb-4">
+      <div className="flex justify-end gap-3 min-h-max">
         <button
           onClick={handleAddProduct}
           className="bg-blue-600 text-white h-3/4 px-4 py-2 rounded-lg hover:bg-blue-700"
