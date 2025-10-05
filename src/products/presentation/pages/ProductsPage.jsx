@@ -8,7 +8,7 @@ const Products = () => {
   
 
   return (
-    <div className="min-h-screen bg-gray-100 px-4">
+    <div className="min-h-screen bg-gray-100">
       {isFormView ? (
         isEditing ? (
           <EditProductForm />
@@ -16,7 +16,7 @@ const Products = () => {
           <FormProduct />
         )
       ) : (
-        <div className="p-8">
+        <div className="p-10">
           {/* <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-gray-800">Productos</h1>
           </div> */}

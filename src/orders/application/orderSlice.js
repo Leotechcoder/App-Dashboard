@@ -55,6 +55,9 @@ const orderSlice = createSlice({
     setCurrentPageOrders: (state, action) => {
       state.paginationOrders.currentPage = action.payload;
     },
+    createDataOrders: (state, action) => {
+      state.data.push(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder

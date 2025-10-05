@@ -56,7 +56,7 @@ const OrdersPage = () => {
   }
 
   return (
-    <main className="p-5 pt-3 w-full max-w-screen-lg">
+    <main className="p-5 pt-3 w-full max-w-screen-xl">
       <div className="p-5">
         {/* Header con Tabs y Acciones */}
         <div className="flex justify-between items-center mb-6">

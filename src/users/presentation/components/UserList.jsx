@@ -81,7 +81,7 @@ const UserList = () => {
         <table className="min-w-full">
           <thead className="bg-gray-50 border-b">
             <tr>
-              {["ID", "Usuario", "Teléfono", "Dirección", "Acciones"].map((header) => (
+              {["ID", "Usuario", "Email", "Teléfono", "Dirección", "Acciones"].map((header) => (
                 <th
                   key={header}
                   className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase"
@@ -97,6 +97,9 @@ const UserList = () => {
                 <td className="px-2 py-4 text-sm text-gray-500">{user.id}</td>
                 <td className="px-2 py-4 text-sm text-gray-500">
                   {user.username}
+                </td>
+                <td className="px-2 py-4 text-sm text-gray-500">
+                  {user.email}
                 </td>
                 <td className="px-2 py-4 text-sm text-gray-500">
                   {user.phone}

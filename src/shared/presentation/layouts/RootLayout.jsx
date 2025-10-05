@@ -70,22 +70,26 @@ const RootLayout = () => {
       <Toaster richColors position="top-right" />
 
       <div className="flex flex-col lg:flex-row min-h-screen">
-        {/* Sidebar */}
-        <div className="w-64 p-4">
-          <Sidebar setLogOutUser={setLogOutUser} />
-        </div>
+  {/* Sidebar */}
+  <div className="w-64 p-4">
+    <Sidebar setLogOutUser={setLogOutUser} />
+  </div>
 
-        {/* Main Content */}
-        <div className="flex-1 ms-8 bg-gray-200 p-5 min-h-screen">
+  {/* Main Content */}
+  <div className="flex-1 ms-8 bg-gray-200 min-h-screen flex flex-col justify-between">
+    <div
+      style={{
+        transform: "scale(0.9)",
+        transformOrigin: "top left",
+        width: "111.111%",
+      }}
+    >
+      <Outlet />
+    </div>
+    <Footer />
+  </div>
+</div>
 
-          <Outlet />
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="bg-gray-800 text-white text-center py-4">
-        <Footer />
-      </div>
     </>
   )
 }

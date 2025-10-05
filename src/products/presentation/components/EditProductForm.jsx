@@ -66,7 +66,7 @@ const EditProductForm = () => {
       try {
         const newForm = {
           id: form.id,
-          name: form.name,
+          name_: form.name,
           price: Number(form.price),
           category: form.category,
           stock: Number(form.stock),
@@ -222,8 +222,8 @@ const EditProductForm = () => {
               onChange={handleInput}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             >
-              <option value="">Seleccione una categoría</option>
-              {categorias.map((cat) => (
+              <option value="" disabled>Seleccione una categoría</option>
+              {categorias.data.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
                 </option>
@@ -244,8 +244,9 @@ const EditProductForm = () => {
               onChange={handleInput}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             >
-              <option value="true">Disponible</option>
-              <option value="false">No Disponible</option>
+                <option value="" disabled>Selecciona un estado</option>
+                <option value="true">Disponible</option>
+                <option value="false">No Disponible</option>
             </select>
             {errors.available && (
               <p className="text-sm text-red-500 mt-1">{errors.available}</p>

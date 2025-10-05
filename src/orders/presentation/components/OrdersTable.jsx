@@ -10,6 +10,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import Pagination from "../../../shared/presentation/components/Pagination.jsx";
 import { useTableData } from "../../../shared/hook/useTableDataO.js";
+import { getData } from "../../application/itemSlice.js";
 
 const OrdersTable = ({ setSelectedOrder, activeTab }) => {
   const dispatch = useDispatch();
@@ -24,6 +25,11 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
     setCurrentPage: setCurrentPageOrders,
     initialData: data,
   });
+
+  useEffect(() => {
+   dispatch(getData())
+  }, [])
+  
 
   const formatDate = (date) =>
     new Date(date).toLocaleString("es-AR", {

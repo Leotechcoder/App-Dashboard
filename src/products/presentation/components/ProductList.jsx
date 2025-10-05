@@ -158,7 +158,7 @@ const ProductList = () => {
                     {product.stock}
                   </td>
                   <td
-                    className={`px-2 py-4 text-base text-center 
+                    className={`px-2 py-4 text-sm font-medium text-center 
                       ${product.available ? "text-green-600" : "text-red-700"} rounded-lg`}
                   >
                     {product.available ? "Sí" : "No"}

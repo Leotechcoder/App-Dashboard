@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DateTime from "./DateTime";
 import { createDataItems, getData } from "../../application/itemSlice";
 import ItemModal from "./ItemModal";
-import { updateDataOrder } from "../../application/orderSlice";
+import { getDataOrders, updateDataOrder } from "../../application/orderSlice";
 import SearchItemsProduct from "./SearchItemsProduct";
 import { formatPrice } from "../../../shared/utils/formatPriceOrders";
 import { getUserData } from "../../../users/application/userSlice";
@@ -189,7 +189,8 @@ const OrderDetails = ({ order, onBack }) => {
     try {
       const orderPromise = order
         ? dispatch(updateDataOrder(newOrder))
-        : dispatch(createDataItems(newOrder));
+        : dispatch(createDataItems(newOrder))
+        dispatch(getDataOrders());
 
       await Promise.all(orderPromise);
     } catch (err) {
@@ -201,7 +202,7 @@ const OrderDetails = ({ order, onBack }) => {
 
   return (
     <main className="py-5 pt-2">
-      <div className="py-4 pt-0 h-screen overflow-hidden">
+      <div className="pt-4 px-8 h-screen overflow-hidden">
         {isModalOpen && (
           <ItemModal
             setModal={setIsModalOpen}
