@@ -1,19 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import OrderDetails from "../components/OrderDetails";
+import OrderDetails from "../components/orderDetails/OrderDetails";
 import { ButtonAddOrder } from "../components/Buttons";
 import OrdersTable from "../components/OrdersTable";
 import { SearchOrder } from "../components/SearchOrder";
 import { getDataOrders, setSelectedOrder } from "../../application/orderSlice";
 import {
-  getData as getItemsData,
+  getData,
   voidItemSelected,
 } from "../../application/itemSlice";
 import { voidSelectedProduct } from "../../../products/application/productSlice";
 
 const OrdersPage = () => {
   const dispatch = useDispatch();
-  const { data, isLoading, error, selectedOrder } = useSelector(
+  const hasFetched = useRef(false);
+  const { isLoading, error, selectedOrder } = useSelector(
     (state) => state.orders
   );
 
@@ -21,10 +22,15 @@ const OrdersPage = () => {
   const [createOrder, setCreateOrder] = useState(false);
   const [showHelp, setShowHelp] = useState(true);
 
-  // Cargar órdenes al montar
   useEffect(() => {
-    if (!data?.length) dispatch(getDataOrders());
-  }, [dispatch]);
+    if(!hasFetched.current){
+      hasFetched.current = true;
+      dispatch(getDataOrders());
+      dispatch(getData())
+    }
+    
+  }, []);
+
 
   // Crear nueva orden
   const handleCreateOrder = () => setCreateOrder(true);
@@ -35,6 +41,7 @@ const OrdersPage = () => {
     dispatch(voidItemSelected());
     dispatch(setSelectedOrder(null));
     setCreateOrder(false);
+    hasFetched.current = false;
   };
 
   // Seleccionar orden de la tabla
@@ -56,7 +63,7 @@ const OrdersPage = () => {
 
   // Vista detalle o creación
   if (selectedOrder || createOrder) {
-    return <OrderDetails order={selectedOrder} onBack={handleBack} />;
+    return <OrderDetails onBack={handleBack} />;
   }
 
   return (

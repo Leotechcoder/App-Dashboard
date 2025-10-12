@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { voidSelectedProduct } from "../../../products/application/productSlice";
-import { setItemSelected, updateDataItems } from "../../application/itemSlice";
-import { idGenerator } from "../../../shared/infrastructure/utils/idGenerator";
+import { voidSelectedProduct } from "../../../../products/application/productSlice";
+import { setItemSelected } from "../../../application/itemSlice";
+import { idGenerator } from "../../../../shared/infrastructure/utils/idGenerator";
 
 const formatPrice = (price) => {
-  if (price == null) return 0; //Maneja null y undefined
+  if (price == null) return 0; // Maneja null y undefined
   const cleaned = String(price)
     .replace("$", "")
     .replace(/\./g, "")
@@ -14,68 +14,62 @@ const formatPrice = (price) => {
   return Number.parseFloat(cleaned) || 0;
 };
 
-const ItemModal = ({ setModal, setPersuit, setUpdateItem, updateItem, setItems, items }) => {
+const ItemModal = ({ setModal, setUpdateItem, updateItem, setItems, items }) => {
   const dispatch = useDispatch();
-  const selectedProduct = useSelector(
-    (store) => store.products.selectedProduct
-  );
+  const selectedProduct = useSelector((store) => store.products.selectedProduct);
+
   if (!selectedProduct) return null;
 
   const [quantity, setQuantity] = useState(1);
   const [description, setDescription] = useState("");
 
-  // Cierra modal al retroceder en el historial
-  useEffect(() => {
-    if (selectedProduct) {
-      setQuantity(selectedProduct.quantity)
-      setDescription(selectedProduct.description)
-      window.history.pushState({ modalOpen: true }, "");
-      const handlePopState = () => {
-        handleClose();
-      };
-      window.addEventListener("popstate", handlePopState);
-      return () => window.removeEventListener("popstate", handlePopState);
-    }
-  }, [selectedProduct]);
-
+  // Maneja cierre del modal
   const handleClose = () => {
     dispatch(voidSelectedProduct());
     setModal(false);
-    setPersuit(false);
     setUpdateItem(false);
     setQuantity(1);
     setDescription("");
   };
 
-  //Funcion para agregar producto
+  // Cierra modal al retroceder en el historial
+  useEffect(() => {
+    if (selectedProduct) {
+      setQuantity(selectedProduct.quantity || 1);
+      setDescription(selectedProduct.description || "");
+      window.history.pushState({ modalOpen: true }, "");
+      const handlePopState = () => handleClose();
+      window.addEventListener("popstate", handlePopState);
+      return () => window.removeEventListener("popstate", handlePopState);
+    }
+  }, [selectedProduct]);
+
+  // Agregar o actualizar producto
   const handleSubmit = () => {
     if (!selectedProduct) return;
 
     const newItem = {
-      id_: updateItem ? selectedProduct.id_ : idGenerator("Items"),
-      product_id: selectedProduct.id,
-      product_name: selectedProduct.name,
+      id: updateItem ? selectedProduct.id : idGenerator("Items"),
+      productId: selectedProduct.productId,
+      productName: selectedProduct.productName,
       description,
-      unit_price: selectedProduct.unit_price,
-      quantity: String(quantity),
+      unitPrice: selectedProduct.unitPrice,
+      quantity,
     };
-    if(updateItem){
-      // dispatch(updateDataItems(newItem));
-      const actualizar = items.map((i) =>
-          i.id_ === newItem.id_ ? newItem : i
-        );
-      setItems(actualizar)
-      handleClose();
-      return;
+
+    if (updateItem) {
+      setItems((prev) =>
+        prev.map((i) => (i.id === newItem.id ? newItem : i))
+      );
+    } else {
+      dispatch(setItemSelected(newItem));
     }
-    dispatch(setItemSelected(newItem));
+
     handleClose();
   };
 
-  if (!selectedProduct) return null;
-
- return (
-    <div className="fixed z-10 inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+  return (
+    <div className="fixed z-10 inset-0 bg-black bg-opacity-5 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b">
@@ -91,13 +85,13 @@ const ItemModal = ({ setModal, setPersuit, setUpdateItem, updateItem, setItems, 
         </div>
 
         {/* Body */}
-        <div key={selectedProduct.id_} className="p-6 space-y-4">
+        <div key={selectedProduct.id} className="p-6 space-y-4">
           <div>
             <label className="block text-base font-medium text-gray-700">
               Nombre
             </label>
             <span className="ml-2 text-base font-normal">
-              {selectedProduct.name}
+              {selectedProduct.productName}
             </span>
           </div>
 
@@ -106,7 +100,7 @@ const ItemModal = ({ setModal, setPersuit, setUpdateItem, updateItem, setItems, 
               Precio
             </label>
             <span className="ml-2 text-base font-normal">
-              ${formatPrice(selectedProduct.unit_price)}
+              ${formatPrice(selectedProduct.unitPrice)}
             </span>
           </div>
 

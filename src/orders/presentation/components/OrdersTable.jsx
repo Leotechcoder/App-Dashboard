@@ -10,26 +10,31 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import Pagination from "../../../shared/presentation/components/Pagination.jsx";
 import { useTableData } from "../../../shared/hook/useTableDataO.js";
-import { getData } from "../../application/itemSlice.js";
 
 const OrdersTable = ({ setSelectedOrder, activeTab }) => {
   const dispatch = useDispatch();
   const { data, isLoading, error, paginationOrders } = useSelector((store) => store.orders);
   const dataItems = useSelector((store) => store.items.data);
 
+  const memoSetFilteredOrders = useCallback((data) => dispatch(setFilteredOrders(data)), [dispatch]);
+  const memoSetCurrentPageOrders = useCallback((page) => dispatch(setCurrentPageOrders(page)), [dispatch]);
+
+  if (!data || !Array.isArray(data)) return null; // <--- evita hook con data vacía
+
   const { currentPage, paginatedData, totalPages, handlePageChange } = useTableData({
     stateKey: "orders",
     itemsPerPage: paginationOrders.itemsPerPage,
     searchFields: ["id"],
-    setFilteredData: setFilteredOrders,
-    setCurrentPage: setCurrentPageOrders,
+    setFilteredData: memoSetFilteredOrders,
+    setCurrentPage: memoSetCurrentPageOrders,
     initialData: data,
   });
 
-  useEffect(() => {
-   dispatch(getData())
-  }, [])
-  
+  // useEffect(() => {
+  //   if (!dataItems?.length) {
+  //     dispatch(getData());
+  //   }
+  // }, [dataItems, dispatch]);
 
   const formatDate = (date) =>
     new Date(date).toLocaleString("es-AR", {
@@ -43,10 +48,11 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
   const handleOrderSelect = useCallback(
     (order) => {
       setSelectedOrder({
-        user_id: order.userId,
-        user_name: order.userName,
+        id: order.id,
+        userId: order.userId,
+        userName: order.userName,
         status: order.status,
-        items: dataItems.filter((item) => item.order_id === order.id),
+        items: dataItems.filter((item) => item.orderId === order.id),
         createdAt: formatDate(order.createdAt),
         updateAt: formatDate(new Date()),
       });
@@ -72,6 +78,37 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
 
   if (isLoading) return <div className="text-center py-4 text-gray-600">Cargando...</div>;
   if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
+  if (!data || data.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <table className="min-w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              {["ID", "ID de Usuario", "Cliente", "Importe", "Estado", "Última actualización", "Acciones"].map((head) => (
+                <th
+                  key={head}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
+                  {head}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colSpan="7" className="py-8 text-center text-gray-500">
+                🚀 No hay órdenes registradas.<br />
+                <span className="text-sm text-gray-400">
+                  Cargá una nueva orden para empezar.
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
 
   return (
     <>
@@ -101,7 +138,7 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 max-w-[9rem] overflow-hidden">{order.userName}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 w-10">${order.totalAmount}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 w-10">{order.status}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatDate(order.updateAt || order.createdAt)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatDate(order.updatedAt || order.createdAt)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex items-center space-x-3">
                       <button onClick={() => handleOrderSelect(order)} className="text-gray-600 hover:text-blue-600">
@@ -110,7 +147,7 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
                       <button onClick={() => handleDeleteOrder(order.id)} className="text-gray-600 hover:text-red-600">
                         <Trash2 className="w-4 h-4" />
                       </button>
-                      <button onClick={() => dispatch(getDataOrders())} className="text-gray-600 hover:text-green-600">
+                      <button className="text-gray-600 hover:text-green-600">
                         <RefreshCw className="w-4 h-4" />
                       </button>
                     </div>

@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect, useRef } from "react";
-import { getDataProducts, setSelectedProduct } from "../../../products/application/productSlice";
+import { getDataProducts, setSelectedProduct } from "../../../../products/application/productSlice";
 
 const SearchItemsProduct = ({ tipo, setIsModalOpen, isModalOpen }) => {
   const { data } = useSelector((store) => store.products);
@@ -46,17 +46,13 @@ const SearchItemsProduct = ({ tipo, setIsModalOpen, isModalOpen }) => {
 
   // Al seleccionar producto lo guarda en el campo selectedProduct del store
   const handleSelectItem = (item) => {
-    const unit_price = String(item.price)
-      .split(",")[0]        // toma solo la parte antes de la coma
-      .replace(/\./g, "")   // quita puntos de miles
-      .replace(/\$/g, "")   // quita símbolo $
-      .trim();
-    const newItem = {  
-        id: item.id,
-        name: item.name,
-        unit_price,
+    const newItem = {
+        productId: item.id,
+        productName: item.name,
+        description: "",
+        unitPrice: item.price,
         quantity: 1,
-        description: "" };
+       };
     dispatch(setSelectedProduct(newItem)); // Guardamos producto seleccionado
     setIsModalOpen(!isModalOpen);
     setBuscadorTerm("");

@@ -80,8 +80,9 @@ const RootLayout = () => {
     <div
       style={{
         transform: "scale(0.9)",
-        transformOrigin: "top left",
+        transformOrigin: "center left",
         width: "111.111%",
+        height: "100%"
       }}
     >
       <Outlet />

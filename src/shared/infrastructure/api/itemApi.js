@@ -9,17 +9,22 @@ class ItemApi extends BaseApi {
     return this.get("/items")
   }
 
-  getItemById(id) {
-    return this.get(`/items/${id}`)
+  getItemById(itemId) {
+    return this.get(`/items/${itemId}`)
   }
 
-  addItem(item) {
-    return this.post("/items", item)
+  addItem(orderId, items) {
+    return this.post(`/orders/${orderId}/items`, items)
+  }
+  
+  updateItem(orderId, itemId, data){
+    return this.patch(`/orders/${orderId}/items/${itemId}`, data)
   }
 
-  updateItem(id, data){
-    return this.patch(`/items/${id}`, data)
+  deleteItem(orderId, itemId) {
+    return this.delete(`/orders/${orderId}/items/${itemId}`)
   }
+
 }
 
 export const itemApi = new ItemApi()

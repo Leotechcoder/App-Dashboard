@@ -3,19 +3,12 @@ import { orderApi } from "../../shared/infrastructure/api/orderApi.js";
 
 export class OrderRepository {
   async getAll() {
-    const response = await orderApi.getOrders();
-    const orders = Array.isArray(response) ? response : response.orders ?? [];
-    return orders.map(order => this._toDomain(order));
+    return await orderApi.getOrders();
   }
 
   async create(order) {
-    const response = await orderApi.createOrder(this._toDTO(order));
-    return this._toDomain(response);
-  }
-
-  async update(order) {
-    const response = await orderApi.updateOrder(this._toDTO(order));
-    return this._toDomain(response);
+    const response = await orderApi.createOrder(order);
+    return response;
   }
 
   async delete(orderId) {
@@ -46,7 +39,6 @@ export class OrderRepository {
       status: order.status,
       items_id: order.itemsId,
       created_at: order.createdAt,
-      updated_at: order.updatedAt,
     };
   }
 }

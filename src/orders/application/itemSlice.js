@@ -3,12 +3,16 @@ import { itemApi } from "../../shared/infrastructure/api/itemApi"
 
 export const getData = createAsyncThunk("items/getData", itemApi.getItems.bind(itemApi))
 export const getDataById = createAsyncThunk("items/getDataById", itemApi.getItemById)
-export const createDataItems = createAsyncThunk("items/createData", async (item) => {
-  return await itemApi.addItem(item)
+export const addItems = createAsyncThunk("items/createData", async ({ orderId, items }) => {
+  console.log(`Esto estoy enviando ${items}`)
+  return await itemApi.addItem(orderId, items)
 });
-export const updateDataItems = createAsyncThunk("items/updateDataItems", async (id, data)=>{
-  return await itemApi.updateItem(id, data)
+export const updateDataItems = createAsyncThunk("items/updateDataItems", async (orderId, itemId, data)=>{
+  return await itemApi.updateItem(orderId, itemId, data)
 })
+export const deleteItem = createAsyncThunk("items/createItem", async (orderId, itemId) => {
+  return await itemApi.createItem(orderId, itemId)
+});
 
 const initialState = {
   data: [],
@@ -39,7 +43,9 @@ const itemSlice = createSlice({
       })
       .addCase(getData.fulfilled, (state, action) => {
         state.isLoading = false
-        state.data = action.payload.items
+        if (action.payload.items.length > 0) {
+          state.data = action.payload.items
+        }
       })
       .addCase(getData.rejected, (state, action) => {
         state.isLoading = false
@@ -57,31 +63,30 @@ const itemSlice = createSlice({
         state.isLoading = false
         state.error = action.error.message
       })
-      .addCase(createDataItems.pending, (state) => {
-        state.isLoading = true
-      })
-      .addCase(createDataItems.fulfilled, (state) => {
-        state.isLoading = false
-        state.lastUpdated = new Date().toISOString()
-      })
-      .addCase(createDataItems.rejected, (state, action) => {
-        state.isLoading = false
-        state.error = action.error.message
-      })
       .addCase(updateDataItems.pending, (state) => {
         state.isLoading = true
       })
-      .addCase(updateDataItems.fulfilled, (state) => {
+      .addCase(updateDataItems.fulfilled, (state, action) => {
         state.isLoading = false
         const updatedItem = action.payload; 
         state.data = state.data.map((p) =>
           p.id === updatedItem.id ? updatedItem : p
-        );
-      })
-      .addCase(updateDataItems.rejected, (state, action) => {
-        state.isLoading = false
-        state.error = action.error.message
-      })
+      );
+    })
+    .addCase(updateDataItems.rejected, (state, action) => {
+      state.isLoading = false
+      state.error = action.error.message
+    })
+    .addCase(deleteItem.pending, (state) => {
+      state.isLoading = true
+    })
+    .addCase(deleteItem.fulfilled, (state) => {
+      state.isLoading = false
+    })
+    .addCase(deleteItem.rejected, (state, action) => {
+      state.isLoading = false
+      state.error = action.error.message
+    })
   },
 })
 

@@ -10,14 +10,7 @@ export class OrderService {
   }
 
   async createOrder(order) {
-    // Validaciones o formateos antes de enviar
-    order.totalAmount = formatPrice(order.totalAmount ?? 0);
     return await this.orderRepository.create(order);
-  }
-
-  async updateOrder(order) {
-    order.totalAmount = formatPrice(order.totalAmount ?? 0);
-    return await this.orderRepository.update(order);
   }
 
   async deleteOrder(orderId) {

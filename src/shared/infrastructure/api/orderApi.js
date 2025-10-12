@@ -13,10 +13,6 @@ class OrderApi extends BaseApi {
     return this.post("/orders", order)
   }
 
-  updateOrder(order) {
-    return this.patch(`/orders/${order.id}`, order)
-  }
-
   deleteOrder(id) {
     return this.delete(`/orders/${id}`)
   }

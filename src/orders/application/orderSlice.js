@@ -1,33 +1,21 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { OrderRepository } from "../infrastructure/orderRepository.js";
-import { OrderService } from "../application/orderService.js"
+import { OrderService } from "../application/orderService.js";
 import { paginacionOrders } from "../../shared/infrastructure/utils/stateInitial.js";
 
 const orderService = new OrderService(new OrderRepository());
 
-export const getDataOrders = createAsyncThunk("order/getData", async () => {
-  const orders = await orderService.getOrders();
-  return orders.map(o => ({
-    id: o.id,
-    userId: o.userId,
-    userName: o.userName,
-    totalAmount: o.totalAmount,
-    status: o.status,
-    itemsId: o.itemsId,
-    createdAt: o.createdAt,
-    updatedAt: o.updatedAt,
-  }));
+// 🔹 Obtener todas las órdenes
+export const getDataOrders = createAsyncThunk("orders/getData", async () => {
+  return await orderService.getOrders();
 });
 
-
+// 🔹 Crear una nueva orden
 export const createDataOrder = createAsyncThunk("orders/createData", async (order) => {
   return await orderService.createOrder(order);
 });
 
-export const updateDataOrder = createAsyncThunk("orders/updateData", async (order) => {
-  return await orderService.updateOrder(order);
-});
-
+// 🔹 Eliminar una orden por ID
 export const deleteDataOrder = createAsyncThunk("orders/deleteData", async (id) => {
   return await orderService.deleteOrder(id);
 });
@@ -55,28 +43,46 @@ const orderSlice = createSlice({
     setCurrentPageOrders: (state, action) => {
       state.paginationOrders.currentPage = action.payload;
     },
-    createDataOrders: (state, action) => {
-      state.data.push(action.payload);
-    },
   },
   extraReducers: (builder) => {
     builder
+      // --- Obtener órdenes ---
       .addCase(getDataOrders.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(getDataOrders.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.data = action.payload;
+        if(action.payload.orders.length > 0 ) state.data = action.payload.orders;
       })
       .addCase(getDataOrders.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
       })
+
+      // --- Crear orden ---
+      .addCase(createDataOrder.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(createDataOrder.fulfilled, (state, action) => {
-        state.data.unshift(action.payload);
+        state.isLoading = false;
+        state.data.unshift(action.payload.order);
+      })
+      .addCase(createDataOrder.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+      })
+
+      // --- Eliminar orden ---
+      .addCase(deleteDataOrder.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(deleteDataOrder.fulfilled, (state, action) => {
-        state.data = state.data.filter(o => o.id !== action.payload);
+        state.isLoading = false;
+        state.data = state.data.filter(order => order.id !== action.payload.id);
+      })
+      .addCase(deleteDataOrder.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
       });
   },
 });
