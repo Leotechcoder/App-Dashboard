@@ -49,7 +49,7 @@ const RootLayout = () => {
         }
 
         if (error) toast.error(error);
-      }, 600);
+      }, 500);
     }
     return () => clearTimeout(timer);
   }, [loading, message, error, dispatch]);

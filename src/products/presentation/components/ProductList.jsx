@@ -16,6 +16,7 @@ import SearchBar from "../../../shared/presentation/components/SearchBar.jsx";
 import { useTableData } from "../../../shared/hook/useTableDataP.js";
 import { FiltrosCategorias } from "../components/CategoryFilter.jsx";
 import { toast } from "sonner"; // 👈 usamos sonner
+import { motion } from "framer-motion";
 
 const ProductList = () => {
   const dispatch = useDispatch();
@@ -96,110 +97,163 @@ const ProductList = () => {
     return <div>Loading...</div>;
   }
 
-  return (
-    <>
-      <div className="flex justify-end gap-1">
-        <button
-          onClick={handleAddProduct}
-          className="bg-blue-600 text-white h-3/4 px-4 py-2 rounded-lg hover:bg-blue-700 scale-90"
-        >
-          <span className="font-normal text-lg">+</span> Nuevo Producto
-        </button>
-        <div className="scale-90">
-          <SearchBar
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+return (
+  <>
+    {/* 🔹 Encabezado (botón + buscador) */}
+    <motion.div
+      className="flex justify-end gap-1"
+      variants={fadeUp}
+      initial="hidden"
+      animate="visible"
+    >
+      <button
+        onClick={handleAddProduct}
+        className="bg-blue-600 text-white h-3/4 px-4 py-2 rounded-lg hover:bg-blue-700 scale-90 shadow-sm hover:shadow-md transition-all"
+      >
+        <span className="font-normal text-lg">+</span> Nuevo Producto
+      </button>
+
+      <div className="scale-90">
+        <SearchBar
           tipo="producto"
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
-        </div>
-        
       </div>
+    </motion.div>
 
-      {/* 🔥 Filtros por categoría */}
+    {/* 🔹 Filtros */}
+    <motion.div
+      className="mt-2"
+      variants={fadeUp}
+      initial="hidden"
+      animate="visible"
+      transition={{ delay: 0.1 }}
+    >
       <FiltrosCategorias
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
       />
+    </motion.div>
 
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
-        <table className="min-w-full">
-          <thead className="bg-gray-50 border-b">
+    {/* 🔹 Tabla completa animada */}
+    <motion.div
+      className="bg-white rounded-lg shadow overflow-x-auto mt-3"
+      variants={fadeUp}
+      initial="hidden"
+      animate="visible"
+      transition={{ delay: 0.15 }}
+    >
+      <table className="min-w-full">
+        <thead className="bg-gray-50 border-b">
+          <tr>
+            {[
+              "ID",
+              "Producto",
+              "Descripción",
+              "Categoría",
+              "Stock",
+              "Disponible",
+              "Precio",
+              "Acciones",
+            ].map((header) => (
+              <th
+                key={header}
+                className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+
+        <tbody className="divide-y divide-gray-200">
+          {paginatedData.length === 0 ? (
             <tr>
-              {["ID", "Producto", "Descripción", "Categoría", "Stock", "Disponible", "Precio", "Acciones"].map((header) => (
-                <th
-                  key={header}
-                  className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-                >
-                  {header}
-                </th>
-              ))}
+              <td colSpan={8} className="px-4 py-4 text-center">
+                <div className="flex items-center justify-center gap-2 text-blue-600 bg-blue-50 border border-blue-200 rounded-lg p-3 max-w-md mx-auto">
+                  <AlertCircle className="h-5 w-5" />
+                  <span className="font-medium">
+                    Agrega un producto a esta categoría
+                  </span>
+                </div>
+              </td>
             </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {paginatedData.length === 0 ? (
-              <tr>
+          ) : (
+            paginatedData.map((product) => (
+              <tr key={product.id} className="hover:bg-gray-50 transition-all">
+                <td className="w-32 px-2 text-xs text-gray-500 uppercase">
+                  {product.id}
+                </td>
+                <td className="w-44 px-1 text-sm text-gray-500">
+                  {product.name}
+                </td>
+                <td className="w-72 px-1 text-sm text-gray-500">
+                  {product.description}
+                </td>
+                <td className="w-24 px-2 text-sm text-gray-500">
+                  {product.category}
+                </td>
+                <td className="w-16 px-1 text-sm text-center text-gray-500">
+                  {product.stock}
+                </td>
                 <td
-                  colSpan={8} // 👈 ajustá al número de columnas
-                  className="px-4 py-4 text-center"
+                  className={`w-16 px-2 text-sm font-medium text-center ${
+                    product.available ? "text-green-600" : "text-red-700"
+                  }`}
                 >
-                  <div className="flex items-center justify-center gap-2 text-blue-600 bg-blue-50 border border-blue-200 rounded-lg p-3 max-w-md mx-auto">
-                    <AlertCircle className="h-5 w-5" />
-                    <span className="font-medium">
-                      Agrega un producto a esta categoría
-                    </span>
+                  {product.available ? "Sí" : "No"}
+                </td>
+                <td className="px-2 py-3 text-sm text-gray-500">
+                  {product.price}
+                </td>
+                <td className="px-2 py-3">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEditar(product)}
+                      className="p-1 hover:bg-gray-100 rounded"
+                    >
+                      <Pencil className="h-4 w-4 text-gray-500" />
+                    </button>
+                    <button
+                      onClick={() => handleEliminar(product.id)}
+                      className="p-1 hover:bg-gray-100 rounded"
+                    >
+                      <Trash className="h-4 w-4 text-gray-500" />
+                    </button>
                   </div>
                 </td>
               </tr>
-            ) : (
-              paginatedData.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50">
-                  <td className="w-32 px-2 text-xs text-gray-500 uppercase">{product.id}</td>
-                  <td className="w-44 px-1 text-sm text-gray-500">{product.name}</td>
-                  <td className="w-72 px-1 text-sm text-gray-500">{product.description}</td>
-                  <td className="w-24 px-2 text-sm text-gray-500">{product.category}</td>
-                  <td className="w-16 px-1 text-sm text-center text-gray-500">
-                    {product.stock}
-                  </td>
-                  <td
-                    className={`w-16 px-2 text-sm font-medium text-center 
-                      ${product.available ? "text-green-600" : "text-red-700"} rounded-lg`}
-                  >
-                    {product.available ? "Sí" : "No"}
-                  </td>
-                  <td className="px-2 py-3 text-sm text-gray-500">{product.price}</td>
-                  <td className="px-2 py-3">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEditar(product)}
-                        className="p-1 hover:bg-gray-100 rounded"
-                      >
-                        <Pencil className="h-4 w-4 text-gray-500" />
-                      </button>
-                      <button
-                        onClick={() => handleEliminar(product.id)}
-                        className="p-1 hover:bg-gray-100 rounded"
-                      >
-                        <Trash className="h-4 w-4 text-gray-500" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          )}
+        </tbody>
+      </table>
+    </motion.div>
 
-      <div className="scale-95">
-        <Pagination
+    {/* 🔹 Paginación */}
+    <motion.div
+      className="scale-95"
+      variants={fadeUp}
+      initial="hidden"
+      animate="visible"
+      transition={{ delay: 0.25 }}
+    >
+      <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
-        </div>      
-      
-    </>
-  );
+    </motion.div>
+  </>
+);
+
+
+
 };
 
 export default ProductList;

@@ -16,11 +16,13 @@ import InfoButton from "../components/InfoButton";
 // 🧠 Redux slices
 import {
   getDataOrders,
+  setClearMessage,
   setSelectedOrder,
   setShowHelpOrders,
 } from "../../application/orderSlice";
 import { getData, voidItemSelected } from "../../application/itemSlice";
 import { voidSelectedProduct } from "../../../products/application/productSlice";
+import { toast } from "sonner";
 
 // =========================
 // 🧭 Componente principal
@@ -28,14 +30,15 @@ import { voidSelectedProduct } from "../../../products/application/productSlice"
 const OrdersPage = () => {
   const dispatch = useDispatch();
   const hasFetched = useRef(false);
-
-  const { isLoading, error, selectedOrder, showHelp } = useSelector(
+  const shownMessageRef = useRef("");
+  
+  const { isLoading, error, selectedOrder, showHelp, message } = useSelector(
     (state) => state.orders
   );
 
   const [activeTab, setActiveTab] = useState("pending");
   const [createOrder, setCreateOrder] = useState(false);
-
+  
   // =========================
   // 🔄 Ciclo de vida
   // =========================
@@ -46,7 +49,15 @@ const OrdersPage = () => {
       dispatch(getData());
     }
   }, [dispatch]);
-
+  
+  // 🚀 Mostrar toast cuando haya message
+    useEffect(() => {
+      if (message && shownMessageRef.current !== message) {
+        toast(message); // dispara toast
+        shownMessageRef.current = message;
+        dispatch(setClearMessage()); // limpia para evitar repetición
+      }
+    }, [message, dispatch]);
   // =========================
   // ⚙️ Handlers
   // =========================
@@ -66,18 +77,16 @@ const OrdersPage = () => {
   // =========================
   // 🚦 Estados intermedios
   // =========================
-  if (isLoading)
-    return <Message text="Cargando órdenes..." type="loading" />;
-  if (error)
-    return <Message text={`Error: ${error}`} type="error" />;
-  if (selectedOrder || createOrder)
-    return <OrderDetails onBack={handleBack} />;
+  if (isLoading) return <Message text="Cargando órdenes..." type="loading" />;
+  if (error) return <Message text={`Error: ${error}`} type="error" />;
+  if (selectedOrder || createOrder) return <OrderDetails onBack={handleBack} />;
+
 
   // =========================
   // 🧱 Render principal
   // =========================
   return (
-    <main className="p-5 pt-3 w-full max-w-screen-xl">
+    <main className="p-5 pt-6 w-full max-w-screen-xl">
       <AnimatePresence mode="wait">
         {/* Encabezado principal */}
         {!showHelp && (
@@ -119,10 +128,19 @@ const OrdersPage = () => {
       />
 
       {/* Tabla de órdenes */}
-      <OrdersTable
-        setSelectedOrder={handleSetSelectedOrder}
-        activeTab={activeTab}
-      />
+      {/* Tabla de órdenes con animación */}
+      <motion.div
+        key="ordersTable"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 15 }}
+        transition={{ duration: 0.7, ease: "easeInOut" }}
+      >
+        <OrdersTable
+          setSelectedOrder={handleSetSelectedOrder}
+          activeTab={activeTab}
+        />
+      </motion.div>
     </main>
   );
 };
@@ -134,10 +152,7 @@ const OrdersPage = () => {
 // Mensajes de carga y error
 const Message = ({ text, type }) => {
   const baseStyles = "text-center py-10 text-base font-medium";
-  const color =
-    type === "error"
-      ? "text-red-500"
-      : "text-gray-600";
+  const color = type === "error" ? "text-red-500" : "text-gray-600";
   return <div className={`${baseStyles} ${color}`}>{text}</div>;
 };
 
@@ -156,18 +171,19 @@ const HelpContent = ({ onClose }) => (
         Gestión de Órdenes
       </h2>
       <p className="text-gray-600 leading-relaxed text-sm ">
-        En esta sección podés <b>crear nuevas órdenes de compra</b>,
-        agregar productos, definir la <b>forma de pago</b> y controlar el{" "}
+        En esta sección podés <b>crear nuevas órdenes de compra</b>, agregar
+        productos, definir la <b>forma de pago</b> y controlar el{" "}
         <b>estado de envío</b>.
       </p>
       <p className="text-gray-600 mt-2 leading-relaxed text-sm">
-        Cada orden incluye información detallada del cliente, los artículos solicitados, 
-        los importes cobrados y el seguimiento del envío. 
-        Gestioná tus ventas de forma centralizada y mantené un control total del flujo de pedidos.
+        Cada orden incluye información detallada del cliente, los artículos
+        solicitados, los importes cobrados y el seguimiento del envío. Gestioná
+        tus ventas de forma centralizada y mantené un control total del flujo de
+        pedidos.
       </p>
       <p className="text-gray-600 mt-2  text-sm">
-        Usá la barra de búsqueda para encontrar órdenes por nombre o ID, 
-        o filtrá por su estado entre <b>pendientes</b> y <b>entregadas</b>.
+        Usá la barra de búsqueda para encontrar órdenes por nombre o ID, o
+        filtrá por su estado entre <b>pendientes</b> y <b>entregadas</b>.
       </p>
     </div>
   </div>

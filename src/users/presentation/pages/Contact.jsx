@@ -82,11 +82,22 @@ const Contact = () => {
         {!showHelp ? headerContent : helpContent}
       </AnimatePresence>
 
-      <UserForm />
+      <motion.div
+        key="form"
+        {...fadeSlide}
+        transition={{ ...fadeSlide.transition, delay: 0.2 }}
+      >
+        <UserForm />
+      </motion.div>
 
-      <section className="px-6 mb-3">
+      <motion.section
+        key="list"
+        className="px-6 mb-3"
+        {...fadeSlide}
+        transition={{ ...fadeSlide.transition, delay: 0.4 }}
+      >
         <UserList />
-      </section>
+      </motion.section>
     </main>
   );
 };

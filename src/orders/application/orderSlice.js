@@ -28,6 +28,7 @@ const initialState = {
   error: null,
   date: new Date().toISOString(),
   paginationOrders: paginacionOrders,
+  message: null,
   showHelp: false,
 };
 
@@ -46,6 +47,9 @@ const orderSlice = createSlice({
     },
     setShowHelpOrders: (state) => {
       state.showHelp = !state.showHelp;
+    },
+    setClearMessage: (state) => {
+      state.message = null;
     }
   },
   extraReducers: (builder) => {
@@ -70,6 +74,7 @@ const orderSlice = createSlice({
       .addCase(createDataOrder.fulfilled, (state, action) => {
         state.isLoading = false;
         state.data.unshift(action.payload.order);
+        state.message = "Orden creada! (OvO)"
       })
       .addCase(createDataOrder.rejected, (state, action) => {
         state.isLoading = false;
@@ -84,6 +89,7 @@ const orderSlice = createSlice({
         state.isLoading = false;
         console.log(action)
         state.data = state.data.filter(order => order.id !== action.meta.arg);
+        state.message = "Orden eliminada (X_X)"
       })
       .addCase(deleteDataOrder.rejected, (state, action) => {
         state.isLoading = false;
@@ -92,5 +98,5 @@ const orderSlice = createSlice({
   },
 });
 
-export const { setSelectedOrder, setFilteredOrders, setCurrentPageOrders, setShowHelpOrders } = orderSlice.actions;
+export const { setSelectedOrder, setFilteredOrders, setCurrentPageOrders, setShowHelpOrders, setClearMessage } = orderSlice.actions;
 export default orderSlice.reducer;
