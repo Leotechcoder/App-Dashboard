@@ -11,7 +11,7 @@ import OrderDetails from "../components/orderDetails/OrderDetails";
 import { ButtonAddOrder } from "../components/Buttons";
 import OrdersTable from "../components/OrdersTable";
 import { SearchOrder } from "../components/SearchOrder";
-import InfoButton from "../components/infoButton";
+import InfoButton from "../components/InfoButton";
 
 // 🧠 Redux slices
 import {
