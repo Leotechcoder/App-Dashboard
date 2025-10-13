@@ -16,17 +16,10 @@ export function useTableData({ stateKey, itemsPerPage, searchFields, setFiltered
     );
   }, [data, initialData]);
 
-  const filteredData = useMemo(() => {
+   const filteredData = useMemo(() => {
     if (!searchTerm) return sortedData;
     return sortedData.filter((item) =>
-      searchFields.some((field) => {
-        const value = item[field];
-        if (typeof value === "string")
-          return value.toLowerCase().includes(searchTerm.toLowerCase());
-        if (typeof value === "number")
-          return value.toString().includes(searchTerm);
-        return false;
-      })
+      searchFields.some((field) => item[field]?.toString().toLowerCase().includes(searchTerm.toLowerCase()))
     );
   }, [sortedData, searchFields, searchTerm]);
 

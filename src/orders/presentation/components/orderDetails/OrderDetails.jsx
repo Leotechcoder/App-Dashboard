@@ -134,12 +134,11 @@ const OrderDetails = ({ onBack }) => {
     } else {
       await dispatch(createDataOrder(newOrder));
     }
-    await dispatch(getDataOrders());
     onBack();
   };
 
   return (
-    <main className="py-5 pt-2">
+    <main className="py-5 pt-2 scale-90">
       {isModalOpen && (
         <ItemModal
           setModal={setIsModalOpen}

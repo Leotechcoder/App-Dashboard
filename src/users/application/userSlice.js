@@ -77,6 +77,7 @@ const initialState = {
   isOpen: false,
   paginationUsers: paginacionUsers,
   message: null,
+  showHelp: true,
 }
 
 // 🔹 Slice
@@ -106,6 +107,9 @@ const userSlice = createSlice({
     setTotalItemsUsers: (state, action) => {
       state.paginationUsers.total = action.payload
     },
+    setShowHelpUsers: (state) =>{
+      state.showHelp = !state.showHelp;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -271,6 +275,7 @@ export const {
   setFilteredUser,
   setCurrentPageUsers,
   setTotalItemsUsers,
+  setShowHelpUsers,
 } = userSlice.actions
 
 export default userSlice.reducer

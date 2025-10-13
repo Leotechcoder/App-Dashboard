@@ -28,6 +28,7 @@ const initialState = {
   error: null,
   date: new Date().toISOString(),
   paginationOrders: paginacionOrders,
+  showHelp: true,
 };
 
 const orderSlice = createSlice({
@@ -43,6 +44,9 @@ const orderSlice = createSlice({
     setCurrentPageOrders: (state, action) => {
       state.paginationOrders.currentPage = action.payload;
     },
+    setShowHelpOrders: (state) => {
+      state.showHelp = !state.showHelp;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -78,7 +82,8 @@ const orderSlice = createSlice({
       })
       .addCase(deleteDataOrder.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.data = state.data.filter(order => order.id !== action.payload.id);
+        console.log(action)
+        state.data = state.data.filter(order => order.id !== action.meta.arg);
       })
       .addCase(deleteDataOrder.rejected, (state, action) => {
         state.isLoading = false;
@@ -87,5 +92,5 @@ const orderSlice = createSlice({
   },
 });
 
-export const { setSelectedOrder, setFilteredOrders, setCurrentPageOrders } = orderSlice.actions;
+export const { setSelectedOrder, setFilteredOrders, setCurrentPageOrders, setShowHelpOrders } = orderSlice.actions;
 export default orderSlice.reducer;

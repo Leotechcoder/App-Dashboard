@@ -25,33 +25,33 @@ const OrderItemsTable = ({
         />
       </div>
 
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-x-auto">
         <table className="min-w-full table-fixed border-t border-gray-200 text-sm">
           <thead className="bg-gray-50 sticky top-0 text-xs">
-  <tr>
-    <th className="w-16 px-3 py-2 text-left font-medium text-gray-500 uppercase">
-      ID
-    </th>
-    <th className="w-44 px-3 py-2 text-left font-medium text-gray-500 uppercase">
-      Producto
-    </th>
-    <th className="w-44 px-3 py-2 text-left font-medium text-gray-500 uppercase">
-      Descripción
-    </th>
-    <th className="w-16 px-3 py-2 text-center font-medium text-gray-500 uppercase">
-      Precio
-    </th>
-    <th className="w-16 px-3 py-2 text-center font-medium text-gray-500 uppercase">
-      Cantidad
-    </th>
-    <th className="w-16 px-3 py-2 text-center font-medium text-gray-500 uppercase">
-      Total
-    </th>
-    <th className="w-24 px-3 py-2 text-center font-medium text-gray-500 uppercase">
-      Acción
-    </th>
-  </tr>
-</thead>
+            <tr>
+              <th className="w-16 px-3 py-2 text-left font-medium text-gray-500 uppercase">
+                ID
+              </th>
+              <th className="w-44 px-3 py-2 text-left font-medium text-gray-500 uppercase">
+                Producto
+              </th>
+              <th className="w-44 px-3 py-2 text-left font-medium text-gray-500 uppercase">
+                Descripción
+              </th>
+              <th className="w-16 px-3 py-2 text-center font-medium text-gray-500 uppercase">
+                Precio
+              </th>
+              <th className="w-16 px-3 py-2 text-center font-medium text-gray-500 uppercase">
+                Cantidad
+              </th>
+              <th className="w-16 px-3 py-2 text-center font-medium text-gray-500 uppercase">
+                Total
+              </th>
+              <th className="w-24 px-3 py-2 text-center font-medium text-gray-500 uppercase">
+                Acción
+              </th>
+            </tr>
+          </thead>
 
           <tbody className="divide-y divide-gray-200">
             {items.length === 0 ? (
@@ -67,11 +67,19 @@ const OrderItemsTable = ({
               items.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50">
                   <td className="pl-2 h-10 truncate max-w-[32px]">{item.id}</td>
-                  <td className="pl-2 h-10 truncate max-w-[70px]">{item.productName}</td>
-                  <td className="pl-2 h-10 truncate max-w-[60px]">{item.description}</td>
-                  <td className="w-18 h-10 text-center">{formatPrice(item.unitPrice)}</td>
+                  <td className="pl-2 h-10 truncate max-w-[70px]">
+                    {item.productName}
+                  </td>
+                  <td className="pl-2 h-10 truncate max-w-[60px]">
+                    {item.description}
+                  </td>
+                  <td className="w-18 h-10 text-center">
+                    {formatPrice(item.unitPrice)}
+                  </td>
                   <td className="w-20 h-10 text-center">{item.quantity}</td>
-                  <td className="w-18 h-10 text-center">{item.unitPrice * item.quantity}</td>
+                  <td className="w-18 h-10 text-center">
+                    {item.unitPrice * item.quantity}
+                  </td>
                   <td className="w-30 h-10 flex items-center justify-center gap-2">
                     <button
                       onClick={() => removeProduct(item.id)}
@@ -95,7 +103,9 @@ const OrderItemsTable = ({
 
       <div className="p-3 border-t border-gray-200 bg-white flex justify-between">
         <span className="text-base font-semibold">Net Total</span>
-        <span className="text-xl font-bold">${calculateSubTotal.toFixed(2)}</span>
+        <span className="text-xl font-bold">
+          ${calculateSubTotal.toFixed(2)}
+        </span>
       </div>
     </div>
   );

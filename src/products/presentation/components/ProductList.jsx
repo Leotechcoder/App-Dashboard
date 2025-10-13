@@ -98,18 +98,21 @@ const ProductList = () => {
 
   return (
     <>
-      <div className="flex justify-end gap-3 min-h-max">
+      <div className="flex justify-end gap-1">
         <button
           onClick={handleAddProduct}
-          className="bg-blue-600 text-white h-3/4 px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="bg-blue-600 text-white h-3/4 px-4 py-2 rounded-lg hover:bg-blue-700 scale-90"
         >
           <span className="font-normal text-lg">+</span> Nuevo Producto
         </button>
-        <SearchBar
+        <div className="scale-90">
+          <SearchBar
           tipo="producto"
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
+        </div>
+        
       </div>
 
       {/* 🔥 Filtros por categoría */}
@@ -137,7 +140,7 @@ const ProductList = () => {
               <tr>
                 <td
                   colSpan={8} // 👈 ajustá al número de columnas
-                  className="px-4 py-6 text-center"
+                  className="px-4 py-4 text-center"
                 >
                   <div className="flex items-center justify-center gap-2 text-blue-600 bg-blue-50 border border-blue-200 rounded-lg p-3 max-w-md mx-auto">
                     <AlertCircle className="h-5 w-5" />
@@ -150,21 +153,21 @@ const ProductList = () => {
             ) : (
               paginatedData.map((product) => (
                 <tr key={product.id} className="hover:bg-gray-50">
-                  <td className="px-2 py-4 text-sm text-gray-500">{product.id}</td>
-                  <td className="px-2 py-4 text-sm text-gray-500">{product.name}</td>
-                  <td className="px-2 py-4 text-sm text-gray-500">{product.description}</td>
-                  <td className="px-2 py-4 text-sm text-gray-500">{product.category}</td>
-                  <td className="px-2 py-4 text-sm text-center text-gray-500">
+                  <td className="w-32 px-2 text-xs text-gray-500 uppercase">{product.id}</td>
+                  <td className="w-44 px-1 text-sm text-gray-500">{product.name}</td>
+                  <td className="w-72 px-1 text-sm text-gray-500">{product.description}</td>
+                  <td className="w-24 px-2 text-sm text-gray-500">{product.category}</td>
+                  <td className="w-16 px-1 text-sm text-center text-gray-500">
                     {product.stock}
                   </td>
                   <td
-                    className={`px-2 py-4 text-sm font-medium text-center 
+                    className={`w-16 px-2 text-sm font-medium text-center 
                       ${product.available ? "text-green-600" : "text-red-700"} rounded-lg`}
                   >
                     {product.available ? "Sí" : "No"}
                   </td>
-                  <td className="px-2 py-4 text-sm text-gray-500">{product.price}</td>
-                  <td className="px-2 py-4">
+                  <td className="px-2 py-3 text-sm text-gray-500">{product.price}</td>
+                  <td className="px-2 py-3">
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEditar(product)}
@@ -187,11 +190,14 @@ const ProductList = () => {
         </table>
       </div>
 
-      <Pagination
+      <div className="scale-95">
+        <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
+        </div>      
+      
     </>
   );
 };

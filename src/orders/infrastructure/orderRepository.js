@@ -12,8 +12,7 @@ export class OrderRepository {
   }
 
   async delete(orderId) {
-    await orderApi.deleteOrder(orderId);
-    return orderId;
+    return await orderApi.deleteOrder(orderId);
   }
 
   // 🔁 Transformadores

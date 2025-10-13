@@ -2,8 +2,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   return (
-    <div className="px-6 py-3 flex items-center justify-between border-t">
-      <div className="text-sm text-gray-500">
+    <div className="px-6 py-3 flex items-center justify-between border-t scale-95">
+      <div className="text-sm text-gray-500 ml-2">
         Página {currentPage} de {totalPages}
       </div>
       <div className="flex gap-2">

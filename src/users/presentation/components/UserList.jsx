@@ -16,7 +16,7 @@ import KpisClientes from "./KpisClientes.jsx";
 
 const UserList = () => {
   const dispatch = useDispatch();
-  const { paginationUsers, data } = useSelector(
+  const { paginationUsers } = useSelector(
     (store) => store.users,
     shallowEqual
   );

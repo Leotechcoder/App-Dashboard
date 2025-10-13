@@ -48,6 +48,7 @@ const initialState = {
   isFormView: false,
   isEditing: null,
   message: null,
+  showHelp: true,
 }
 
 const productSlice = createBaseSlice(
@@ -80,6 +81,9 @@ const productSlice = createBaseSlice(
     clearMessage: (state) => {
       state.message = null;
     },
+    setShowHelpProducts: (state) => {
+      state.showHelp = !state.showHelp;
+    }
   },
   (builder) => {
     builder
@@ -173,6 +177,7 @@ export const {
   setTotalItems,
   setFilteredProduct,
   clearMessage,
+  setShowHelpProducts,
 } = productSlice.actions;
 
 export default productSlice.reducer;

@@ -5,7 +5,7 @@ export const FiltrosCategorias = ({ onCategoryChange, selectedCategory }) => {
   const categorias = useSelector((store) => store.products.categorias)
 
   return (
-    <div className="flex gap-4 border-b mb-6 overflow-x-auto">
+    <div className="flex gap-4 border-b my-3 overflow-x-auto">
       <button
         className={`px-4 py-2 whitespace-nowrap ${
           !selectedCategory ? "border-b-2 border-orange-600 text-orange-600" : "text-gray-500"

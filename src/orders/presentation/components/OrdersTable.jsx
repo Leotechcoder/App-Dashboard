@@ -13,28 +13,31 @@ import { useTableData } from "../../../shared/hook/useTableDataO.js";
 
 const OrdersTable = ({ setSelectedOrder, activeTab }) => {
   const dispatch = useDispatch();
-  const { data, isLoading, error, paginationOrders } = useSelector((store) => store.orders);
+  const { data, isLoading, error, paginationOrders } = useSelector(
+    (store) => store.orders
+  );
   const dataItems = useSelector((store) => store.items.data);
 
-  const memoSetFilteredOrders = useCallback((data) => dispatch(setFilteredOrders(data)), [dispatch]);
-  const memoSetCurrentPageOrders = useCallback((page) => dispatch(setCurrentPageOrders(page)), [dispatch]);
+  const memoSetFilteredOrders = useCallback(
+    (data) => dispatch(setFilteredOrders(data)),
+    [dispatch]
+  );
+  const memoSetCurrentPageOrders = useCallback(
+    (page) => dispatch(setCurrentPageOrders(page)),
+    [dispatch]
+  );
 
   if (!data || !Array.isArray(data)) return null; // <--- evita hook con data vacía
 
-  const { currentPage, paginatedData, totalPages, handlePageChange } = useTableData({
-    stateKey: "orders",
-    itemsPerPage: paginationOrders.itemsPerPage,
-    searchFields: ["id"],
-    setFilteredData: memoSetFilteredOrders,
-    setCurrentPage: memoSetCurrentPageOrders,
-    initialData: data,
-  });
-
-  // useEffect(() => {
-  //   if (!dataItems?.length) {
-  //     dispatch(getData());
-  //   }
-  // }, [dataItems, dispatch]);
+  const { currentPage, paginatedData, totalPages, handlePageChange } =
+    useTableData({
+      stateKey: "orders",
+      itemsPerPage: paginationOrders.itemsPerPage,
+      searchFields: ["id"],
+      setFilteredData: memoSetFilteredOrders, 
+      setCurrentPage: memoSetCurrentPageOrders,
+      initialData: data,
+    });
 
   const formatDate = (date) =>
     new Date(date).toLocaleString("es-AR", {
@@ -63,6 +66,7 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
   const handleDeleteOrder = useCallback(
     (id) => {
       if (window.confirm("¿Estás seguro de que deseas eliminar esta orden?")) {
+        // 1️⃣ Dispatch para eliminar en backend
         dispatch(deleteDataOrder(id));
       }
     },
@@ -76,15 +80,25 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
 
   const newestOrderId = paginatedData[0]?.id; // Primera orden de la página
 
-  if (isLoading) return <div className="text-center py-4 text-gray-600">Cargando...</div>;
-  if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
-  if (!data || data.length === 0) {
+  if (isLoading)
+    return <div className="text-center py-4 text-gray-600">Cargando...</div>;
+  if (error)
+    return <div className="text-center py-4 text-red-500">{error}</div>;
+  if (!filteredOrders || filteredOrders.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
+      <div className="bg-white rounded-lg shadow overflow-x-auto scale-90">
         <table className="min-w-full">
           <thead className="bg-gray-50">
             <tr>
-              {["ID", "ID de Usuario", "Cliente", "Importe", "Estado", "Última actualización", "Acciones"].map((head) => (
+              {[
+                "ID",
+                "ID de Usuario",
+                "Cliente",
+                "Importe",
+                "Estado",
+                "Última actualización",
+                "Acciones",
+              ].map((head) => (
                 <th
                   key={head}
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
@@ -97,7 +111,8 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
           <tbody>
             <tr>
               <td colSpan="7" className="py-8 text-center text-gray-500">
-                🚀 No hay órdenes registradas.<br />
+                No hay órdenes registradas.
+                <br />
                 <span className="text-sm text-gray-400">
                   Cargá una nueva orden para empezar.
                 </span>
@@ -109,15 +124,25 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
     );
   }
 
-
   return (
     <>
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
+      <div className="bg-white rounded-lg shadow overflow-x-auto scale-90">
         <table className="min-w-full">
           <thead className="bg-gray-50">
             <tr>
-              {["ID", "ID de Usuario", "Cliente", "Importe", "Estado", "Última actualización", "Acciones"].map((head) => (
-                <th key={head} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              {[
+                "ID",
+                "ID de Usuario",
+                "Cliente",
+                "Importe",
+                "Estado",
+                "Última actualización",
+                "Acciones",
+              ].map((head) => (
+                <th
+                  key={head}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
                   {head}
                 </th>
               ))}
@@ -128,23 +153,45 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
               filteredOrders.map((order) => (
                 <motion.tr
                   key={order.id}
-                  initial={order.id === newestOrderId ? { backgroundColor: "#bbf7d0" } : { backgroundColor: "#ffffff" }}
+                  initial={
+                    order.id === newestOrderId
+                      ? { backgroundColor: "#bbf7d0" }
+                      : { backgroundColor: "#ffffff" }
+                  }
                   animate={{ backgroundColor: "#ffffff" }}
                   transition={{ duration: 1.5 }}
                   className="hover:bg-gray-50"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 max-w-[8rem]">{order.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 max-w-[8rem] overflow-hidden">{order.userId}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 max-w-[9rem] overflow-hidden">{order.userName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 w-10">${order.totalAmount}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 w-10">{order.status}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatDate(order.updatedAt || order.createdAt)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 max-w-[8rem]">
+                    {order.id}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 max-w-[8rem] overflow-hidden">
+                    {order.userId}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 max-w-[9rem] overflow-hidden">
+                    {order.userName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 w-10">
+                    ${order.totalAmount}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 w-10">
+                    {order.status}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {formatDate(order.updatedAt || order.createdAt)}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex items-center space-x-3">
-                      <button onClick={() => handleOrderSelect(order)} className="text-gray-600 hover:text-blue-600">
+                      <button
+                        onClick={() => handleOrderSelect(order)}
+                        className="text-gray-600 hover:text-blue-600"
+                      >
                         <Pencil className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDeleteOrder(order.id)} className="text-gray-600 hover:text-red-600">
+                      <button
+                        onClick={() => handleDeleteOrder(order.id)}
+                        className="text-gray-600 hover:text-red-600"
+                      >
                         <Trash2 className="w-4 h-4" />
                       </button>
                       <button className="text-gray-600 hover:text-green-600">
@@ -156,14 +203,20 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="text-center py-4">No hay órdenes para mostrar</td>
+                <td colSpan="7" className="text-center py-4">
+                  No hay órdenes para mostrar
+                </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </>
   );
 };

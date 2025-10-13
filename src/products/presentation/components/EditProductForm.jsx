@@ -101,7 +101,7 @@ const EditProductForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-6 px-4 lg:pt-0 bg-gray-50 lg:px-12">
+    <div className="min-h-screen flex flex-col items-center py-6 px-4 lg:pt-0 bg-gray-100 lg:px-12">
       <div className="flex justify-start w-full pl-5">
         <button
           onClick={handleGoBack}
@@ -113,7 +113,7 @@ const EditProductForm = () => {
       </div>
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-md overflow-hidden lg:scale-90 lg:flex lg:items-stretch">
         <div
-          className="w-full lg:w-1/2 h-64 lg:h-auto bg-gray-100 flex items-center justify-center"
+          className="w-full lg:w-1/2 h-64 lg:h-auto bg-gray-50 flex items-center justify-center"
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleFileDrop}
         >

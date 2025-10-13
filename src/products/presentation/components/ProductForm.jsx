@@ -104,7 +104,7 @@ const ProductForm = () => {
   };
 
   return (
-    <div className="h-full flex flex-col items-center py-6 px-4 bg-gray-200 lg:px-12">
+    <div className="h-full flex flex-col items-center py-6 px-4 bg-gray-100 lg:px-12">
       <div className="flex justify-start w-full pl-5">
         <button
           onClick={handleGoBack}
