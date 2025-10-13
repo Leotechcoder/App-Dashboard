@@ -7,7 +7,7 @@ import FormProduct from "../components/ProductForm.jsx";
 import EditProductForm from "../components/EditProductForm.jsx";
 import TablaProductos from "../components/ProductList.jsx";
 import { Info } from "lucide-react";
-import InfoButton from "../../../orders/presentation/components/infoButton.jsx";
+import InfoButton from "../../../orders/presentation/components/InfoButton.jsx";
 import { setShowHelpProducts } from "../../application/productSlice.js";
 
 // =========================
