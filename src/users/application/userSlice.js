@@ -77,7 +77,7 @@ const initialState = {
   isOpen: false,
   paginationUsers: paginacionUsers,
   message: null,
-  showHelp: true,
+  showHelp: false,
 }
 
 // 🔹 Slice

@@ -48,7 +48,7 @@ const initialState = {
   isFormView: false,
   isEditing: null,
   message: null,
-  showHelp: true,
+  showHelp: false,
 }
 
 const productSlice = createBaseSlice(

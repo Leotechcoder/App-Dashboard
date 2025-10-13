@@ -28,7 +28,7 @@ const initialState = {
   error: null,
   date: new Date().toISOString(),
   paginationOrders: paginacionOrders,
-  showHelp: true,
+  showHelp: false,
 };
 
 const orderSlice = createSlice({

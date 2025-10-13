@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Info } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setShowHelpUsers } from "../../application/userSlice.js";
-import InfoButton from "../../../orders/presentation/components/infoButton.jsx";
+import InfoButton from "../../../orders/presentation/components/InfoButton.jsx";
 import UserForm from "../components/UserForm.jsx";
 import UserList from "../components/UserList.jsx";
 
