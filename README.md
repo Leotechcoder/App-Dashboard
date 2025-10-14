@@ -22,7 +22,12 @@ El proyecto está desarrollado bajo los principios de arquitectura hexagonal, co
 - Permitir agregar nuevas funcionalidades sin afectar las capas ya existentes.
 
 Demo
+
 Podés ver una demo en vivo acá:
+
 https://app-dashboard-xi.vercel.app/
+
 Usuario: correo@ejemplo.com
+
 Contraseña: Correo1234
+
