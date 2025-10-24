@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import { Info } from "lucide-react";
+import { toast } from "sonner";
 
 // 🧩 Componentes internos
 import OrderDetails from "../components/orderDetails/OrderDetails";
@@ -22,7 +23,6 @@ import {
 } from "../../application/orderSlice";
 import { getData, voidItemSelected } from "../../application/itemSlice";
 import { voidSelectedProduct } from "../../../products/application/productSlice";
-import { toast } from "sonner";
 
 // =========================
 // 🧭 Componente principal
@@ -31,14 +31,17 @@ const OrdersPage = () => {
   const dispatch = useDispatch();
   const hasFetched = useRef(false);
   const shownMessageRef = useRef("");
-  
+
   const { isLoading, error, selectedOrder, showHelp, message } = useSelector(
     (state) => state.orders
   );
 
   const [activeTab, setActiveTab] = useState("pending");
   const [createOrder, setCreateOrder] = useState(false);
-  
+
+  // 👇 Nuevo estado local para mostrar recarga suave
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   // =========================
   // 🔄 Ciclo de vida
   // =========================
@@ -49,25 +52,37 @@ const OrdersPage = () => {
       dispatch(getData());
     }
   }, [dispatch]);
-  
+
   // 🚀 Mostrar toast cuando haya message
-    useEffect(() => {
-      if (message && shownMessageRef.current !== message) {
-        toast(message); // dispara toast
+  useEffect(() => {
+    if (message && shownMessageRef.current !== message) {
+      toast.success(message)
+      setTimeout(() => {
         shownMessageRef.current = message;
-        dispatch(setClearMessage()); // limpia para evitar repetición
-      }
-    }, [message, dispatch]);
+      dispatch(setClearMessage());
+      }, 2000);
+      
+    }
+  }, [message, dispatch]);
+
   // =========================
   // ⚙️ Handlers
   // =========================
   const handleCreateOrder = () => setCreateOrder(true);
 
-  const handleBack = () => {
+  const handleBack = async () => {
+    // Limpieza normal
     dispatch(voidSelectedProduct());
     dispatch(voidItemSelected());
     dispatch(setSelectedOrder(null));
     setCreateOrder(false);
+
+    // 👇 Nueva lógica de recarga visual
+    setIsRefreshing(true);
+    // Refetch suave
+    await dispatch(getDataOrders());
+    // Pequeño delay visual para UX
+    setTimeout(() => setIsRefreshing(false), 500);
   };
 
   const handleSetSelectedOrder = (order) => dispatch(setSelectedOrder(order));
@@ -77,10 +92,10 @@ const OrdersPage = () => {
   // =========================
   // 🚦 Estados intermedios
   // =========================
-  if (isLoading) return <Message text="Cargando órdenes..." type="loading" />;
+  if (isLoading && !isRefreshing ) return <Message text="Cargando órdenes..." type="loading" />;
   if (error) return <Message text={`Error: ${error}`} type="error" />;
-  if (selectedOrder || createOrder) return <OrderDetails onBack={handleBack} />;
-
+  if (selectedOrder || createOrder)
+    return <OrderDetails onBack={handleBack} />;
 
   // =========================
   // 🧱 Render principal
@@ -127,20 +142,39 @@ const OrdersPage = () => {
         onCreateOrder={handleCreateOrder}
       />
 
-      {/* Tabla de órdenes */}
-      {/* Tabla de órdenes con animación */}
-      <motion.div
-        key="ordersTable"
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 15 }}
-        transition={{ duration: 0.7, ease: "easeInOut" }}
-      >
-        <OrdersTable
-          setSelectedOrder={handleSetSelectedOrder}
-          activeTab={activeTab}
-        />
-      </motion.div>
+      {/* 👇 Bloque condicional para recarga suave */}
+      <AnimatePresence mode="wait">
+        {isRefreshing ? (
+          <motion.div
+            key="refreshing"
+            className="flex justify-center items-center h-40 text-gray-500 font-medium text-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <motion.div
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ repeat: Infinity, duration: 1.2 }}
+            >
+              🔄 Actualizando órdenes...
+            </motion.div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="ordersTable"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 15 }}
+            transition={{ duration: 0.7, ease: "easeInOut" }}
+          >
+            <OrdersTable
+              setSelectedOrder={handleSetSelectedOrder}
+              activeTab={activeTab}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 };
@@ -148,15 +182,12 @@ const OrdersPage = () => {
 // =========================
 // 🧩 Subcomponentes
 // =========================
-
-// Mensajes de carga y error
 const Message = ({ text, type }) => {
   const baseStyles = "text-center py-10 text-base font-medium";
   const color = type === "error" ? "text-red-500" : "text-gray-600";
   return <div className={`${baseStyles} ${color}`}>{text}</div>;
 };
 
-// Bloque de ayuda contextual
 const HelpContent = ({ onClose }) => (
   <div className="flex items-start space-x-3 relative p-2">
     <button
@@ -171,25 +202,17 @@ const HelpContent = ({ onClose }) => (
         Gestión de Órdenes
       </h2>
       <p className="text-gray-600 leading-relaxed text-sm ">
-        En esta sección podés <b>crear nuevas órdenes de compra</b>, agregar
-        productos, definir la <b>forma de pago</b> y controlar el{" "}
-        <b>estado de envío</b>.
+        En esta sección podés <b>crear nuevas órdenes</b>, agregar productos,
+        definir la <b>forma de pago</b> y controlar el <b>estado de envío</b>.
       </p>
       <p className="text-gray-600 mt-2 leading-relaxed text-sm">
-        Cada orden incluye información detallada del cliente, los artículos
-        solicitados, los importes cobrados y el seguimiento del envío. Gestioná
-        tus ventas de forma centralizada y mantené un control total del flujo de
-        pedidos.
-      </p>
-      <p className="text-gray-600 mt-2  text-sm">
-        Usá la barra de búsqueda para encontrar órdenes por nombre o ID, o
-        filtrá por su estado entre <b>pendientes</b> y <b>entregadas</b>.
+        Cada orden incluye información detallada del cliente, los artículos,
+        importes cobrados y seguimiento del envío.
       </p>
     </div>
   </div>
 );
 
-// Tabs + Acciones
 const HeaderActions = ({ activeTab, setActiveTab, onCreateOrder }) => (
   <div className="flex justify-between items-center mb-6 scale-90">
     <div className="flex space-x-2">
@@ -212,13 +235,12 @@ const HeaderActions = ({ activeTab, setActiveTab, onCreateOrder }) => (
   </div>
 );
 
-// Botón de Tabs
 const TabButton = ({ label, isActive, onClick }) => (
   <button
     className={`px-4 py-2 rounded-full transition-colors font-medium ${
       isActive
         ? "bg-amber-600 text-white shadow-sm"
-        : "bg-gray-100 text-gray-600 hover:bg-gray-200 "
+        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
     }`}
     onClick={onClick}
   >
@@ -226,7 +248,4 @@ const TabButton = ({ label, isActive, onClick }) => (
   </button>
 );
 
-// =========================
-// 🏁 Export
-// =========================
 export default OrdersPage;

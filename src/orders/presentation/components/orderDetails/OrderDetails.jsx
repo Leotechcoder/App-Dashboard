@@ -29,6 +29,7 @@ const OrderDetails = ({ onBack }) => {
   const [orderDetails, setOrderDetails] = useState({
     userId: idGenerator("Users"),
     userName: "Invitado",
+    status: "pending",
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [updateItem, setUpdateItem] = useState(false);

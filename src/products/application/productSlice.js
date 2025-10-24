@@ -81,6 +81,9 @@ const productSlice = createBaseSlice(
     clearMessage: (state) => {
       state.message = null;
     },
+    clearError: (state) =>{
+      state.error = null;
+    },
     setShowHelpProducts: (state) => {
       state.showHelp = !state.showHelp;
     }
@@ -177,6 +180,7 @@ export const {
   setTotalItems,
   setFilteredProduct,
   clearMessage,
+  clearError,
   setShowHelpProducts,
 } = productSlice.actions;
 

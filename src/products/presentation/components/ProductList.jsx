@@ -8,7 +8,8 @@ import {
   setFormView,
   setEditingProduct,
   setCurrentPage,
-  clearMessage, // 👈 importamos para limpiar
+  clearMessage,
+  clearError, // 👈 importamos para limpiar
 } from "../../application/productSlice.js";
 import { Pencil, Trash, AlertCircle } from "lucide-react";
 import Pagination from "../../../shared/presentation/components/Pagination.jsx";
@@ -21,7 +22,7 @@ import { motion } from "framer-motion";
 const ProductList = () => {
   const dispatch = useDispatch();
   const shownMessageRef = useRef("");
-  const { pagination, isLoading, data, message } = useSelector(
+  const { pagination, isLoading, data, message, error } = useSelector(
     (store) => ({
       pagination: store.products.pagination,
       isLoading: store.products.isLoading,
@@ -69,11 +70,15 @@ const ProductList = () => {
   // 🚀 Mostrar toast cuando haya message
   useEffect(() => {
     if (message && shownMessageRef.current !== message) {
-      toast(message); // dispara toast
+      toast.success(message); // dispara toast
       shownMessageRef.current = message;
       dispatch(clearMessage()); // limpia para evitar repetición
     }
-  }, [message, dispatch]);
+    if(error) {
+      toast.error(error)
+      dispatch(clearError())
+    }
+  }, [message, dispatch, error]);
 
   const handleEditar = (product) => {
     const price = parseFloat(product.price);

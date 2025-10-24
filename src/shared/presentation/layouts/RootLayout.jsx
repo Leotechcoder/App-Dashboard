@@ -60,7 +60,7 @@ const RootLayout = () => {
     <>
       <Toaster richColors position="top-right" />
 
-      <div className="flex min-h-screen bg-gray-200">
+      <div className="flex min-h-screen bg-gray-100">
         {/* Sidebar */}
         <aside className="w-64 p-4 bg-white shadow-md">
           <Sidebar setLogOutUser={setLogOutUser} />
