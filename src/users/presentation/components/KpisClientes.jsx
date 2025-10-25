@@ -12,7 +12,7 @@ const KpisClientes = () => {
   const anioActual = fechaActual.getFullYear();
   
   const nuevosEsteMes = usuarios.filter(usuario => {
-  const fecha = new Date(usuario.registration_date);
+  const fecha = new Date(usuario.registrationDate);
   return fecha.getMonth() === mesActual && fecha.getFullYear() === anioActual;
 });
 

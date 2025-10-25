@@ -15,8 +15,8 @@ export class UserService {
       u.phone,
       u.address,
       u.avatar,
-      u.registration_date,
-      u.update_profile
+      u.registrationDate,
+      u.updateProfile
     ))
     return ({users, message})
   }
@@ -30,8 +30,8 @@ export class UserService {
       data.phone,
       data.address,
       data.avatar,
-      data.registration_date,
-      data.update_profile
+      data.registrationDate,
+      data.updateProfile
     )
     return ({user, message})
   }
@@ -45,8 +45,8 @@ export class UserService {
       data.phone,
       data.address,
       data.avatar,
-      data.registration_date,
-      data.update_profile
+      data.registrationDate,
+      data.updateProfile
     )
     return ({createdUser, message})
   }
@@ -60,8 +60,8 @@ export class UserService {
       data.phone,
       data.address,
       data.avatar,
-      data.registration_date,
-      data.update_profile
+      data.registrationDate,
+      data.updateProfile
     )
     return ({updatedUser, message})
   }

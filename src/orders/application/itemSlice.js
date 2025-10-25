@@ -10,9 +10,14 @@ export const addItems = createAsyncThunk("items/createData", async ({ orderId, i
 export const updateDataItems = createAsyncThunk("items/updateDataItems", async (orderId, itemId, data)=>{
   return await itemApi.updateItem(orderId, itemId, data)
 })
-export const deleteItem = createAsyncThunk("items/createItem", async (orderId, itemId) => {
-  return await itemApi.createItem(orderId, itemId)
-});
+export const deleteItem = createAsyncThunk(
+  "items/deleteItem",
+  async ({ orderId, itemId }) => {
+    const response = await itemApi.deleteItem(orderId, itemId);
+    return response; // 🔥 importante para que .fulfilled se ejecute
+  }
+);
+
 
 const initialState = {
   data: [],

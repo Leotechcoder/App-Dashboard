@@ -81,6 +81,7 @@ const OrdersPage = () => {
     setIsRefreshing(true);
     // Refetch suave
     await dispatch(getDataOrders());
+    dispatch(getData());
     // Pequeño delay visual para UX
     setTimeout(() => setIsRefreshing(false), 500);
   };

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { idGenerator } from "../../../../shared/infrastructure/utils/idGenerator";
-import { addItems, getData } from "../../../application/itemSlice";
+import { addItems, deleteItem, getData } from "../../../application/itemSlice";
 import {
   getDataOrders,
   createDataOrder,
@@ -86,7 +86,10 @@ const OrderDetails = ({ onBack }) => {
     }
   }, [itemSelected]);
 
+  //Eliminar producto de la orden local/BD
   const removeProduct = (id) => setItems(items.filter((i) => i.id !== id));
+
+  //Actualizar producto de la orden local
   const updateProduct = (id) => {
     const item = items.find((i) => i.id === id);
     dispatch(setSelectedProduct(item));
@@ -100,21 +103,40 @@ const OrderDetails = ({ onBack }) => {
   );
 
   const handleOrderSave = async () => {
-    if (!items.length) return;
-    const newOrder = {
-      ...orderDetails,
-      items,
-      totalAmount: calculateSubTotal,
-      paymentInfo: {
-        methods: Object.keys(payments).filter((m) => payments[m]),
-        amounts,
-      },
-      deliveryType,
-    };
-    if (selectedOrder?.id) {
-      const newItems = items.filter(
-        (i) => !selectedOrder.items.some((old) => old.productId === i.productId)
+  if (!items.length) return;
+
+  const newOrder = {
+    ...orderDetails,
+    items,
+    totalAmount: calculateSubTotal,
+    paymentInfo: {
+      methods: Object.keys(payments).filter((m) => payments[m]),
+      amounts,
+    },
+    deliveryType,
+  };
+
+  if (selectedOrder?.id) {
+    // Detectar ítems nuevos y eliminados
+    const newItems = items.filter(
+      (i) => !selectedOrder.items.some((old) => old.productId === i.productId)
+    );
+
+    const deletedItems = selectedOrder.items.filter(
+      (old) => !items.some((i) => i.productId === old.productId)
+    );
+
+    // 1️⃣ Eliminar los borrados en backend
+    if (deletedItems.length > 0) {
+      await Promise.all(
+        deletedItems.map((del) =>
+          dispatch(deleteItem({ orderId: selectedOrder.id, itemId: del.id }))
+        )
       );
+    }
+
+    // 2️⃣ Agregar los nuevos
+    if (newItems.length > 0) {
       const formatted = newItems.map(
         (i) =>
           new Item(
@@ -132,11 +154,15 @@ const OrderDetails = ({ onBack }) => {
           items: formatted.map((i) => i.toApiFormat()),
         })
       );
-    } else {
-      await dispatch(createDataOrder(newOrder));
     }
-    onBack();
-  };
+  } else {
+    // Nueva orden
+    await dispatch(createDataOrder(newOrder));
+  }
+
+  onBack();
+};
+
 
   return (
     <main className="py-5 pt-2 scale-90">
@@ -185,13 +211,13 @@ const OrderDetails = ({ onBack }) => {
               <div>
                 <label className="block text-gray-600">Orden N°</label>
                 <span className="font-medium">
-                  {selectedOrder?.items?.[0]?.order_id || "Pendiente"}
+                  {selectedOrder?.items?.[0]?.orderId || "Pendiente"}
                 </span>
               </div>
 
               <div>
                 <label className="block text-gray-600 font-medium">
-                  Fecha de Emisión
+                  Orden abierta:
                 </label>
                 {selectedOrder ? (
                   <span className="font-semibold text-xs">
