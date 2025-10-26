@@ -7,9 +7,14 @@ export const addItems = createAsyncThunk("items/createData", async ({ orderId, i
   console.log(`Esto estoy enviando ${items}`)
   return await itemApi.addItem(orderId, items)
 });
-export const updateDataItems = createAsyncThunk("items/updateDataItems", async (orderId, itemId, data)=>{
-  return await itemApi.updateItem(orderId, itemId, data)
-})
+export const updateDataItems = createAsyncThunk(
+  "items/updateDataItems",
+  async ({ orderId, itemId, data }) => {
+    return await itemApi.updateItem(orderId, itemId, data);
+  }
+);
+
+
 export const deleteItem = createAsyncThunk(
   "items/deleteItem",
   async ({ orderId, itemId }) => {

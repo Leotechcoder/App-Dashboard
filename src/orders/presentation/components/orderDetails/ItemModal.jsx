@@ -42,7 +42,7 @@ const ItemModal = ({ setModal, setUpdateItem, updateItem, setItems, items }) => 
       window.addEventListener("popstate", handlePopState);
       return () => window.removeEventListener("popstate", handlePopState);
     }
-  }, [selectedProduct]);
+  }, []);
 
   // Agregar o actualizar producto
   const handleSubmit = () => {
@@ -54,8 +54,9 @@ const ItemModal = ({ setModal, setUpdateItem, updateItem, setItems, items }) => 
       productName: selectedProduct.productName,
       description,
       unitPrice: selectedProduct.unitPrice,
-      quantity,
+      quantity: Number(quantity),
     };
+    console.log("Item actualizado:", newItem);
 
     if (updateItem) {
       setItems((prev) =>

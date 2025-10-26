@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { idGenerator } from "../../../../shared/infrastructure/utils/idGenerator";
-import { addItems, deleteItem, getData } from "../../../application/itemSlice";
+import { addItems, deleteItem, getData, updateDataItems } from "../../../application/itemSlice";
 import {
   getDataOrders,
   createDataOrder,
@@ -66,7 +66,7 @@ const OrderDetails = ({ onBack }) => {
     setShowSuggestions(value.length > 0);
   };
   const handleSelectUser = (user) => {
-    setOrderDetails({ userId: user.id, userName: user.username });
+    setOrderDetails({ userId: user.id, userName: user.username, status: "pending" });
     setShowSuggestions(false);
   };
 
@@ -116,17 +116,34 @@ const OrderDetails = ({ onBack }) => {
     deliveryType,
   };
 
+  // Si la orden ya existe (edición)
   if (selectedOrder?.id) {
-    // Detectar ítems nuevos y eliminados
+    const originalItems = selectedOrder.items || [];
+
+    // Detectar ítems nuevos, eliminados y actualizados
     const newItems = items.filter(
-      (i) => !selectedOrder.items.some((old) => old.productId === i.productId)
+      (i) => !originalItems.some((old) => old.productId === i.productId)
     );
 
-    const deletedItems = selectedOrder.items.filter(
+    const deletedItems = originalItems.filter(
       (old) => !items.some((i) => i.productId === old.productId)
     );
 
-    // 1️⃣ Eliminar los borrados en backend
+    const updatedItems = items.filter((i) => {
+      const original = originalItems.find((oi) => oi.productId === i.productId);
+      const isPersisted = i.id?.startsWith("It-"); // Solo actualizamos los que ya existen en DB
+      return (
+        original &&
+        isPersisted &&
+        (i.quantity !== original.quantity ||
+          i.unitPrice !== original.unitPrice ||
+          i.description !== original.description)
+      );
+    });
+
+    console.log({ newItems, deletedItems, updatedItems });
+
+    // 1️⃣ Eliminar ítems borrados
     if (deletedItems.length > 0) {
       await Promise.all(
         deletedItems.map((del) =>
@@ -135,7 +152,7 @@ const OrderDetails = ({ onBack }) => {
       );
     }
 
-    // 2️⃣ Agregar los nuevos
+    // 2️⃣ Agregar nuevos ítems
     if (newItems.length > 0) {
       const formatted = newItems.map(
         (i) =>
@@ -155,13 +172,32 @@ const OrderDetails = ({ onBack }) => {
         })
       );
     }
+
+    // 3️⃣ Actualizar ítems existentes (solo si ya están persistidos)
+    if (updatedItems.length > 0) {
+      console.log("Actualizando ítems:", updatedItems);
+      for (const item of updatedItems) {
+        await dispatch(
+          updateDataItems({
+            orderId: selectedOrder.id,
+            itemId: item.id,
+            data: {
+              description: item.description,
+              quantity: item.quantity,
+            },
+          })
+        );
+      }
+    }
+
   } else {
-    // Nueva orden
+    // Si la orden es nueva
     await dispatch(createDataOrder(newOrder));
   }
 
   onBack();
 };
+
 
 
   return (
