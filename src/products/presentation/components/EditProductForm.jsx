@@ -66,11 +66,11 @@ const EditProductForm = () => {
       try {
         const newForm = {
           id: form.id,
-          name_: form.name,
+          name: form.name,
           price: Number(form.price),
           category: form.category,
           stock: Number(form.stock),
-          image_url: form.image_url,
+          imageUrl: form.imageUrl,
           description: form.description,
           available: form.available, // ahora siempre boolean
         };

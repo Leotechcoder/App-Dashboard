@@ -9,16 +9,16 @@ export class ProductService {
   async  getAllProducts() {
       const { products } =  await this.productRepository.getAll()
       return products.map(p => new Product(
-          p.id_, 
-          p.name_, 
+          p.id, 
+          p.name, 
           p.price, 
           p.category, 
           p.stock, 
-          p.image_url, 
+          p.imageUrl, 
           p.description, 
           p.available, 
-          p.created_at, 
-          p.updated_at)
+          p.createdAt, 
+          p.updatedAt)
         )
     }
   
@@ -26,35 +26,35 @@ export class ProductService {
       return this.productRepository.getById(id)
     }
   
-  async  createProduct(product) {
-      const {data, message} = await this.productRepository.create(product);
+  async  createProduct(data) {
+      const {product, message} = await this.productRepository.create(data);
       const createdProduct = new Product(
-        data.id_,
-        data.name_, 
-        data.price, 
-        data.category, 
-        data.stock, 
-        data.image_url, 
-        data.description, 
-        data.available, 
-        data.created_at, 
+        product.id,
+        product.name, 
+        product.price, 
+        product.category, 
+        product.stock, 
+        product.imageUrl, 
+        product.description, 
+        product.available, 
+        product.createdAt, 
       )
       return ({ createdProduct, message })
     }
   
-  async  updateProduct(product) {
-      const {data, message} = await this.productRepository.update(product);
+  async  updateProduct(data) {
+      const {product, message} = await this.productRepository.update(data);
       const updateProduct = new Product(
-        data.id_,
-        data.name_, 
-        data.price, 
-        data.category, 
-        data.stock, 
-        data.image_url, 
-        data.description, 
-        data.available, 
-        data.created_at, 
-        data.updated_at
+        product.id,
+        product.name, 
+        product.price, 
+        product.category, 
+        product.stock, 
+        product.imageUrl, 
+        product.description, 
+        product.available, 
+        product.createdAt, 
+        product.updatedAt
       )
       return ({ updateProduct, message })
     }
