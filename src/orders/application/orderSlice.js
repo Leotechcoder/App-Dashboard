@@ -11,14 +11,34 @@ export const getDataOrders = createAsyncThunk("orders/getData", async () => {
 });
 
 // 🔹 Crear una nueva orden
-export const createDataOrder = createAsyncThunk("orders/createData", async (order) => {
-  return await orderService.createOrder(order);
-});
+export const createDataOrder = createAsyncThunk(
+  "orders/createData",
+  async (order) => {
+    return await orderService.createOrder(order);
+  }
+);
+
+// 🧩 Actualizar datos generales de una orden (ej. delivery_type, status, etc.)
+export const updateDataOrder = createAsyncThunk(
+  "orders/updateDataOrder",
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await orderService.updateOrder(id, data);
+      return response;
+    } catch (error) {
+      console.error("Error updating order:", error);
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 
 // 🔹 Eliminar una orden por ID
-export const deleteDataOrder = createAsyncThunk("orders/deleteData", async (id) => {
-  return await orderService.deleteOrder(id);
-});
+export const deleteDataOrder = createAsyncThunk(
+  "orders/deleteData",
+  async (id) => {
+    return await orderService.deleteOrder(id);
+  }
+);
 
 const initialState = {
   data: [],
@@ -50,7 +70,7 @@ const orderSlice = createSlice({
     },
     setClearMessage: (state) => {
       state.message = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -60,7 +80,8 @@ const orderSlice = createSlice({
       })
       .addCase(getDataOrders.fulfilled, (state, action) => {
         state.isLoading = false;
-        if(action.payload.orders.length > 0 ) state.data = action.payload.orders;
+        if (action.payload.length > 0)
+          state.data = action.payload;
       })
       .addCase(getDataOrders.rejected, (state, action) => {
         state.isLoading = false;
@@ -73,12 +94,29 @@ const orderSlice = createSlice({
       })
       .addCase(createDataOrder.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.data.unshift(action.payload.order);
-        state.message = "Orden creada! (OvO)"
+        state.data.unshift(action.payload);
+        state.message = "Orden creada! (OvO)";
       })
       .addCase(createDataOrder.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
+      })
+
+      // --- Actualizar orden ---
+      .addCase(updateDataOrder.fulfilled, (state, action) => {
+        const updatedOrder = action.payload;
+        const index = state.data.findIndex((o) => o.id === updatedOrder.id);
+        if (index !== -1) {
+          state.data[index] = { ...state.data[index], ...updatedOrder };
+        }
+
+        // Si la orden editada era la seleccionada, actualizamos también selectedOrder
+        if (state.selectedOrder?.id === updatedOrder.id) {
+          state.selectedOrder = { ...state.selectedOrder, ...updatedOrder };
+        }
+      })
+      .addCase(updateDataOrder.rejected, (state, action) => {
+        console.error("Error al actualizar la orden:", action.payload);
       })
 
       // --- Eliminar orden ---
@@ -87,9 +125,9 @@ const orderSlice = createSlice({
       })
       .addCase(deleteDataOrder.fulfilled, (state, action) => {
         state.isLoading = false;
-        console.log(action)
-        state.data = state.data.filter(order => order.id !== action.meta.arg);
-        state.message = "Orden eliminada (X_X)"
+        console.log(action);
+        state.data = state.data.filter((order) => order.id !== action.meta.arg);
+        state.message = "Orden eliminada (X_X)";
       })
       .addCase(deleteDataOrder.rejected, (state, action) => {
         state.isLoading = false;
@@ -98,5 +136,11 @@ const orderSlice = createSlice({
   },
 });
 
-export const { setSelectedOrder, setFilteredOrders, setCurrentPageOrders, setShowHelpOrders, setClearMessage } = orderSlice.actions;
+export const {
+  setSelectedOrder,
+  setFilteredOrders,
+  setCurrentPageOrders,
+  setShowHelpOrders,
+  setClearMessage,
+} = orderSlice.actions;
 export default orderSlice.reducer;

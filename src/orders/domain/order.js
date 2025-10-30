@@ -1,10 +1,11 @@
 export class Order {
-  constructor({ id, userId, userName, totalAmount, status, itemsId, createdAt, updatedAt }) {
+  constructor({ id, userId, userName, totalAmount, status, itemsId, createdAt, updatedAt, deliveryType }) {
     this.id = id
     this.userId = userId
     this.userName = userName
     this.totalAmount = totalAmount
     this.status = status
+    this.deliveryType = deliveryType
     this.itemsId = itemsId
     this.createdAt = createdAt
     this.updatedAt = updatedAt

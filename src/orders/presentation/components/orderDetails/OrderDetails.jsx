@@ -1,23 +1,25 @@
-// OrderDetails.jsx
+"use client";
+
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { idGenerator } from "../../../../shared/infrastructure/utils/idGenerator";
 import { addItems, deleteItem, getData, updateDataItems } from "../../../application/itemSlice";
-import {
-  getDataOrders,
-  createDataOrder,
-} from "../../../application/orderSlice";
 import { getUserData } from "../../../../users/application/userSlice";
 import { setSelectedProduct } from "../../../../products/application/productSlice";
+import { createDataOrder, updateDataOrder } from "../../../application/orderSlice"; // 👈 asegúrate de tener este thunk
 import { Item } from "../../../domain/item";
+
 import ItemModal from "./ItemModal";
 import OrderItemsTable from "./OrderItemsTable";
 import OrderUserSelector from "./OrderUserSelector";
 import OrderDeliveryType from "./OrderDeliveryType";
-import OrderPaymentSection from "./OrderPaymentSection";
 import OrderSummary from "./OrderSummary";
 import DateTime from "../DateTime";
+
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 const OrderDetails = ({ onBack }) => {
   const dispatch = useDispatch();
@@ -34,46 +36,28 @@ const OrderDetails = ({ onBack }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [updateItem, setUpdateItem] = useState(false);
   const [deliveryType, setDeliveryType] = useState("local");
-  const [modoCobro, setModoCobro] = useState(false);
-  const [payments, setPayments] = useState({
-    efectivo: false,
-    credito: false,
-    debito: false,
-  });
-  const [amounts, setAmounts] = useState({
-    efectivo: "",
-    credito: "",
-    debito: "",
-  });
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Funciones auxiliares
-  const handleTogglePayment = (method) => {
-    setPayments((prev) => ({ ...prev, [method]: !prev[method] }));
-    if (payments[method]) setAmounts((prev) => ({ ...prev, [method]: "" }));
-  };
-  const handleAmountChange = (method, value) =>
-    setAmounts((prev) => ({ ...prev, [method]: value }));
-
-  const handleUserInput = (e) => {
-    const value = e.target.value;
-    setOrderDetails({ ...orderDetails, userName: value });
-    const filtered = users.filter((u) =>
-      u.username.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredUsers(filtered);
-    setShowSuggestions(value.length > 0);
-  };
-  const handleSelectUser = (user) => {
-    setOrderDetails({ userId: user.id, userName: user.username, status: "pending" });
-    setShowSuggestions(false);
-  };
-
+  // 🔄 Al montar o cambiar la orden seleccionada
   useEffect(() => {
     dispatch(getUserData());
     dispatch(getData());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedOrder) {
+      // sincronizar con la orden al editar
+      setItems(selectedOrder.items || []);
+      setDeliveryType(selectedOrder.deliveryType || "local");
+      setOrderDetails((prev) => ({
+        ...prev,
+        userId: selectedOrder.userId || prev.userId,
+        userName: selectedOrder.userName || prev.userName,
+        status: selectedOrder.status || prev.status,
+      }));
+    }
+  }, [selectedOrder]);
 
   useEffect(() => {
     if (itemSelected.length > 0) {
@@ -86,10 +70,23 @@ const OrderDetails = ({ onBack }) => {
     }
   }, [itemSelected]);
 
-  //Eliminar producto de la orden local/BD
+  const handleUserInput = (e) => {
+    const value = e.target.value;
+    setOrderDetails({ ...orderDetails, userName: value });
+    const filtered = users.filter((u) =>
+      u.username.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+    setShowSuggestions(value.length > 0);
+  };
+
+  const handleSelectUser = (user) => {
+    setOrderDetails({ userId: user.id, userName: user.username, status: "pending" });
+    setShowSuggestions(false);
+  };
+
   const removeProduct = (id) => setItems(items.filter((i) => i.id !== id));
 
-  //Actualizar producto de la orden local
   const updateProduct = (id) => {
     const item = items.find((i) => i.id === id);
     dispatch(setSelectedProduct(item));
@@ -102,106 +99,105 @@ const OrderDetails = ({ onBack }) => {
     0
   );
 
+  // 💾 Guardar o actualizar orden
   const handleOrderSave = async () => {
-  if (!items.length) return;
+    if (!items.length) return;
 
-  const newOrder = {
-    ...orderDetails,
-    items,
-    totalAmount: calculateSubTotal,
-    paymentInfo: {
-      methods: Object.keys(payments).filter((m) => payments[m]),
-      amounts,
-    },
-    deliveryType,
-  };
+    const newOrder = {
+      ...orderDetails,
+      items,
+      totalAmount: calculateSubTotal,
+      paymentInfo: null,
+      deliveryType, 
+    };
 
-  // Si la orden ya existe (edición)
-  if (selectedOrder?.id) {
-    const originalItems = selectedOrder.items || [];
+    if (selectedOrder?.id) {
+      const originalItems = selectedOrder.items || [];
 
-    // Detectar ítems nuevos, eliminados y actualizados
-    const newItems = items.filter(
-      (i) => !originalItems.some((old) => old.productId === i.productId)
-    );
-
-    const deletedItems = originalItems.filter(
-      (old) => !items.some((i) => i.productId === old.productId)
-    );
-
-    const updatedItems = items.filter((i) => {
-      const original = originalItems.find((oi) => oi.productId === i.productId);
-      const isPersisted = i.id?.startsWith("It-"); // Solo actualizamos los que ya existen en DB
-      return (
-        original &&
-        isPersisted &&
-        (i.quantity !== original.quantity ||
-          i.unitPrice !== original.unitPrice ||
-          i.description !== original.description)
+      const newItems = items.filter(
+        (i) => !originalItems.some((old) => old.productId === i.productId)
       );
-    });
 
-    console.log({ newItems, deletedItems, updatedItems });
-
-    // 1️⃣ Eliminar ítems borrados
-    if (deletedItems.length > 0) {
-      await Promise.all(
-        deletedItems.map((del) =>
-          dispatch(deleteItem({ orderId: selectedOrder.id, itemId: del.id }))
-        )
+      const deletedItems = originalItems.filter(
+        (old) => !items.some((i) => i.productId === old.productId)
       );
-    }
 
-    // 2️⃣ Agregar nuevos ítems
-    if (newItems.length > 0) {
-      const formatted = newItems.map(
-        (i) =>
-          new Item(
-            i.id,
-            i.productId,
-            i.productName,
-            i.description,
-            i.unitPrice,
-            i.quantity
+      const updatedItems = items.filter((i) => {
+        const original = originalItems.find((oi) => oi.productId === i.productId);
+        const isPersisted = i.id?.startsWith("It-");
+        return (
+          original &&
+          isPersisted &&
+          (i.quantity !== original.quantity ||
+            i.unitPrice !== original.unitPrice ||
+            i.description !== original.description)
+        );
+      });
+
+      // 🔹 Eliminar ítems borrados
+      if (deletedItems.length > 0) {
+        await Promise.all(
+          deletedItems.map((del) =>
+            dispatch(deleteItem({ orderId: selectedOrder.id, itemId: del.id }))
           )
-      );
-      await dispatch(
-        addItems({
-          orderId: selectedOrder.id,
-          items: formatted.map((i) => i.toApiFormat()),
-        })
-      );
-    }
+        );
+      }
 
-    // 3️⃣ Actualizar ítems existentes (solo si ya están persistidos)
-    if (updatedItems.length > 0) {
-      console.log("Actualizando ítems:", updatedItems);
-      for (const item of updatedItems) {
+      // 🔹 Agregar ítems nuevos
+      if (newItems.length > 0) {
+        const formatted = newItems.map(
+          (i) =>
+            new Item(
+              i.id,
+              i.productId,
+              i.productName,
+              i.description,
+              i.unitPrice,
+              i.quantity
+            )
+        );
         await dispatch(
-          updateDataItems({
+          addItems({
             orderId: selectedOrder.id,
-            itemId: item.id,
-            data: {
-              description: item.description,
-              quantity: item.quantity,
-            },
+            items: formatted.map((i) => i.toApiFormat()),
           })
         );
       }
+
+      // 🔹 Actualizar ítems existentes
+      if (updatedItems.length > 0) {
+        for (const item of updatedItems) {
+          await dispatch(
+            updateDataItems({
+              orderId: selectedOrder.id,
+              itemId: item.id,
+              data: {
+                description: item.description,
+                quantity: item.quantity,
+              },
+            })
+          );
+        }
+      }
+
+      // 🔹 Actualizar método de entrega si cambió
+      if (deliveryType !== selectedOrder.deliveryType) {
+        await dispatch(
+          updateDataOrder({
+            id: selectedOrder.id,
+            data: { deliveryType },
+          })
+        );
+      }
+    } else {
+      await dispatch(createDataOrder(newOrder));
     }
 
-  } else {
-    // Si la orden es nueva
-    await dispatch(createDataOrder(newOrder));
-  }
-
-  onBack();
-};
-
-
+    onBack();
+  };
 
   return (
-    <main className="py-5 pt-2 scale-90">
+    <main className="py-6 px-8 bg-muted/40 min-h-screen">
       {isModalOpen && (
         <ItemModal
           setModal={setIsModalOpen}
@@ -212,28 +208,43 @@ const OrderDetails = ({ onBack }) => {
         />
       )}
 
-      <button
+      <Button
+        variant="ghost"
         onClick={onBack}
-        className="flex items-center text-gray-600 hover:text-gray-900 mb-3 px-8"
+        className="flex items-center text-gray-600 hover:text-gray-900 mb-5"
       >
         <ArrowLeft className="w-4 h-4 mr-2" /> Volver a las órdenes
-      </button>
+      </Button>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 px-8">
-        <OrderItemsTable
-          items={items}
-          removeProduct={removeProduct}
-          updateProduct={updateProduct}
-          calculateSubTotal={calculateSubTotal}
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-        />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* 🧾 Productos seleccionados */}
+        <Card className="shadow-sm border border-gray-200 bg-white lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold text-gray-700">
+              Productos seleccionados
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <OrderItemsTable
+              items={items}
+              removeProduct={removeProduct}
+              updateProduct={updateProduct}
+              calculateSubTotal={calculateSubTotal}
+              isModalOpen={isModalOpen}
+              setIsModalOpen={setIsModalOpen}
+            />
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow-lg flex flex-col overflow-hidden">
-          <div className="bg-orange-600 text-white p-3 font-semibold">
-            DETALLES DE LA ORDEN
-          </div>
-          <div className="p-4 grid gap-3 text-sm">
+        {/* 📦 Detalles */}
+        <Card className="shadow-sm border border-gray-200 bg-white">
+          <CardHeader className="bg-gradient-to-r from-primary/80 to-primary text-white py-4 rounded-t-lg">
+            <CardTitle className="text-lg font-semibold tracking-wide">
+              Detalles de la Orden
+            </CardTitle>
+          </CardHeader>
+
+          <CardContent className="p-5 grid gap-4 text-sm">
             <OrderUserSelector
               orderDetails={orderDetails}
               handleUserInput={handleUserInput}
@@ -242,58 +253,47 @@ const OrderDetails = ({ onBack }) => {
               showSuggestions={showSuggestions}
               selectedOrder={selectedOrder}
             />
-            {/* Datos de orden */}
-            <div className="grid grid-cols-2 gap-1">
+
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-gray-600">Orden N°</label>
-                <span className="font-medium">
+                <Label className="text-gray-600 text-sm">Orden N°</Label>
+                <p className="font-medium text-gray-800">
                   {selectedOrder?.items?.[0]?.orderId || "Pendiente"}
-                </span>
+                </p>
               </div>
 
               <div>
-                <label className="block text-gray-600 font-medium">
-                  Orden abierta:
-                </label>
-                {selectedOrder ? (
-                  <span className="font-semibold text-xs">
-                    {selectedOrder.createdAt}
-                  </span>
-                ) : (
-                  <span className="font-semibold text-xs">
-                    <DateTime />
-                  </span>
-                )}
+                <Label className="text-gray-600 text-sm">Orden abierta</Label>
+                <p className="font-medium text-gray-800">
+                  {selectedOrder ? selectedOrder.createdAt : <DateTime />}
+                </p>
               </div>
 
               <div>
-                <label className="block text-gray-600">
-                  Estado de la Orden
-                </label>
-                <span className="font-medium">
+                <Label className="text-gray-600 text-sm">Estado</Label>
+                <p
+                  className={`font-medium ${
+                    selectedOrder?.status === "closed"
+                      ? "text-green-600"
+                      : "text-yellow-600"
+                  }`}
+                >
                   {selectedOrder?.status || "Pendiente"}
-                </span>
+                </p>
               </div>
             </div>
+
             <OrderDeliveryType
               deliveryType={deliveryType}
               setDeliveryType={setDeliveryType}
             />
-            <OrderPaymentSection
-              modoCobro={modoCobro}
-              setModoCobro={setModoCobro}
-              payments={payments}
-              handleTogglePayment={handleTogglePayment}
-              amounts={amounts}
-              handleAmountChange={handleAmountChange}
+
+            <OrderSummary
+              handleOrderSave={handleOrderSave}
+              selectedOrder={selectedOrder}
             />
-          </div>
-          <OrderSummary
-            handleOrderSave={handleOrderSave}
-            selectedOrder={selectedOrder}
-            modoCobro={modoCobro}
-          />
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </main>
   );

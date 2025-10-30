@@ -62,16 +62,24 @@ const RootLayout = () => {
 
       <div className="flex min-h-screen bg-gray-100">
         {/* Sidebar */}
-        <aside className="w-64 p-4 bg-white shadow-md">
+        <aside className="w-64 p-4 bg-white shadow-md flex-shrink-0">
           <Sidebar setLogOutUser={setLogOutUser} />
         </aside>
 
         {/* Main Content */}
         <div className="flex flex-col flex-1 overflow-hidden">
-          <main className="flex-1 overflow-y-auto">
-            <Outlet />
-          </main>
-          <Footer />
+          {/* Este contenedor fuerza que el main tenga siempre altura suficiente */}
+          <div className="flex flex-col min-h-screen">
+            <main className="flex-1 overflow-y-auto">
+              <div className="min-h-[calc(100vh-100px)] p-4">
+                {/* Ajustá 100px según la altura de tu footer */}
+                <Outlet />
+              </div>
+            </main>
+
+            {/* Footer fijo al fondo del scroll, no visible hasta scrollear */}
+          </div>
+            <Footer />  
         </div>
       </div>
     </>

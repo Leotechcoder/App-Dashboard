@@ -56,6 +56,7 @@ const OrdersTable = ({ setSelectedOrder, activeTab }) => {
         userName: order.userName,
         status: order.status,
         items: dataItems.filter((item) => item.orderId === order.id),
+        deliveryType: order.deliveryType,
         createdAt: formatDate(order.createdAt),
         updateAt: formatDate(new Date()),
       });
