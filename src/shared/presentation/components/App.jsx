@@ -7,9 +7,10 @@ import Dashboard from "../pages/Home.jsx"
 import Contact from "../../../users/presentation/pages/Contact.jsx"
 import Products from "../../../products/presentation/pages/ProductsPage.jsx"
 import OrdersPage from "../../../orders/presentation/pages/OrdersPage.jsx"
-import VentasPage from "../../../solds/presentation/pages/VentasPage.jsx"
+// import VentasPage from "../../../solds/presentation/pages/VentasPage.jsx"
 import OrderSheet from "./OrderSheet.jsx"
 import UserSheet from "./UserSheet.jsx"
+import { SalesDashboardView } from "@/sales/presentation/pages/SalesDashboardView.jsx"
 
 
 
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
       { path: "contact", element: <Contact /> },
       { path: "products", element: <Products /> },
       { path: "orders", element: <OrdersPage /> },
-      { path: "ventas", element: <VentasPage /> },
+      { path: "ventas", element: <SalesDashboardView /> },
       { path: "*", element: <ErrorUrl /> },
     ],
   },
