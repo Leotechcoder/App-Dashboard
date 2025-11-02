@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchPendingOrders, closeOrder } from "../../application/salesThunks";
+import { fetchActiveCashRegister } from "../../application/salesThunks";
 import { useSalesData } from "../hooks/useSalesData";
 import { useCashRegister } from "../hooks/useCashRegister";
 import { useSalesHistory } from "../hooks/useSalesHistory";
@@ -76,6 +77,7 @@ export function SalesDashboardView() {
   const handleCloseOrder = async (orderId, paymentInfo) => {
     await dispatch(closeOrder({ orderId, paymentInfo }));
     dispatch(fetchPendingOrders());
+    dispatch(fetchActiveCashRegister());
   };
 
   const isCashRegisterOpen = cashRegister && cashRegister.status === "open";
