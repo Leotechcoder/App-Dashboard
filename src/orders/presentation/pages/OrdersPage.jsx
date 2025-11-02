@@ -20,9 +20,15 @@ import {
   setClearMessage,
   setSelectedOrder,
   setShowHelpOrders,
+  setFilteredOrders,
+  setCurrentPageOrders,
+  deleteDataOrder,
 } from "../../application/orderSlice";
 import { getData, voidItemSelected } from "../../application/itemSlice";
 import { voidSelectedProduct } from "../../../products/application/productSlice";
+
+// 🧠 Hook genérico de tabla
+import { useTableData } from "@/shared/hook/useTableDataO";
 
 // =========================
 // 🧭 Componente principal
@@ -36,11 +42,21 @@ const OrdersPage = () => {
     (state) => state.orders
   );
 
-  const [activeTab, setActiveTab] = useState("pending");
+  const [activeTab, setActiveTab] = useState("local");
   const [createOrder, setCreateOrder] = useState(false);
-
-  // 👇 Nuevo estado local para mostrar recarga suave
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // =========================
+  // 🔍 Hook centralizado de tabla
+  // =========================
+  const table = useTableData({
+    stateKey: "orders",
+    itemsPerPage: 10,
+    searchFields: ["id", "userName"],
+    setFilteredData: setFilteredOrders,
+    setCurrentPage: setCurrentPageOrders,
+    externalFilter: (order) => order.deliveryType === activeTab && order.status === "pending",
+  });
 
   // =========================
   // 🔄 Ciclo de vida
@@ -51,17 +67,16 @@ const OrdersPage = () => {
       dispatch(getDataOrders());
       dispatch(getData());
     }
-  }, [dispatch]);
+  }, []);
 
-  // 🚀 Mostrar toast cuando haya message
+  // 🚀 Mostrar toast cuando haya mensaje nuevo
   useEffect(() => {
     if (message && shownMessageRef.current !== message) {
-      toast.success(message)
+      toast.success(message);
       setTimeout(() => {
         shownMessageRef.current = message;
-      dispatch(setClearMessage());
+        dispatch(setClearMessage());
       }, 2000);
-      
     }
   }, [message, dispatch]);
 
@@ -71,18 +86,14 @@ const OrdersPage = () => {
   const handleCreateOrder = () => setCreateOrder(true);
 
   const handleBack = async () => {
-    // Limpieza normal
     dispatch(voidSelectedProduct());
     dispatch(voidItemSelected());
     dispatch(setSelectedOrder(null));
     setCreateOrder(false);
 
-    // 👇 Nueva lógica de recarga visual
     setIsRefreshing(true);
-    // Refetch suave
     await dispatch(getDataOrders());
     dispatch(getData());
-    // Pequeño delay visual para UX
     setTimeout(() => setIsRefreshing(false), 500);
   };
 
@@ -90,10 +101,22 @@ const OrdersPage = () => {
 
   const handleShowHelp = () => dispatch(setShowHelpOrders());
 
+  const handleDeleteOrder = async (orderId) => {
+    const confirmDelete = 
+      window.confirm("¿Estás seguro que querés eliminar esta orden? Esta acción no se puede deshacer."
+  );
+
+  if (!confirmDelete) return;
+  await dispatch(deleteDataOrder(orderId));
+  await dispatch(getDataOrders());
+};
+
+
   // =========================
   // 🚦 Estados intermedios
   // =========================
-  if (isLoading && !isRefreshing ) return <Message text="Cargando órdenes..." type="loading" />;
+  if (isLoading && !isRefreshing)
+    return <Message text="Cargando órdenes..." type="loading" />;
   if (error) return <Message text={`Error: ${error}`} type="error" />;
   if (selectedOrder || createOrder)
     return <OrderDetails onBack={handleBack} />;
@@ -141,6 +164,8 @@ const OrdersPage = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onCreateOrder={handleCreateOrder}
+        searchTerm={table.searchTerm}
+        setSearchTerm={table.setSearchTerm}
       />
 
       {/* 👇 Bloque condicional para recarga suave */}
@@ -170,8 +195,12 @@ const OrdersPage = () => {
             transition={{ duration: 0.7, ease: "easeInOut" }}
           >
             <OrdersTable
+              data={table.paginatedData}
+              totalPages={table.totalPages}
+              currentPage={table.currentPage}
+              onPageChange={table.handlePageChange}
               setSelectedOrder={handleSetSelectedOrder}
-              activeTab={activeTab}
+              handleDeleteOrder={handleDeleteOrder}
             />
           </motion.div>
         )}
@@ -203,36 +232,47 @@ const HelpContent = ({ onClose }) => (
         Gestión de Órdenes
       </h2>
       <p className="text-gray-600 leading-relaxed text-sm ">
-        En esta sección podés <b>crear nuevas órdenes</b>, agregar productos,
-        definir la <b>forma de pago</b> y controlar el <b>estado de envío</b>.
-      </p>
+        En esta sección podés <b>crear nuevas órdenes</b> o <b>modificar órdenes existentes</b> </p>
       <p className="text-gray-600 mt-2 leading-relaxed text-sm">
-        Cada orden incluye información detallada del cliente, los artículos,
-        importes cobrados y seguimiento del envío.
+        Cada orden incluye información detallada del cliente, los artículos y muestra el punto actual en el que se encuentra.
       </p>
     </div>
   </div>
 );
 
-const HeaderActions = ({ activeTab, setActiveTab, onCreateOrder }) => (
+const HeaderActions = ({
+  activeTab,
+  setActiveTab,
+  onCreateOrder,
+  searchTerm,
+  setSearchTerm,
+}) => (
   <div className="flex justify-between items-center mb-6 scale-90">
     <div className="flex space-x-2">
       <TabButton
-        label="Pendientes de Entrega"
-        isActive={activeTab === "charged"}
-        onClick={() => setActiveTab("charged")}
+        label="Entrega por delivery"
+        isActive={activeTab === "delivery"}
+        onClick={() => setActiveTab("delivery")}
       />
       <TabButton
-        label="Cobro Pendiente"
-        isActive={activeTab === "pending"}
-        onClick={() => setActiveTab("pending")}
+        label="Retiro en local"
+        isActive={activeTab === "local"}
+        onClick={() => setActiveTab("local")}
       />
     </div>
 
-    <div className="flex space-x-4">
-      <ButtonAddOrder handleClick={onCreateOrder} />
-      <SearchOrder />
-    </div>
+   <div className="flex items-center space-x-3">
+  <ButtonAddOrder
+    handleClick={onCreateOrder}
+    className="bg-amber-500 hover:bg-amber-600 text-white text-md h-10 px-5 rounded-lg shadow-md"
+  />
+  <SearchOrder
+    searchTerm={searchTerm}
+    setSearchTerm={setSearchTerm}
+    className="flex-1 h-10 rounded-lg border border-gray-300 pl-10 pr-4 focus:ring-2 focus:ring-amber-500 transition"
+  />
+</div>
+
   </div>
 );
 

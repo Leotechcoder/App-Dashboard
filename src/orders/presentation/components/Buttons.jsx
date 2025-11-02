@@ -1,15 +1,19 @@
-import { Plus, Search } from "lucide-react"
-import Input from "../../../shared/presentation/components/Input.jsx"
+import { Plus, Search } from "lucide-react";
+import Input from "../../../shared/presentation/components/Input.jsx";
 
-export const ButtonAddOrder = ({ handleClick }) => (
+export const ButtonAddOrder = ({ handleClick, className }) => (
   <button
     onClick={handleClick}
-    className="flex items-center gap-2 bg-brown-750 hover:bg-brown-600 text-slate-300 border border-gray-300 px-4 py-2 rounded"
+    className={`w-60 flex items-center justify-center gap-2 bg-brown-750 
+      hover:bg-brown-600 text-slate-300 border border-gray-300 
+      px-4 py-2 rounded transition 
+      ${className || ""
+    }`}
   >
     <Plus className="w-4 h-4" />
     Nueva Orden
   </button>
-)
+);
 
 export const ButtonSearch = ({ value, onChange }) => (
   <div className="relative">
@@ -22,5 +26,4 @@ export const ButtonSearch = ({ value, onChange }) => (
       className="pl-10 pr-4 py-2 w-64"
     />
   </div>
-)
-
+);

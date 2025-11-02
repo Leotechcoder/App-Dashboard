@@ -76,7 +76,8 @@ export function useSalesData() {
     );
 
     // Filtrar solo las órdenes con método efectivo
-    let cashOrders = SalesService.filterCashOrders(ordersInRange);
+    let cashOrders = SalesService.filterSessionOrders(ordersInRange, startIso, endIso);
+
 
     // 🔸 Incluir solo órdenes cerradas o completadas
     const closedStatusRegex = /closed|paid|completed|cancelled/i;
@@ -91,24 +92,31 @@ export function useSalesData() {
   }, [orders, activeCashRegister]);
 
   // 🔹 Calcular totales de la caja activa
-  const cashRegisterAnalysis = useMemo(() => {
-    if (!activeCashRegister) return null;
+const cashRegisterAnalysis = useMemo(() => {
+  if (!activeCashRegister) return null;
 
-    const cashTotal =
-      Number(SalesService.calculateTotalSales(sessionOrders)) || 0;
-    const cashAmountTotal =
-      Number(SalesService.calculateTotalCashAmount(sessionOrders)) || 0;
-    const initial = Number(activeCashRegister.initialAmount) || 0;
+  const initial = Number(activeCashRegister.initialAmount) || 0;
+  const totalByMethod = SalesService.calculateTotalByPaymentMethod(sessionOrders);
 
-    return {
-      expectedTotal: cashTotal, // Total general (todas las ventas en efectivo)
-      expectedCashAmount: cashAmountTotal, // 💰 Monto real pagado en efectivo
-      ordersCount: sessionOrders.length,
-      initialAmount: initial,
-      expectedFinalAmount: initial + cashAmountTotal,
-      lastUpdate: new Date().toISOString(), // Serializar para evitar Date objects en Redux
-    };
-  }, [activeCashRegister, sessionOrders]);
+  const totalCash = totalByMethod.cash || 0;
+  const totalDebit = totalByMethod.debit || 0;
+  const totalCredit = totalByMethod.credit || 0;
+  const totalTransfer = totalByMethod.transfer || 0;
+
+  const totalExpected = totalCash + totalDebit + totalCredit + totalTransfer;
+
+  return {
+    expectedTotal: totalExpected,
+    expectedCashAmount: totalCash,
+    expectedDebitAmount: totalDebit,
+    expectedCreditAmount: totalCredit,
+    expectedTransferAmount: totalTransfer,
+    ordersCount: sessionOrders.length,
+    initialAmount: initial,
+    expectedFinalAmount: initial + totalCash,
+    lastUpdate: new Date().toISOString(),
+  };
+}, [activeCashRegister, sessionOrders]);
 
   // 🔹 Retornar datos preparados para el dashboard
   return {

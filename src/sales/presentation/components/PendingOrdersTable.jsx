@@ -26,18 +26,20 @@ export function PendingOrdersTable({ orders, onCloseOrder }) {
     efectivo: false,
     credito: false,
     debito: false,
+    transferencia: false,
   })
 
   const [amounts, setAmounts] = useState({
     efectivo: "",
     credito: "",
     debito: "",
+    transferencia: "",
   })
 
   const handleOpenDialog = (order) => {
     setSelectedOrder(order)
-    setPayments({ efectivo: false, credito: false, debito: false })
-    setAmounts({ efectivo: "", credito: "", debito: "" })
+    setPayments({ efectivo: false, credito: false, debito: false, transferencia: false })
+    setAmounts({ efectivo: "", credito: "", debito: "", transferencia: "" })
     setIsDialogOpen(true)
   }
 
@@ -73,6 +75,7 @@ export function PendingOrdersTable({ orders, onCloseOrder }) {
     { key: "efectivo", label: "Efectivo", icon: DollarSign },
     { key: "credito", label: "Crédito", icon: CreditCard },
     { key: "debito", label: "Débito", icon: Smartphone },
+    { key: "transferencia", label: "Transferencia", icon: Smartphone },
   ]
 
   return (

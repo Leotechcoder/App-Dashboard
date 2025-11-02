@@ -19,6 +19,7 @@ import { AlertCircle, CheckCircle2, DollarSign, TrendingDown, TrendingUp, Bankno
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 import { motion, AnimatePresence } from "framer-motion"
+import { SalesService } from "@/sales/application/salesService"
 
 export function CloseCashRegisterDialog({ open, onOpenChange, onConfirm, cashRegister, orders = [] }) {
   const [finalAmount, setFinalAmount] = useState("")
@@ -47,7 +48,7 @@ export function CloseCashRegisterDialog({ open, onOpenChange, onConfirm, cashReg
   if (!cashRegister) return null
 
   const initialAmount = cashRegister.initialAmount || 0
-  const cashOrdersTotal = orders.reduce((sum, order) => sum + (order.total || 0), 0)
+  const cashOrdersTotal = SalesService.calculateTotalCashAmount(orders)
   const expectedFinalAmount = initialAmount + cashOrdersTotal
   const actualFinalAmount = Number.parseFloat(finalAmount) || 0
   const difference = actualFinalAmount - expectedFinalAmount

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 
-export function SalesTable({ orders }) {
+export function SalesTable({ orders, onSelectOrder }) {
   const getStatusBadge = (status) => {
     const variants = {
       paid: "default",
@@ -43,7 +43,10 @@ export function SalesTable({ orders }) {
             </TableRow>
           ) : (
             orders.map((order) => (
-              <TableRow key={order.id}>
+              <TableRow key={order.id}
+               onClick={() => onSelectOrder(order)}
+               className="cursor-pointer hover:bg-muted"
+               >
                 <TableCell className="font-medium">#{order.id}</TableCell>
                 <TableCell>{order.customerName || "Cliente"}</TableCell>
                 <TableCell>{format(new Date(order.createdAt), "dd MMM yyyy, HH:mm", { locale: es })}</TableCell>

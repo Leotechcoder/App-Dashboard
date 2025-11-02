@@ -1,105 +1,111 @@
+// =========================
+// 📦 Imports
+// =========================
 import { AnimatePresence, motion } from "framer-motion";
 import { Info } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { setShowHelpUsers } from "../../application/userSlice.js";
+import { setShowHelpUsers, setEditingUser, setFormView } from "../../application/userSlice.js";
 import InfoButton from "../../../orders/presentation/components/InfoButton.jsx";
-import UserForm from "../components/UserForm.jsx";
+import UserSheet from "../components/UserSheet.jsx";
 import UserList from "../components/UserList.jsx";
 
-/* ------------------------------------------
- * Configuración de animaciones reutilizable
- * ------------------------------------------ */
+// =========================
+// 🎞️ Animaciones base
+// =========================
 const fadeSlide = {
-  initial: { opacity: 0, y: -10 },
+  initial: { opacity: 0, y: 10 },
   animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -10 },
-  transition: { duration: 0.6, ease: "easeInOut" },
+  exit: { opacity: 0, y: 10 },
+  transition: { duration: 0.5, ease: "easeInOut" },
 };
 
-/* ------------------------------------------
- * Componente principal
- * ------------------------------------------ */
+// =========================
+// 🧭 Componente principal
+// =========================
 const Contact = () => {
   const dispatch = useDispatch();
-  const { showHelp } = useSelector((state) => state.users);
+  const { showHelp, isFormView, editingUser } = useSelector((state) => state.users);
 
   const handleToggleHelp = () => dispatch(setShowHelpUsers());
-
-  const helpContent = (
-    <motion.div
-      key="help"
-      className="bg-white shadow-md rounded-xl p-6 mt-3 mb-6 border-l-4 border-blue-500"
-      {...fadeSlide}
-    >
-      <div className="flex items-start space-x-3 relative">
-        <button
-          onClick={handleToggleHelp}
-          aria-label="Cerrar ayuda"
-          className="absolute right-0 text-gray-500 hover:text-gray-700 font-bold"
-        >
-          ✕
-        </button>
-
-        <Info className="text-blue-500 w-6 h-6 mt-1 flex-shrink-0" />
-
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-1">
-            Gestión de Clientes
-          </h2>
-
-          <p className="text-gray-600 leading-relaxed text-sm md:text-base">
-            En esta sección podés <strong>registrar nuevos clientes</strong>,
-            <strong> editar información existente</strong> o
-            <strong> eliminar registros</strong> según sea necesario.
-            <br />
-            Usá el formulario para agregar nuevos contactos y la lista inferior
-            para buscar, filtrar o administrar los actuales.
-            <br />
-            💡 Consejo: mantené actualizados los datos para ofrecer una mejor
-            atención y conocer mejor los hábitos de compra de tus clientes.
-          </p>
-        </div>
-      </div>
-    </motion.div>
-  );
-
-  const headerContent = (
-    <motion.div
-      key="header"
-      className="flex items-center justify-between"
-      {...fadeSlide}
-    >
-      <h1 className="text-2xl pl-4 text-sky-950 font-semibold">
-        Gestión de Clientes
-      </h1>
-      <InfoButton showHelp={handleToggleHelp} />
-    </motion.div>
-  );
+  const handleOpenForm = (user = null) => {
+    dispatch(setEditingUser(user));
+    dispatch(setFormView(true));
+  };
+  const handleCloseForm = () => dispatch(setFormView(false));
 
   return (
-    <main className="p-8 scale-95">
+    <main className="pl-8 pt-8 bg-gray-50 rounded-lg min-h-[95vh] overflow-hidden">
       <AnimatePresence mode="wait">
-        {!showHelp ? headerContent : helpContent}
+        {isFormView && editingUser ? (
+          // =========================
+          // 🧾 Vista: Ficha completa de usuario (ocupa todo el padre)
+          // =========================
+          <motion.div
+            key="userSheet"
+            {...fadeSlide}
+            className="w-full h-full bg-white rounded-xl shadow-lg overflow-auto"
+          >
+            <UserSheet user={editingUser} onClose={handleCloseForm} />
+          </motion.div>
+        ) : (
+          // =========================
+          // 📋 Vista: Lista de usuarios
+          // =========================
+          <motion.div key="userList" {...fadeSlide}>
+            {!showHelp && (
+              <motion.div
+                key="header"
+                className="flex items-center justify-between mb-6"
+                {...fadeSlide}
+              >
+                <h1 className="text-2xl font-semibold text-sky-950 pl-4">
+                  Gestión de Clientes
+                </h1>
+                <InfoButton showHelp={handleToggleHelp} />
+              </motion.div>
+            )}
+
+            {showHelp && (
+              <motion.div
+                key="help"
+                className="bg-white border-l-4 border-blue-500 rounded-lg shadow-md p-6 mb-6 relative max-w-5xl ml-5"
+                {...fadeSlide}
+              >
+                <HelpContent onClose={handleToggleHelp} />
+              </motion.div>
+            )}
+
+            <section className="px-6 mb-3">
+              <UserList />
+            </section>
+          </motion.div>
+        )}
       </AnimatePresence>
-
-      <motion.div
-        key="form"
-        {...fadeSlide}
-        transition={{ ...fadeSlide.transition, delay: 0.2 }}
-      >
-        <UserForm />
-      </motion.div>
-
-      <motion.section
-        key="list"
-        className="px-6 mb-3"
-        {...fadeSlide}
-        transition={{ ...fadeSlide.transition, delay: 0.4 }}
-      >
-        <UserList />
-      </motion.section>
     </main>
   );
 };
+
+// =========================
+// 🧩 Subcomponente de ayuda
+// =========================
+const HelpContent = ({ onClose }) => (
+  <div className="flex items-start space-x-3 relative">
+    <button
+      onClick={onClose}
+      className="absolute right-0 text-gray-500 hover:text-gray-700 font-bold"
+    >
+      ✕
+    </button>
+
+    <Info className="text-blue-500 w-6 h-6 mt-1 flex-shrink-0" />
+    <div>
+      <h2 className="text-2xl font-bold text-gray-800 mb-2">Gestión de Clientes</h2>
+      <p className="text-gray-600 leading-relaxed text-sm pr-2">
+        En esta sección podés <strong>registrar, editar o eliminar clientes</strong> del sistema.
+        Cada registro contiene información útil para ofrecer una atención más personalizada.
+      </p>
+    </div>
+  </div>
+);
 
 export default Contact;

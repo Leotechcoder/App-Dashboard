@@ -2,9 +2,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { DollarSign, Clock, Calendar, TrendingUp, Banknote, Package } from "lucide-react"
+import { DollarSign, Clock, Calendar, TrendingUp, Banknote, CreditCard, Wallet, ArrowLeftRight, Package } from "lucide-react"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
+import { formatCurrency } from "@/shared/utils/formatPriceLocal"
 
 export function CashRegisterSummary({ cashRegister, analysis }) {
   if (!cashRegister) return null
@@ -12,11 +13,37 @@ export function CashRegisterSummary({ cashRegister, analysis }) {
   const duration = cashRegister.closedAt
     ? new Date(cashRegister.closedAt) - new Date(cashRegister.openedAt)
     : Date.now() - new Date(cashRegister.openedAt)
-
   const hours = Math.floor(duration / (1000 * 60 * 60))
   const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60))
 
   const isOpen = cashRegister.status === "open"
+
+  const paymentCards = [
+    {
+      label: "Ventas en Efectivo",
+      value: analysis?.expectedCashAmount,
+      icon: <Wallet className="h-4 w-4 text-green-600" />,
+      color: "text-green-600",
+    },
+    {
+      label: "Ventas en Débito",
+      value: analysis?.expectedDebitAmount,
+      icon: <CreditCard className="h-4 w-4 text-blue-500" />,
+      color: "text-blue-500",
+    },
+    {
+      label: "Ventas en Crédito",
+      value: analysis?.expectedCreditAmount,
+      icon: <CreditCard className="h-4 w-4 text-indigo-500" />,
+      color: "text-indigo-500",
+    },
+    {
+      label: "Transferencias",
+      value: analysis?.expectedTransferAmount,
+      icon: <ArrowLeftRight className="h-4 w-4 text-amber-500" />,
+      color: "text-amber-500",
+    },
+  ].filter((m) => m.value && m.value > 0)
 
   return (
     <Card className={isOpen ? "border-green-500 bg-green-50 dark:bg-green-950" : ""}>
@@ -29,56 +56,66 @@ export function CashRegisterSummary({ cashRegister, analysis }) {
           {isOpen ? "Abierta" : "Cerrada"}
         </Badge>
       </CardHeader>
+
       <CardContent className="space-y-4">
+        {/* Totales principales */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="flex flex-col gap-1">
+          <div>
             <div className="flex items-center gap-2">
               <DollarSign className="h-4 w-4 text-muted-foreground" />
               <p className="text-xs text-muted-foreground">Monto Inicial</p>
             </div>
-            <p className="text-xl font-bold">${cashRegister.initialAmount.toFixed(2)}</p>
+            <p className="text-xl font-bold">${formatCurrency(cashRegister.initialAmount.toFixed(1))}</p>
           </div>
 
-          {analysis && isOpen && (
+          {isOpen && analysis && (
             <>
-              <div className="flex flex-col gap-1">
+              <div>
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-green-600" />
-                  <p className="text-xs text-muted-foreground">Ventas en Efectivo</p>
-                </div>
-                <p className="text-xl font-bold text-green-600">${analysis.expectedCashAmount.toFixed(2)}</p>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <Banknote className="h-4 w-4 text-blue-600" />
+                  <TrendingUp className="h-4 w-4 text-blue-600" />
                   <p className="text-xs text-muted-foreground">Total Esperado</p>
                 </div>
-                <p className="text-xl font-bold text-blue-600">${analysis.expectedFinalAmount.toFixed(2)}</p>
+                <p className="text-xl font-bold text-blue-600">${formatCurrency(analysis.expectedTotal.toFixed(1))}</p>
               </div>
 
-              <div className="flex flex-col gap-1">
+              <div>
                 <div className="flex items-center gap-2">
                   <Package className="h-4 w-4 text-muted-foreground" />
-                  <p className="text-xs text-muted-foreground">Órdenes en Efectivo</p>
+                  <p className="text-xs text-muted-foreground">Órdenes Totales</p>
                 </div>
                 <p className="text-xl font-bold">{analysis.ordersCount}</p>
               </div>
             </>
           )}
 
-          {cashRegister.finalAmount !== null && !isOpen && (
-            <div className="flex flex-col gap-1">
+          {!isOpen && cashRegister.finalAmount !== null && (
+            <div>
               <div className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                 <p className="text-xs text-muted-foreground">Monto Final</p>
               </div>
-              <p className="text-xl font-bold">${cashRegister.finalAmount.toFixed(2)}</p>
+              <p className="text-xl font-bold">${formatCurrency(cashRegister.finalAmount.toFixed(1))}</p>
             </div>
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4 pt-2 border-t">
+        {/* Totales por método */}
+        {paymentCards.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 border-t pt-3">
+            {paymentCards.map((m) => (
+              <div key={m.label} className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  {m.icon}
+                  <p className="text-xs text-muted-foreground">{m.label}</p>
+                </div>
+                <p className={`text-lg font-semibold ${m.color}`}>${formatCurrency(m.value.toFixed(1))}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Info temporal */}
+        <div className="grid grid-cols-2 gap-4 pt-3 border-t">
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <div className="flex-1">
@@ -93,9 +130,7 @@ export function CashRegisterSummary({ cashRegister, analysis }) {
             <Clock className="h-4 w-4 text-muted-foreground" />
             <div className="flex-1">
               <p className="text-xs text-muted-foreground">Duración</p>
-              <p className="text-sm font-medium">
-                {hours}h {minutes}m
-              </p>
+              <p className="text-sm font-medium">{hours}h {minutes}m</p>
             </div>
           </div>
         </div>

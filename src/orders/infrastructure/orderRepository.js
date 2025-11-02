@@ -4,7 +4,7 @@ import { orderApi } from "../../shared/infrastructure/api/orderApi.js";
 export class OrderRepository {
   async getAll() {
     const response = await orderApi.getOrders();
-    return response.orders.map((raw) => this._toDomain(raw));
+    return response.orders.map((raw) => this._toDomain(raw).toObject());
   }
 
   async create(order) {

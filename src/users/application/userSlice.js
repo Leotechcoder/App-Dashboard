@@ -78,6 +78,8 @@ const initialState = {
   paginationUsers: paginacionUsers,
   message: null,
   showHelp: false,
+  editingUser: null,
+  formView: "list",
 }
 
 // 🔹 Slice
@@ -109,7 +111,13 @@ const userSlice = createSlice({
     },
     setShowHelpUsers: (state) =>{
       state.showHelp = !state.showHelp;
-    }
+    },
+     setEditingUser: (state, action) => {
+      state.editingUser = action.payload
+    },
+    setFormView: (state, action) => {
+      state.formView = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -276,6 +284,8 @@ export const {
   setCurrentPageUsers,
   setTotalItemsUsers,
   setShowHelpUsers,
+  setEditingUser,
+  setFormView,
 } = userSlice.actions
 
 export default userSlice.reducer

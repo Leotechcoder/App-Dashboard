@@ -23,48 +23,53 @@ export function useSalesHistory() {
 
   // 🧮 Calcula el rango de fechas según el filtro seleccionado
   const getDateRange = () => {
-    const now = new Date()
-    let startDate, endDate
+  const now = new Date();
+  let startDate, endDate;
 
-    switch (filters.dateRange) {
-      case "today":
-        startDate = new Date(now)
-        startDate.setHours(0, 0, 0, 0)
-        endDate = new Date(now)
-        endDate.setHours(23, 59, 59, 999)
-        break
-      case "week":
-        startDate = new Date(now)
-        startDate.setDate(now.getDate() - 7)
-        startDate.setHours(0, 0, 0, 0)
-        endDate = new Date()
-        endDate.setHours(23, 59, 59, 999)
-        break
-      case "month":
-        startDate = new Date(now)
-        startDate.setMonth(now.getMonth() - 1)
-        startDate.setHours(0, 0, 0, 0)
-        endDate = new Date()
-        endDate.setHours(23, 59, 59, 999)
-        break
-      case "custom":
-        startDate = filters.startDate ? new Date(filters.startDate) : new Date()
-        startDate.setHours(0, 0, 0, 0)
-        endDate = filters.endDate ? new Date(filters.endDate) : new Date()
-        endDate.setHours(23, 59, 59, 999)
-        break
-      default:
-        startDate = new Date(now)
-        startDate.setHours(0, 0, 0, 0)
-        endDate = new Date(now)
-        endDate.setHours(23, 59, 59, 999)
-    }
-
-    return {
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-    }
+  switch (filters.dateRange) {
+    case "today":
+      startDate = new Date(now);
+      startDate.setHours(0, 0, 0, 0);
+      endDate = new Date(now);
+      endDate.setHours(23, 59, 59, 999);
+      break;
+    case "week":
+      startDate = new Date(now);
+      startDate.setDate(now.getDate() - 7);
+      startDate.setHours(0, 0, 0, 0);
+      endDate = new Date();
+      endDate.setHours(23, 59, 59, 999);
+      break;
+    case "month":
+      startDate = new Date(now);
+      startDate.setMonth(now.getMonth() - 1);
+      startDate.setHours(0, 0, 0, 0);
+      endDate = new Date();
+      endDate.setHours(23, 59, 59, 999);
+      break;
+    case "custom":
+      startDate = filters.startDate ? new Date(filters.startDate) : new Date();
+      startDate.setHours(0, 0, 0, 0);
+      endDate = filters.endDate ? new Date(filters.endDate) : new Date();
+      endDate.setHours(23, 59, 59, 999);
+      break;
+    default:
+      startDate = new Date(now);
+      startDate.setHours(0, 0, 0, 0);
+      endDate = new Date(now);
+      endDate.setHours(23, 59, 59, 999);
   }
+
+  // 🔹 Retornar en formato local (no UTC)
+  const formatLocal = (d) =>
+    d.toLocaleString("sv-SE", { timeZone: "America/Argentina/Buenos_Aires" }).replace(" ", "T");
+
+  return {
+    startDate: formatLocal(startDate),
+    endDate: formatLocal(endDate),
+  };
+};
+
 
   // 🧠 Filtra las órdenes por método de pago (además de la fecha)
   const filteredOrders = useMemo(() => {

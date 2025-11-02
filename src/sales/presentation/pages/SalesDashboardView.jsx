@@ -24,8 +24,9 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
+import OrderCard from "@/shared/presentation/components/OrderSheet";
 
 export function SalesDashboardView() {
   const dispatch = useDispatch();
@@ -45,6 +46,19 @@ export function SalesDashboardView() {
 
   const [openDialog, setOpenDialog] = useState(false);
   const [closeDialog, setCloseDialog] = useState(false);
+  const [selectedOrderCard, setSelectedOrderCard] = useState(null);
+
+  // Evita scroll en la página padre mientras el modal está abierto
+  useEffect(() => {
+    if (selectedOrderCard) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [selectedOrderCard]);
 
   useEffect(() => {
     dispatch(fetchPendingOrders());
@@ -74,8 +88,6 @@ export function SalesDashboardView() {
           <h2 className="text-3xl font-bold tracking-tight">
             Control de caja e historial de ventas
           </h2>
-          <span></span>
-          {/* <p className="text-muted-foreground">Control de caja e historial de ventas</p> */}
         </div>
         {isCashRegisterOpen && (
           <Button
@@ -108,7 +120,7 @@ export function SalesDashboardView() {
             )}
           </TabsTrigger>
           <TabsTrigger value="sales" className="gap-2 flex-1 md:flex-none">
-            <Package className="h-4 w-4" /> Ventas Cerradas
+            <Package className="h-4 w-4 text-muted-foreground" /> Ventas Cerradas
           </TabsTrigger>
         </TabsList>
 
@@ -129,24 +141,18 @@ export function SalesDashboardView() {
 
         {/* Sales Tab */}
         <TabsContent value="sales" className="space-y-4">
-          <SalesFilters
-            filters={filters}
-            onFiltersChange={handleFilterChange}
-          />
+          {/* Filters */}
+          <SalesFilters filters={filters} onFiltersChange={handleFilterChange} />
 
           {/* Metrics Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <Card>
               <CardHeader className="flex items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total de Ganancias
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Total de Ganancias</CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  ${totalEarnings.toFixed(2)}
-                </div>
+                <div className="text-2xl font-bold">${totalEarnings.toFixed(2)}</div>
                 <p className="text-xs text-muted-foreground">
                   De {orders.length} órdenes cerradas
                 </p>
@@ -155,33 +161,23 @@ export function SalesDashboardView() {
 
             <Card>
               <CardHeader className="flex items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Fecha Actual
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Fecha Actual</CardTitle>
                 <Calendar className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {format(new Date(), "dd MMM", { locale: es })}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {format(new Date(), "yyyy", { locale: es })}
-                </p>
+                <div className="text-2xl font-bold">{format(new Date(), "dd MMM", { locale: es })}</div>
+                <p className="text-xs text-muted-foreground">{format(new Date(), "yyyy", { locale: es })}</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Órdenes Cerradas
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Órdenes Cerradas</CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{orders.length}</div>
-                <p className="text-xs text-muted-foreground">
-                  Pagadas o entregadas
-                </p>
+                <p className="text-xs text-muted-foreground">Pagadas o entregadas</p>
               </CardContent>
             </Card>
           </div>
@@ -196,11 +192,9 @@ export function SalesDashboardView() {
             </CardHeader>
             <CardContent className="overflow-x-auto">
               {loading ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  Cargando órdenes...
-                </div>
+                <div className="text-center py-8 text-muted-foreground">Cargando órdenes...</div>
               ) : orders.length > 0 ? (
-                <SalesTable orders={orders} />
+                <SalesTable orders={orders} onSelectOrder={setSelectedOrderCard} />
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   No hay órdenes cerradas en este período
@@ -223,7 +217,7 @@ export function SalesDashboardView() {
             <Button
               size="lg"
               className="h-14 w-14 rounded-full shadow-md border-b-2"
-              style={{ borderColor: "#F3F4F6" }} // tu color personalizado
+              style={{ borderColor: "#F3F4F6" }}
               onClick={() => setOpenDialog(true)}
             >
               <Plus className="h-6 w-6" />
@@ -233,18 +227,33 @@ export function SalesDashboardView() {
       </AnimatePresence>
 
       {/* Dialogs */}
-      <OpenCashRegisterDialog
-        open={openDialog}
-        onOpenChange={setOpenDialog}
-        onConfirm={handleOpen}
-      />
-      <CloseCashRegisterDialog
-        open={closeDialog}
-        onOpenChange={setCloseDialog}
-        onConfirm={handleClose}
-        cashRegister={cashRegister}
-        orders={sessionOrders}
-      />
+      <OpenCashRegisterDialog open={openDialog} onOpenChange={setOpenDialog} onConfirm={handleOpen} />
+      <CloseCashRegisterDialog open={closeDialog} onOpenChange={setCloseDialog} onConfirm={handleClose} cashRegister={cashRegister} orders={sessionOrders} />
+
+      <AnimatePresence>
+  {selectedOrderCard && (
+    <motion.div
+      className="fixed inset-0 z-50 flex items-start justify-end backdrop-blur-sm px-4 -top-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div
+        className="mt-6 mx-20 w-full max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-lg"
+        initial={{ scale: 0.9, x: 100 }}
+        animate={{ scale: 1, x: 0 }}
+        exit={{ scale: 0.9, x: 100 }}
+        transition={{ type: "spring", stiffness: 150, damping: 18 }}
+      >
+        <OrderCard
+          order={selectedOrderCard}
+          onBack={() => setSelectedOrderCard(null)}
+        />
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
     </div>
   );
 }
