@@ -27,7 +27,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import OrderCard from "@/shared/presentation/components/OrderSheet";
+import OrderCard from "@/sales/presentation/components/OrderSalesSheet";
 
 export function SalesDashboardView() {
   const dispatch = useDispatch();
@@ -235,13 +235,13 @@ export function SalesDashboardView() {
       <AnimatePresence>
   {selectedOrderCard && (
     <motion.div
-      className="fixed inset-0 z-50 flex items-start justify-end backdrop-blur-sm px-4 -top-6"
+      className="fixed inset-0 z-50 flex justify-center backdrop-blur-sm"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
       <motion.div
-        className="mt-6 mx-20 w-full max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-lg"
+        className=" w-full max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-lg"
         initial={{ scale: 0.9, x: 100 }}
         animate={{ scale: 1, x: 0 }}
         exit={{ scale: 0.9, x: 100 }}
@@ -250,6 +250,7 @@ export function SalesDashboardView() {
         <OrderCard
           order={selectedOrderCard}
           onBack={() => setSelectedOrderCard(null)}
+          className={"h-[calc(100dvh-145px)] overflow-y-auto"}
         />
       </motion.div>
     </motion.div>

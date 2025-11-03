@@ -29,6 +29,7 @@ import EditUserForm from "./EditUserForm";
 import { AnimatePresence, motion } from "framer-motion";
 import { fetchClosedOrders } from "@/sales/application/salesThunks";
 import { getData } from "@/orders/application/itemSlice";
+import OrderCard from "@/sales/presentation/components/OrderSalesSheet";
 
 const UserCard = ({ user, onBack }) => {
   const dispatch = useDispatch();
@@ -37,6 +38,10 @@ const UserCard = ({ user, onBack }) => {
   const orders = useSelector((state) => state.sales.orders || []);
   const items = useSelector((state) => state.items.data || []);
   const role = useSelector((state) => state.users.role) || "Cliente";
+
+  //States mostrar OrderSheet
+  const [showSheet, setShowSheet] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   if (!user) {
     return (
@@ -111,6 +116,15 @@ const UserCard = ({ user, onBack }) => {
   };
 
   const handleEditProfile = () => setEditModal(true);
+
+  const handlerShowOrderSheet = (order) => setSelectedOrder(order);
+
+  const handlerOnbackOrder = () => {setShowSheet(!showSheet); setSelectedOrder(null)}
+
+  if(selectedOrder) {
+    return(<OrderCard order={selectedOrder} onBack={handlerOnbackOrder} />)
+  }
+
 
   // 🔹 Función para mostrar el Badge según status
   const getStatusBadge = (status) => {
@@ -290,7 +304,10 @@ const UserCard = ({ user, onBack }) => {
                     </TableRow>
                   ) : (
                     userOrders.slice(0, 5).map((order) => (
-                      <TableRow key={order.id}>
+                      <TableRow key={order.id}
+                      className={"cursor-pointer"}
+                       onClick={() => handlerShowOrderSheet(order) }
+                       >
                         <TableCell className="font-medium">
                           #{order.orderNumber}
                         </TableCell>
