@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { fetchPendingOrders } from "../../application/salesThunks";
+import { fetchPendingOrders, closeOrder } from "../../application/salesThunks";
 import { useSalesData } from "../hooks/useSalesData";
 import { useCashRegister } from "../hooks/useCashRegister";
 import { useSalesHistory } from "../hooks/useSalesHistory";
@@ -24,8 +24,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import OrderCard from "../components/OrderSalesSheet";
-import OrdersPage from "@/orders/presentation/pages/OrdersPage";
+import OrderCard from "@/shared/presentation/components/OrderSheet";
 
 export function SalesDashboardView() {
   const dispatch = useDispatch();
@@ -78,10 +77,10 @@ export function SalesDashboardView() {
     await handleCloseCashRegister(finalAmount);
     setCloseDialog(false);
   };
-  // const handleCloseOrder = async (orderId, paymentInfo) => {
-  //   await dispatch(closeOrder({ orderId, paymentInfo }));
-  //   dispatch(fetchPendingOrders());
-  // };
+  const handleCloseOrder = async (orderId, paymentInfo) => {
+    await dispatch(closeOrder({ orderId, paymentInfo }));
+    dispatch(fetchPendingOrders());
+  };
 
   const isCashRegisterOpen = cashRegister && cashRegister.status === "open";
 
@@ -245,13 +244,12 @@ export function SalesDashboardView() {
   {selectedOrderCard && (
     <motion.div
       className="fixed inset-0 z-50 flex items-start justify-end backdrop-blur-sm px-4 -top-6"
-      onClick={(e) => e.target === e.currentTarget && setSelectedOrderCard(null)}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
       <motion.div
-        className="mt-6 mx-20 w-full max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-lg"
+        className=" w-full max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-lg"
         initial={{ scale: 0.9, x: 100 }}
         animate={{ scale: 1, x: 0 }}
         exit={{ scale: 0.9, x: 100 }}
@@ -259,9 +257,7 @@ export function SalesDashboardView() {
       >
         <OrderCard
           order={selectedOrderCard}
-          onBack={() => setSelectedOrderCard(null)
-          }
-          className={'h-[calc(100dvh-145px)] overflow-y-auto'}
+          onBack={() => setSelectedOrderCard(null)}
         />
       </motion.div>
     </motion.div>
