@@ -42,8 +42,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import clsx from "clsx";
+import { fetchPendingOrders } from "@/sales/application/salesThunks";
 
-export default function OrderDetails({ onBack }) {
+export default function OrderDetails({ onBack, className }) {
   const dispatch = useDispatch();
   const { itemSelected } = useSelector((store) => store.items);
   const selectedOrder = useSelector((store) => store.orders.selectedOrder);
@@ -215,17 +217,16 @@ export default function OrderDetails({ onBack }) {
     } else {
       await dispatch(createDataOrder(newOrder));
     }
-
-    await dispatch(getDataOrders());
+    
     dispatch(getData());
     onBack();
   };
 
   return (
-     <main
-      className={`py-6 px-8 min-h-screen transition-colors duration-500 ${
+    <main
+      className={clsx(`py-6 px-8 min-h-screen transition-colors duration-500 ${
         isEditing ? "bg-blue-50/40" : "bg-emerald-50/30"
-      }`}
+      }` , className)}
     >
       {isModalOpen && (
         <ItemModal

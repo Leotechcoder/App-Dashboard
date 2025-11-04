@@ -28,7 +28,7 @@ import { voidSelectedProduct } from "../../../products/application/productSlice"
 import { useTableData } from "@/shared/hook/useTableDataO";
 import { closeOrder, fetchPendingOrders } from "@/sales/application/salesThunks";
 
-const OrdersPage = ({pendingOrders}) => {
+const OrdersPage = ({ pendingOrders }) => {
   const dispatch = useDispatch();
   const hasFetched = useRef(false);
   const shownMessageRef = useRef("");
@@ -38,18 +38,20 @@ const OrdersPage = ({pendingOrders}) => {
   );
 
   const [activeTab, setActiveTab] = useState("delivery");
-  const [createOrder, setCreateOrder] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [openOrderDetails, setOpenOrderDetails] = useState(false);
+
+  const scrollRef = useRef(null);
 
   // Hook centralizado de tabla
   const table = useTableData({
     stateKey: "orders",
     itemsPerPage: 10,
-    searchFields: ["id", "userName"],
+    searchFields: ["id", "customerName"],
     setFilteredData: setFilteredOrders,
     setCurrentPage: setCurrentPageOrders,
-    externalFilter: (order) => order.deliveryType === activeTab && order.status === "pending",
+    externalFilter: (order) =>
+      order.deliveryType === activeTab && order.status === "pending",
   });
 
   // Ciclo de vida
@@ -59,7 +61,7 @@ const OrdersPage = ({pendingOrders}) => {
       dispatch(fetchPendingOrders());
       dispatch(getData());
     }
-  }, []);
+  }, [dispatch]);
 
   // Toast por mensajes
   useEffect(() => {
@@ -72,8 +74,9 @@ const OrdersPage = ({pendingOrders}) => {
     }
   }, [message, dispatch]);
 
+
   // Handlers
-  const handleCreateOrder = () => setCreateOrder(true);
+  const handleCreateOrder = () => setOpenOrderDetails(true);
 
   const handleOpenOrderDetails = (order) => {
     dispatch(setSelectedOrder(order));
@@ -85,15 +88,8 @@ const OrdersPage = ({pendingOrders}) => {
     dispatch(setSelectedOrder(null));
     dispatch(voidSelectedProduct());
     dispatch(voidItemSelected());
-    setCreateOrder(false);
-
-    // setIsRefreshing(true);
-    // await dispatch(getDataOrders());
-    // dispatch(getData());
-    // setTimeout(() => setIsRefreshing(false), 500);
+    await dispatch(fetchPendingOrders());
   };
-
-  const handleShowHelp = () => dispatch(setShowHelpOrders());
 
   const handleDeleteOrder = async (orderId) => {
     const confirmDelete = window.confirm(
@@ -113,13 +109,11 @@ const OrdersPage = ({pendingOrders}) => {
     return <Message text="Cargando órdenes..." type="loading" />;
   if (error) return <Message text={`Error: ${error}`} type="error" />;
 
-  if (openOrderDetails || createOrder)
-    return <OrderDetails onBack={handleBack} />;
-
-  // Render principal
   return (
-    <main className="w-full pb-4 pt-6">
-
+    <main
+      className="w-full pb-4 pt-6 "
+    >
+      {/* HEADER DE ACCIONES */}
       <HeaderActions
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -128,6 +122,7 @@ const OrdersPage = ({pendingOrders}) => {
         setSearchTerm={table.setSearchTerm}
       />
 
+      {/* TABLA DE ÓRDENES */}
       <AnimatePresence mode="wait">
         {isRefreshing ? (
           <motion.div
@@ -148,6 +143,7 @@ const OrdersPage = ({pendingOrders}) => {
         ) : (
           <motion.div
             key="ordersTable"
+            className="overflow-y-auto h-[calc(90vh-100px)] border-t border-b border-gray-200 border-opacity-30"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 15 }}
@@ -165,11 +161,39 @@ const OrdersPage = ({pendingOrders}) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* MODAL DE ORDER DETAILS */}
+      <AnimatePresence>
+        {(openOrderDetails) && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-start justify-end backdrop-blur-sm px-4 pt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="w-full max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-xl"
+              initial={{ scale: 0.9, x: 100 }}
+              animate={{ scale: 1, x: 0 }}
+              exit={{ scale: 0.9, x: 100 }}
+              transition={{ type: "spring", stiffness: 150, damping: 18 }}
+            >
+              <OrderDetails
+                onBack={handleBack}
+                className="h-[calc(100dvh-145px)] overflow-y-auto pt-6"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 };
 
-// Subcomponentes
+/* ───────────────────────────────
+   SUBCOMPONENTES
+──────────────────────────────── */
+
 const Message = ({ text, type }) => {
   const baseStyles = "text-center py-10 text-base font-medium";
   const color = type === "error" ? "text-red-500" : "text-gray-600";
