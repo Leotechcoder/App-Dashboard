@@ -24,7 +24,8 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import OrderCard from "@/shared/presentation/components/OrderSheet";
+import OrderCard from "../components/OrderSalesSheet";
+import OrdersPage from "@/orders/presentation/pages/OrdersPage";
 
 export function SalesDashboardView() {
   const dispatch = useDispatch();
@@ -258,6 +259,7 @@ export function SalesDashboardView() {
         <OrderCard
           order={selectedOrderCard}
           onBack={() => setSelectedOrderCard(null)}
+          className={"h-[calc(100dvh-145px)] overflow-y-auto pt-6"}
         />
       </motion.div>
     </motion.div>
