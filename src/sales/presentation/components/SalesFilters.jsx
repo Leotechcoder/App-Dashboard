@@ -13,10 +13,12 @@ import { Input } from "@/components/ui/input";
 import { Calendar } from "lucide-react";
 
 export function SalesFilters({ filters, onFiltersChange }) {
+
   const handleDateRangeChange = (value) => {
     onFiltersChange({ dateRange: value });
   };
 
+  
   const handleStartDateChange = (e) => {
     onFiltersChange({ startDate: e.target.value });
   };
