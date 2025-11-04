@@ -26,9 +26,9 @@ import { voidSelectedProduct } from "../../../products/application/productSlice"
 
 // Hook de tabla
 import { useTableData } from "@/shared/hook/useTableDataO";
-import { closeOrder } from "@/sales/application/salesThunks";
+import { closeOrder, fetchPendingOrders } from "@/sales/application/salesThunks";
 
-const OrdersPage = () => {
+const OrdersPage = ({pendingOrders}) => {
   const dispatch = useDispatch();
   const hasFetched = useRef(false);
   const shownMessageRef = useRef("");
@@ -56,7 +56,7 @@ const OrdersPage = () => {
   useEffect(() => {
     if (!hasFetched.current) {
       hasFetched.current = true;
-      dispatch(getDataOrders());
+      dispatch(fetchPendingOrders());
       dispatch(getData());
     }
   }, []);

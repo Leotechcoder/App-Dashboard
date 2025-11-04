@@ -131,7 +131,7 @@ const OrdersTableEnhanced = ({
 
   // ===== Comparación segura con tolerancia de decimales
   const totalsMatch = useMemo(() => {
-    const expected = Number(selectedOrderModal?.totalAmount || 0);
+    const expected = Number(selectedOrderModal?.total || 0);
     const entered = Number(totalEntered || 0);
     return Math.abs(expected - entered) < 0.01; // margen de error decimal
   }, [totalEntered, selectedOrderModal]);
@@ -156,8 +156,8 @@ const OrdersTableEnhanced = ({
 
   if (!data || data.length === 0) {
     return (
-      <div className="text-center font-bold py-12 text-muted-foreground">
-        Carga una orden 😁
+      <div className="text-center font-mono font-bold py-12 text-muted-foreground">
+        No hay órdenes 🤔
       </div>
     );
   }
@@ -201,25 +201,25 @@ const OrdersTableEnhanced = ({
                   className="cursor-pointer hover:bg-gray-50"
                   onClick={() => handleSelectTableOrder(order)}
                 >
-                  <TableCell className="px-3 py-4 text-sm font-medium">
+                  <TableCell className="w-16 px-3 py-4 text-sm font-medium">
                     {order.id}
                   </TableCell>
-                  <TableCell className="w-24 px-3 py-4 text-sm overflow-hidden">
-                    {order.userId}
+                  <TableCell className="w-32 px-2 py-4 text-sm overflow-hidden">
+                    {order.customerId}
                   </TableCell>
-                  <TableCell className="px-6 py-4 text-sm overflow-hidden">
-                    {order.userName}
+                  <TableCell className="w-32 px-2 py-4 text-sm overflow-hidden">
+                    {order.customerName}
                   </TableCell>
                   <TableCell className="px-3 py-4 text-sm">
-                    ${order.totalAmount}
+                    ${order.total}
                   </TableCell>
                   <TableCell className="px-3 py-4 text-sm">
                     {order.status}
                   </TableCell>
-                  <TableCell className="px-6 py-4 text-sm">
+                  <TableCell className="px-3 py-4 text-sm">
                     {formatDate(order.updatedAt || order.createdAt)}
                   </TableCell>
-                  <TableCell className="px-4 py-4 text-sm">
+                  <TableCell className="px-3 py-4 text-sm">
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => handleEditOrder(order)}
@@ -272,13 +272,13 @@ const OrdersTableEnhanced = ({
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Cliente:</span>
                   <span className="font-medium">
-                    {selectedOrderModal.userName}
+                    {selectedOrderModal.customerName}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Total:</span>
                   <span className="font-bold text-lg">
-                    ${selectedOrderModal.totalAmount}
+                    ${selectedOrderModal.total}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-700">

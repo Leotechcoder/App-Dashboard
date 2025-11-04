@@ -95,20 +95,6 @@ const Sidebar = ({ setLogOutUser }) => {
 
           {isExpanded && (
             <NavLink
-              to={PATH.orders}
-              className={({ isActive }) =>
-                isActive
-                  ? "flex items-center gap-4 py-4 pl-10 text-md w-full bg-gray-600 rounded-md p-2 mr-1"
-                  : "flex items-center gap-4 py-3 pl-10 text-md text-gray-500 w-full cursor-pointer hover:bg-gray-700 hover:rounded-md "
-              }
-            >
-              <FiBox size={25} />
-              Ordenes
-            </NavLink>
-          )}
-
-          {isExpanded && (
-            <NavLink
               to={PATH.ventas}
               className={({ isActive }) =>
                 isActive

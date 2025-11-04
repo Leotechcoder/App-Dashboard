@@ -24,7 +24,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import OrderCard from "@/shared/presentation/components/OrderSalesSheet";
+import OrderCard from "../components/OrderSalesSheet";
 import OrdersPage from "@/orders/presentation/pages/OrdersPage";
 
 export function SalesDashboardView() {
