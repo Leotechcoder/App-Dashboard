@@ -1,8 +1,8 @@
 // OrderDeliveryType.jsx
 const OrderDeliveryType = ({ deliveryType, setDeliveryType }) => (
-  <div className="bg-gray-50 border-b-transparent border-gray-200">
-    <div className="p-2 font-semibold text-gray-800 bg-gray-300 rounded-t-lg">ENTREGA</div>
-    <div className="p-3">
+  <div className="">
+    <div className="py-1 font-semibold text-gray-800">ENTREGA</div>
+    <div className="py-1">
       <select
         className="border rounded p-2 w-full text-sm"
         value={deliveryType}

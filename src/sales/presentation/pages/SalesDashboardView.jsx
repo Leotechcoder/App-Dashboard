@@ -1,8 +1,6 @@
-"use client";
 
 import { useState, useEffect } from "react";
 import { fetchPendingOrders, closeOrder } from "../../application/salesThunks";
-import { fetchActiveCashRegister } from "../../application/salesThunks";
 import { useSalesData } from "../hooks/useSalesData";
 import { useCashRegister } from "../hooks/useCashRegister";
 import { useSalesHistory } from "../hooks/useSalesHistory";
@@ -12,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SalesFilters } from "../components/SalesFilters";
 import { SalesChart } from "../components/SalesChart";
 import { SalesTable } from "../components/SalesTable";
-import { PendingOrdersTable } from "../components/PendingOrdersTable";
 import { OpenCashRegisterDialog } from "../components/OpenCashRegisterDialog";
 import { CloseCashRegisterDialog } from "../components/CloseCashRegisterDialog";
 import { CashRegisterSummary } from "../components/CashRegisterSummary";
@@ -27,7 +24,8 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import OrderCard from "@/sales/presentation/components/OrderSalesSheet";
+import OrderCard from "../components/OrderSalesSheet";
+import OrdersPage from "@/orders/presentation/pages/OrdersPage";
 
 export function SalesDashboardView() {
   const dispatch = useDispatch();
@@ -51,20 +49,26 @@ export function SalesDashboardView() {
 
   // Evita scroll en la página padre mientras el modal está abierto
   useEffect(() => {
-    if (selectedOrderCard) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [selectedOrderCard]);
+  const shouldLockScroll = !!selectedOrderCard || openDialog || closeDialog;
+  document.body.style.overflow = shouldLockScroll ? "hidden" : "auto";
+  return () => { document.body.style.overflow = "auto"; };
+}, [selectedOrderCard, openDialog, closeDialog]);
 
+
+  //Al renderizar el componente
   useEffect(() => {
-    dispatch(fetchPendingOrders());
+    const fetchData = async () => {
+      try {
+        await dispatch(fetchPendingOrders());
+      } catch (err) {
+        console.error("Error al cargar órdenes pendientes:", err);
+      }
+    };
+    fetchData();
   }, [dispatch]);
 
+
+  //HANDLERS
   const handleFilterChange = (newFilters) => updateFilters(newFilters);
   const handleOpen = async (initialAmount) => {
     await handleOpenCashRegister(initialAmount);
@@ -77,7 +81,6 @@ export function SalesDashboardView() {
   const handleCloseOrder = async (orderId, paymentInfo) => {
     await dispatch(closeOrder({ orderId, paymentInfo }));
     dispatch(fetchPendingOrders());
-    dispatch(fetchActiveCashRegister());
   };
 
   const isCashRegisterOpen = cashRegister && cashRegister.status === "open";
@@ -87,8 +90,8 @@ export function SalesDashboardView() {
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">
-            Control de caja e historial de ventas
+          <h2 className="text-3xl font-bold tracking-tight font-mono">
+            Control de Caja e Historial de Ventas
           </h2>
         </div>
         {isCashRegisterOpen && (
@@ -112,31 +115,37 @@ export function SalesDashboardView() {
 
       {/* Tabs */}
       <Tabs defaultValue="pending" className="space-y-4">
-        <TabsList className="flex flex-wrap gap-2">
-          <TabsTrigger value="pending" className="gap-2 flex-1 md:flex-none">
-            <ClipboardList className="h-4 w-4" /> Órdenes Pendientes
-            {pendingOrders.length > 0 && (
-              <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-                {pendingOrders.length}
-              </span>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="sales" className="gap-2 flex-1 md:flex-none">
-            <Package className="h-4 w-4 text-muted-foreground" /> Ventas Cerradas
-          </TabsTrigger>
-        </TabsList>
+         <TabsList className="flex flex-wrap gap-2 justify-start">
+
+        {/* ----- TAB PENDIENTES ----- */}
+        <TabsTrigger
+          value="pending"   
+          className="gap-2 flex-1 md:flex-none transition-all
+          "
+        >
+          <ClipboardList className="h-4 w-4" /> Órdenes Pendientes
+          {pendingOrders.length > 0 && (
+            <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+              {pendingOrders.length}
+            </span>
+          )}
+        </TabsTrigger>
+
+        {/* ----- TAB VENTAS CERRADAS ----- */}
+        <TabsTrigger
+          value="sales"
+          className="gap-2 flex-1 md:flex-none transition-all 
+          "
+        >
+          <Package className="h-4 w-4 text-muted-foreground" /> Ventas Cerradas
+        </TabsTrigger>
+      </TabsList>
 
         {/* Pending Orders Tab */}
-        <TabsContent value="pending" className="space-y-4 overflow-x-auto">
+        <TabsContent value="pending" className="space-y-4 ">
           <Card>
-            <CardHeader>
-              <CardTitle>Órdenes Pendientes de Cierre</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <PendingOrdersTable
-                orders={pendingOrders}
-                onCloseOrder={handleCloseOrder}
-              />
+            <CardContent className="p-0">
+              <OrdersPage />
             </CardContent>
           </Card>
         </TabsContent>
@@ -235,7 +244,7 @@ export function SalesDashboardView() {
       <AnimatePresence>
   {selectedOrderCard && (
     <motion.div
-      className="fixed inset-0 z-50 flex justify-center backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-start justify-end backdrop-blur-sm px-4 -top-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -250,7 +259,7 @@ export function SalesDashboardView() {
         <OrderCard
           order={selectedOrderCard}
           onBack={() => setSelectedOrderCard(null)}
-          className={"h-[calc(100dvh-145px)] overflow-y-auto"}
+          className={"h-[calc(100dvh-145px)] overflow-y-auto pt-6"}
         />
       </motion.div>
     </motion.div>

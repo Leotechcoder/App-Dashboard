@@ -2,7 +2,7 @@
 import Button from "../../../../shared/presentation/components/Button";
 
 const OrderSummary = ({ handleOrderSave, selectedOrder, modoCobro }) => (
-  <div className="p-3 border-t bg-white">
+  <div className=" bg-white w-full">
     <Button
       onClick={handleOrderSave}
       className="w-full bg-orange-600 hover:bg-orange-700 text-white"
