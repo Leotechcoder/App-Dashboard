@@ -259,7 +259,9 @@ export function SalesDashboardView() {
       >
         <OrderCard
           order={selectedOrderCard}
-          onBack={() => setSelectedOrderCard(null)}
+          onBack={() => setSelectedOrderCard(null)
+          }
+          className={'h-[calc(100dvh-145px)] overflow-y-auto'}
         />
       </motion.div>
     </motion.div>

@@ -25,6 +25,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { getData } from "@/orders/application/itemSlice";
+import clsx from "clsx";
 
 const OrderCard = ({ order, onBack, className = "" }) => {
   const items = useSelector((state) => state.items.data || []);
@@ -155,7 +156,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
         </CardHeader>
 
         {/* CONTENT SCROLLABLE */}
-        <CardContent className="h-[calc(100dvh-145px)] overflow-y-auto p-6 space-y-6">
+        <CardContent className={clsx(" p-6 space-y-6", className)}>
           {/* Información del cliente */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
