@@ -9,6 +9,7 @@ export function useSalesData() {
   const { activeCashRegister } = useCashRegister();
   const { cashRegisterHistory } = useSelector((state) => state.sales);
 
+
   // 🔹 Total general de ventas (todas las órdenes)
   const totalEarnings = useMemo(() => {
     if (!orders?.length) return 0;

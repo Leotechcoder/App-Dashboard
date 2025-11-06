@@ -1,4 +1,4 @@
-import { OrderEntity } from "@/orders/domain/order";
+import { Order, OrderEntity } from "@/orders/domain/order";
 import { CashRegisterEntity } from "../domain/cashRegisterEntity";
 
 export class SalesService {
@@ -12,7 +12,7 @@ export class SalesService {
 
   async getPendingOrders() {
     const data = await this.repository.getPendingOrders();
-    return data.map((order) => new OrderEntity(order).toObject());
+    return data.map((order) => new Order(order).toObject());
   }
 
   async getClosedOrders(startDate, endDate) {

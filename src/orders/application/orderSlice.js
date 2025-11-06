@@ -103,16 +103,15 @@ const orderSlice = createSlice({
       })
 
       // --- Actualizar orden ---
+      .addCase(updateDataOrder.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(updateDataOrder.fulfilled, (state, action) => {
+        state.isLoading = false;
         const updatedOrder = action.payload;
         const index = state.data.findIndex((o) => o.id === updatedOrder.id);
         if (index !== -1) {
           state.data[index] = { ...state.data[index], ...updatedOrder };
-        }
-
-        // Si la orden editada era la seleccionada, actualizamos también selectedOrder
-        if (state.selectedOrder?.id === updatedOrder.id) {
-          state.selectedOrder = { ...state.selectedOrder, ...updatedOrder };
         }
       })
       .addCase(updateDataOrder.rejected, (state, action) => {
@@ -125,8 +124,7 @@ const orderSlice = createSlice({
       })
       .addCase(deleteDataOrder.fulfilled, (state, action) => {
         state.isLoading = false;
-        console.log(action);
-        state.data = state.data.filter((order) => order.id !== action.meta.arg);
+        state.data = state.data.filter((order) => order.id !== action.payload.deletedId);
         state.message = "Orden eliminada (X_X)";
       })
       .addCase(deleteDataOrder.rejected, (state, action) => {

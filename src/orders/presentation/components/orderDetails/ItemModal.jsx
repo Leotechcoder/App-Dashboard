@@ -71,7 +71,7 @@ const ItemModal = ({ setModal, setUpdateItem, updateItem, setItems, items }) => 
 
   return (
     <div className="fixed z-10 inset-0 bg-black bg-opacity-5 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+      <div className="bg-white rounded-md shadow-xl w-full max-w-md">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b">
           <h2 className="text-xl font-semibold text-gray-900">

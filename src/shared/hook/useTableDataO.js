@@ -25,7 +25,7 @@ export function useTableData({
   const [searchTerm, setSearchTerm] = useState("");
   const [localCurrentPage, setLocalCurrentPage] = useState(1);
 
-  const data = useSelector((state) => state.sales.pendingOrders, shallowEqual);
+  const data = useSelector((state) => state.orders.data, shallowEqual);
   const reduxCurrentPage = useSelector(
     (state) => state[stateKey].pagination?.currentPage || 1
   );

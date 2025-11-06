@@ -61,7 +61,7 @@ const Sidebar = ({ setLogOutUser }) => {
               }
             >
               <FiHome size={25} />
-              Home
+              Inicio
             </NavLink>
           )}
 

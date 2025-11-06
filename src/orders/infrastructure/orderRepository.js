@@ -15,7 +15,7 @@ export class OrderRepository {
   // ✅ Nuevo método: actualizar datos de una orden existente
   async update(orderId, data) {
     const response = await orderApi.updateOrder(orderId, data);
-    return this._toDomain(response);
+    return this._toDomain(response.order);
   }
   async delete(orderId) {
     return await orderApi.deleteOrder(orderId);

@@ -13,34 +13,32 @@ import OrdersTableEnhanced from "../components/OrdersTableEnhanced";
 
 // Redux slices
 import {
-  getDataOrders,
   setClearMessage,
   setSelectedOrder,
-  setShowHelpOrders,
   setFilteredOrders,
   setCurrentPageOrders,
   deleteDataOrder,
 } from "../../application/orderSlice";
-import { getData, voidItemSelected } from "../../application/itemSlice";
-import { voidSelectedProduct } from "../../../products/application/productSlice";
 
 // Hook de tabla
 import { useTableData } from "@/shared/hook/useTableDataO";
-import { closeOrder, fetchPendingOrders } from "@/sales/application/salesThunks";
+import {
+  closeOrder,
+  fetchPendingOrders,
+} from "@/sales/application/salesThunks";
+import { voidItemSelected } from "@/orders/application/itemSlice";
+import { voidSelectedProduct } from "@/products/application/productSlice";
 
-const OrdersPage = ({pendingOrders}) => {
+const OrdersPage = () => {
   const dispatch = useDispatch();
-  const hasFetched = useRef(false);
   const shownMessageRef = useRef("");
 
-  const { isLoading, error, showHelp, message } = useSelector(
-    (state) => state.orders
-  );
-
+  const { selectedOrder, isLoading, error, message } = useSelector((state) => state.orders);
+  const dataOrders = useSelector((state) => state.orders.data);
   const [activeTab, setActiveTab] = useState("delivery");
-  const [createOrder, setCreateOrder] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [openOrderDetails, setOpenOrderDetails] = useState(false);
+  const [createOrder, setCreateOrder] = useState(false);
 
   // Hook centralizado de tabla
   const table = useTableData({
@@ -49,17 +47,9 @@ const OrdersPage = ({pendingOrders}) => {
     searchFields: ["id", "userName"],
     setFilteredData: setFilteredOrders,
     setCurrentPage: setCurrentPageOrders,
-    externalFilter: (order) => order.deliveryType === activeTab && order.status === "pending",
+    externalFilter: (order) =>
+      order.deliveryType === activeTab && order.status === "pending",
   });
-
-  // Ciclo de vida
-  useEffect(() => {
-    if (!hasFetched.current) {
-      hasFetched.current = true;
-      dispatch(fetchPendingOrders());
-      dispatch(getData());
-    }
-  }, []);
 
   // Toast por mensajes
   useEffect(() => {
@@ -69,11 +59,15 @@ const OrdersPage = ({pendingOrders}) => {
         shownMessageRef.current = message;
         dispatch(setClearMessage());
       }, 2000);
+      shownMessageRef.current = "";
     }
   }, [message, dispatch]);
 
   // Handlers
-  const handleCreateOrder = () => setCreateOrder(true);
+  const handleCreateOrder = () => {
+    setOpenOrderDetails(true);
+    setCreateOrder(true);
+  };
 
   const handleOpenOrderDetails = (order) => {
     dispatch(setSelectedOrder(order));
@@ -82,26 +76,21 @@ const OrdersPage = ({pendingOrders}) => {
 
   const handleBack = async () => {
     setOpenOrderDetails(false);
-    dispatch(setSelectedOrder(null));
-    dispatch(voidSelectedProduct());
-    dispatch(voidItemSelected());
     setCreateOrder(false);
-
-    // setIsRefreshing(true);
-    // await dispatch(getDataOrders());
-    // dispatch(getData());
-    // setTimeout(() => setIsRefreshing(false), 500);
+    setTimeout(() => {
+      dispatch(voidSelectedProduct());
+      dispatch(voidItemSelected());
+      dispatch(setSelectedOrder(null));
+    }, 100);
   };
-
-  const handleShowHelp = () => dispatch(setShowHelpOrders());
 
   const handleDeleteOrder = async (orderId) => {
     const confirmDelete = window.confirm(
       "¿Estás seguro que querés eliminar esta orden? Esta acción no se puede deshacer."
     );
     if (!confirmDelete) return;
-    await dispatch(deleteDataOrder(orderId));
-    await dispatch(getDataOrders());
+    await dispatch(deleteDataOrder(orderId)); //Ya actualiza el state orders mas adelante revisar
+    dispatch(fetchPendingOrders()); //Actualiza los datos en sales.orders
   };
 
   const handleCloseOrder = async (orderId, paymentInfo) => {
@@ -113,13 +102,9 @@ const OrdersPage = ({pendingOrders}) => {
     return <Message text="Cargando órdenes..." type="loading" />;
   if (error) return <Message text={`Error: ${error}`} type="error" />;
 
-  if (openOrderDetails || createOrder)
-    return <OrderDetails onBack={handleBack} />;
-
-  // Render principal
   return (
-    <main className="w-full pb-4 pt-6">
-
+    <main className="w-full pb-4 pt-6 ">
+      {/* HEADER DE ACCIONES */}
       <HeaderActions
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -128,6 +113,7 @@ const OrdersPage = ({pendingOrders}) => {
         setSearchTerm={table.setSearchTerm}
       />
 
+      {/* TABLA DE ÓRDENES */}
       <AnimatePresence mode="wait">
         {isRefreshing ? (
           <motion.div
@@ -148,6 +134,7 @@ const OrdersPage = ({pendingOrders}) => {
         ) : (
           <motion.div
             key="ordersTable"
+            className="overflow-y-auto h-[calc(90vh-100px)] border-t border-b border-gray-200 border-opacity-30"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 15 }}
@@ -165,11 +152,39 @@ const OrdersPage = ({pendingOrders}) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* MODAL DE ORDER DETAILS */}
+      <AnimatePresence>
+        {((openOrderDetails && selectedOrder) || createOrder) && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-start justify-end backdrop-blur-sm px-4 pt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="w-full max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-xl"
+              initial={{ scale: 0.9, x: 100 }}
+              animate={{ scale: 1, x: 0 }}
+              exit={{ scale: 0.9, x: 100 }}
+              transition={{ type: "spring", stiffness: 150, damping: 18 }}
+            >
+              <OrderDetails
+                onBack={handleBack}
+                className="h-[calc(100dvh-145px)] overflow-y-auto pt-6"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 };
 
-// Subcomponentes
+/* ───────────────────────────────
+   SUBCOMPONENTES
+──────────────────────────────── */
+
 const Message = ({ text, type }) => {
   const baseStyles = "text-center py-10 text-base font-medium";
   const color = type === "error" ? "text-red-500" : "text-gray-600";

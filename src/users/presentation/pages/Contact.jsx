@@ -27,10 +27,10 @@ const Contact = () => {
   const { showHelp, isFormView, editingUser } = useSelector((state) => state.users);
 
   const handleToggleHelp = () => dispatch(setShowHelpUsers());
-  const handleOpenForm = (user = null) => {
-    dispatch(setEditingUser(user));
-    dispatch(setFormView(true));
-  };
+  // const handleOpenForm = (user = null) => {
+  //   dispatch(setEditingUser(user));
+  //   dispatch(setFormView(true));
+  // };
   const handleCloseForm = () => dispatch(setFormView(false));
 
   return (
@@ -38,7 +38,7 @@ const Contact = () => {
       <AnimatePresence mode="wait">
         {isFormView && editingUser ? (
           // =========================
-          // 🧾 Vista: Ficha completa de usuario (ocupa todo el padre)
+          // 🧾 Vista: Ficha completa de contacto (ocupa todo el padre)
           // =========================
           <motion.div
             key="userSheet"
@@ -49,7 +49,7 @@ const Contact = () => {
           </motion.div>
         ) : (
           // =========================
-          // 📋 Vista: Lista de usuarios
+          // 📋 Vista: Lista de contactos
           // =========================
           <motion.div key="userList" {...fadeSlide}>
             {!showHelp && (

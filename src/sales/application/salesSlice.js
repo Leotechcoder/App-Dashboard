@@ -10,7 +10,7 @@ import {
 } from "./salesThunks"
 
 const initialState = {
-  orders: [],
+  closedOrders: [],
   pendingOrders: [],
   cashRegisterHistory: [],
   activeCashRegister: null,
@@ -45,7 +45,7 @@ const salesSlice = createSlice({
       })
       .addCase(fetchClosedOrders.fulfilled, (state, action) => {
         state.loading = false
-        state.orders = action.payload
+        state.closedOrders = action.payload
       })
       .addCase(fetchClosedOrders.rejected, (state, action) => {
         state.loading = false
@@ -123,7 +123,7 @@ const salesSlice = createSlice({
         // Remover de pendientes
         state.pendingOrders = state.pendingOrders.filter((o) => o.id !== action.payload.id)
         // Agregar a órdenes cerradas
-        state.orders.unshift(action.payload)
+        state.closedOrders.unshift(action.payload)
       })
       .addCase(closeOrder.rejected, (state, action) => {
         state.loading = false
