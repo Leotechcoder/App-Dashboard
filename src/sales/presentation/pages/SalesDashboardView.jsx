@@ -28,6 +28,7 @@ import OrdersPage from "@/orders/presentation/pages/OrdersPage";
 import { getData } from "@/orders/application/itemSlice";
 import { getUserData } from "@/users/application/userSlice";
 import { getDataOrders } from "@/orders/application/orderSlice";
+import { useScrollLock } from "@/shared/hook/useScrollLock";
 
 export function SalesDashboardView() {
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ export function SalesDashboardView() {
   const [closeDialog, setCloseDialog] = useState(false);
   const [selectedOrderCard, setSelectedOrderCard] = useState(null);
 
+  //Al cargar la vista, carga los datos necesarios (Mejorar esto para que no se cargue todo cada vez)
   useEffect(() => {
       dispatch(fetchPendingOrders());
       dispatch(getData())
@@ -57,13 +59,7 @@ export function SalesDashboardView() {
   }, []);
 
   // Evita scroll en la página padre mientras el modal está abierto
-  useEffect(() => {
-    const shouldLockScroll = !!selectedOrderCard || openDialog || closeDialog;
-    document.body.style.overflow = shouldLockScroll ? "hidden" : "auto";
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [selectedOrderCard, openDialog, closeDialog]);
+  useScrollLock(!!selectedOrderCard || openDialog || closeDialog);
 
   //HANDLERS
   const handleFilterChange = (newFilters) => updateFilters(newFilters);

@@ -35,7 +35,7 @@ const UserCard = ({ user, onBack }) => {
   const dispatch = useDispatch();
   const [editModal, setEditModal] = useState(false);
 
-  const orders = useSelector((state) => state.sales.orders || []);
+  const orders = useSelector((state) => state.sales.closedOrders || []);
   const items = useSelector((state) => state.items.data || []);
   const role = useSelector((state) => state.users.role) || "Cliente";
 

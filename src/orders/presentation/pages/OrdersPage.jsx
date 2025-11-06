@@ -28,6 +28,7 @@ import {
 } from "@/sales/application/salesThunks";
 import { voidItemSelected } from "@/orders/application/itemSlice";
 import { voidSelectedProduct } from "@/products/application/productSlice";
+import { useScrollLock } from "@/shared/hook/useScrollLock";
 
 const OrdersPage = () => {
   const dispatch = useDispatch();
@@ -51,6 +52,8 @@ const OrdersPage = () => {
       order.deliveryType === activeTab && order.status === "pending",
   });
 
+  //Hook para bloquear scroll cuando se abre el modal de detalles
+  useScrollLock(openOrderDetails || createOrder);
   // Toast por mensajes
   useEffect(() => {
     if (message && shownMessageRef.current !== message) {
