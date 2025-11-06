@@ -9,7 +9,6 @@ export function useSalesData() {
   const { activeCashRegister } = useCashRegister();
   const { cashRegisterHistory } = useSelector((state) => state.sales);
 
-
   // 🔹 Total general de ventas (todas las órdenes)
   const totalEarnings = useMemo(() => {
     if (!orders?.length) return 0;
@@ -44,13 +43,26 @@ export function useSalesData() {
     if (!orders?.length) return [];
 
     const groupedByDate = orders.reduce((acc, order) => {
-      const date = new Date(order.createdAt).toLocaleDateString("es-AR");
-      if (!acc[date]) acc[date] = { date, total: 0, count: 0 };
-      acc[date].total += Number(order.total) || 0;
-      acc[date].count += 1;
+      // Convertir a fecha local consistente (Argentina UTC-3)
+      const dateObj = new Date(order.createdAt);
+      const localDate = new Date(
+        dateObj.getFullYear(),
+        dateObj.getMonth(),
+        dateObj.getDate()
+      );
+
+      // Usar formato YYYY-MM-DD (sin desfase horario)
+      const dateKey = localDate.toISOString().split("T")[0];
+
+      if (!acc[dateKey]) acc[dateKey] = { date: dateKey, total: 0, count: 0 };
+
+      acc[dateKey].total += Number(order.total) || 0;
+      acc[dateKey].count += 1;
+
       return acc;
     }, {});
 
+    // Ordenar cronológicamente
     return Object.values(groupedByDate).sort(
       (a, b) => new Date(a.date) - new Date(b.date)
     );
@@ -77,8 +89,11 @@ export function useSalesData() {
     );
 
     // Filtrar solo las órdenes con método efectivo
-    let cashOrders = SalesService.filterSessionOrders(ordersInRange, startIso, endIso);
-
+    let cashOrders = SalesService.filterSessionOrders(
+      ordersInRange,
+      startIso,
+      endIso
+    );
 
     // 🔸 Incluir solo órdenes cerradas o completadas
     const closedStatusRegex = /closed|paid|completed|cancelled/i;
@@ -93,31 +108,32 @@ export function useSalesData() {
   }, [orders, activeCashRegister]);
 
   // 🔹 Calcular totales de la caja activa
-const cashRegisterAnalysis = useMemo(() => {
-  if (!activeCashRegister) return null;
+  const cashRegisterAnalysis = useMemo(() => {
+    if (!activeCashRegister) return null;
 
-  const initial = Number(activeCashRegister.initialAmount) || 0;
-  const totalByMethod = SalesService.calculateTotalByPaymentMethod(sessionOrders);
+    const initial = Number(activeCashRegister.initialAmount) || 0;
+    const totalByMethod =
+      SalesService.calculateTotalByPaymentMethod(sessionOrders);
 
-  const totalCash = totalByMethod.cash || 0;
-  const totalDebit = totalByMethod.debit || 0;
-  const totalCredit = totalByMethod.credit || 0;
-  const totalTransfer = totalByMethod.transfer || 0;
+    const totalCash = totalByMethod.cash || 0;
+    const totalDebit = totalByMethod.debit || 0;
+    const totalCredit = totalByMethod.credit || 0;
+    const totalTransfer = totalByMethod.transfer || 0;
 
-  const totalExpected = totalCash + totalDebit + totalCredit + totalTransfer;
+    const totalExpected = totalCash + totalDebit + totalCredit + totalTransfer;
 
-  return {
-    expectedTotal: totalExpected,
-    expectedCashAmount: totalCash,
-    expectedDebitAmount: totalDebit,
-    expectedCreditAmount: totalCredit,
-    expectedTransferAmount: totalTransfer,
-    ordersCount: sessionOrders.length,
-    initialAmount: initial,
-    expectedFinalAmount: initial + totalCash,
-    lastUpdate: new Date().toISOString(),
-  };
-}, [activeCashRegister, sessionOrders]);
+    return {
+      expectedTotal: totalExpected,
+      expectedCashAmount: totalCash,
+      expectedDebitAmount: totalDebit,
+      expectedCreditAmount: totalCredit,
+      expectedTransferAmount: totalTransfer,
+      ordersCount: sessionOrders.length,
+      initialAmount: initial,
+      expectedFinalAmount: initial + totalCash,
+      lastUpdate: new Date().toISOString(),
+    };
+  }, [activeCashRegister, sessionOrders]);
 
   // 🔹 Retornar datos preparados para el dashboard
   return {

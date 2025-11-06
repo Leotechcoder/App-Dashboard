@@ -14,6 +14,7 @@ import HomeInProduction from "../components/home/HomeInProduction.jsx";
 import { getData } from "@/orders/application/itemSlice.js";
 import { getDataProducts } from "@/products/application/productSlice.js";
 import { fetchPendingOrders } from "@/sales/application/salesThunks.js";
+import DashboardHome from "../components/home/InicioPrueba.jsx";
 
 const Dashboard = () => {
   const username = useSelector((store) => store.users.username);
@@ -22,22 +23,18 @@ const Dashboard = () => {
   useEffect(() => {
     if (!username) {
       dispatch(getUserAuth());
-      //CARGA DE DATOS AL INICIAR SESION
-      dispatch(getUserData());//CONTACTOS
-      dispatch(getDataProducts())//PRODUCTOS
-      dispatch(fetchPendingOrders())//ORDENES NO CERRADAS
-      dispatch(getData());//ITEMS
     }
   }, [username]);
   
 
   return (
-    <div className="container mx-auto p-8 scale-95">
+    <div className="container mx-auto flex flex-col gap-4 p-8">
       <WelcomeHeader />
-      <HomeInProduction />
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-4">
-        <SalesChart />
+      <DashboardHome />
+      {/* <div className="grid grid-cols-1 gap-6 mb-6 p-4">
         <RevenueDisplay />
+      <HomeInProduction />
+        <SalesChart />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
         <RecentOrdersTimeline />

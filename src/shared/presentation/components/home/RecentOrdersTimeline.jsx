@@ -6,48 +6,48 @@ const RecentOrdersTimeline = () => {
     {
       id: 1,
       time: "09:30 am",
-      type: "payment_received",
-      description: "Payment received from John Doe of",
+      type: "pago_recibido",
+      description: "Pago recibido de John Doe por",
       amount: 385.9,
       color: "bg-blue-400",
     },
     {
       id: 2,
       time: "10:00 am",
-      type: "new_sale",
-      description: "New sale recorded",
+      type: "nueva_venta",
+      description: "Nueva venta registrada",
       reference: "ML-3467",
       color: "bg-indigo-400",
     },
     {
       id: 3,
       time: "12:00 am",
-      type: "payment_made",
-      description: "Payment was made of",
+      type: "pago_hecho",
+      description: "Pago hecho de",
       amount: 64.95,
-      additionalInfo: "to Michael",
+      additionalInfo: "a Michael",
       color: "bg-emerald-400",
     },
     {
       id: 4,
       time: "09:30 am",
-      type: "new_sale",
-      description: "New sale recorded",
+      type: "nueva_venta",
+      description: "Nueva venta registrada",
       reference: "ML-3467",
       color: "bg-amber-400",
     },
     {
       id: 5,
       time: "09:30 am",
-      type: "new_arrival",
-      description: "New arrival recorded",
+      type: "nuevo_ingreso",
+      description: "Nuevo ingreso registrado",
       color: "bg-rose-400",
     },
     {
       id: 6,
       time: "12:00 am",
-      type: "payment_received",
-      description: "Payment Received",
+      type: "pago_recibido",
+      description: "Pago recibido",
       color: "bg-emerald-400",
     },
   ]
@@ -56,7 +56,7 @@ const RecentOrdersTimeline = () => {
     <div className="bg-white shadow rounded-lg p-6">
       <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
         <Clock className="w-6 h-6 mr-2 text-gray-500" />
-        Recent Transactions
+        Movimientos recientes
       </h2>
 
       <div className="relative">

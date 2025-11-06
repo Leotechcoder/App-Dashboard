@@ -8,6 +8,8 @@ import Contact from "../../../users/presentation/pages/Contact.jsx"
 import Products from "../../../products/presentation/pages/ProductsPage.jsx"
 import { SalesDashboardView } from "@/sales/presentation/pages/SalesDashboardView.jsx"
 import PreviewPage from "@/../pruebas/PreviewPage.jsx"
+import ProtectedRoute from "@/shared/middleware/ProtectedRoutes.jsx"
+import WorkComponent from "./WorkComponent.jsx"
 
 
 
@@ -17,21 +19,25 @@ const router = createBrowserRouter([
         element: <LoginPage />,
         errorElement: <Error />,
   },
-  {
-    path: "/admin",
-    element: <RootLayout />,
-    errorElement: <Error />,
-    children: [
-      { path: "home", element: <Dashboard /> },
-      { path: "contact", element: <Contact /> },
-      { path: "products", element: <Products /> },
-      { path: "ventas", element: <SalesDashboardView /> },
-      {path: "pruebas", element: <PreviewPage />},
+  { element: <ProtectedRoute />, // Protegemos las rutas hijas
+    children: [ 
+      {
+        path: "/admin",
+        element: <RootLayout />,
+        errorElement: <Error />,
+        children: [
+          { path: "home", element: <Dashboard/> },
+          { path: "contact", element: <Contact /> },
+          { path: "products", element: <Products /> },
+          { path: "ventas", element: <SalesDashboardView /> },
+          { path: "pruebas", element: <PreviewPage /> },
+          { path: "*", element: <ErrorUrl /> },
+        ],
+      },
       { path: "*", element: <ErrorUrl /> },
     ],
-  },
+  }
   
-  { path: "*", element: <ErrorUrl /> },
 ])
 
 

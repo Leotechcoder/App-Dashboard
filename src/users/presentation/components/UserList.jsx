@@ -15,6 +15,7 @@ import SearchBar from "./SearchBar.jsx";
 import KpisClientes from "./KpisClientes.jsx";
 import UserCard from "./UserSheet.jsx";
 import UserForm from "./UserForm.jsx"; // 👈 importamos tu componente
+import { useScrollLock } from "@/shared/hook/useScrollLock.js";
 
 const UserList = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,8 @@ const UserList = () => {
   const [openModal, setOpenModal] = useState(null); // "edit" | "details" | null
   const [selectedUser, setSelectedUser] = useState(null);
   const hasFetched = useRef(false);
+
+  useScrollLock(isOpen);
 
   const {
     searchTerm,
@@ -79,10 +82,10 @@ const UserList = () => {
 
   return (
     <>
-      {/* 🔥 Modal de creación */}
-      <UserForm /> {/* 👈 ahora se monta globalmente y se controla con isOpen */}
+      {/* Modal de creación */}
+      <UserForm /> 
 
-      {/* 🔥 Modal de edición */}
+      {/* Modal de edición */}
       {openModal === "edit" && (
         <EditUserForm user={selectedUser} setEditModal={setOpenModal} />
       )}

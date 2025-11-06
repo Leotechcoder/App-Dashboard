@@ -6,8 +6,8 @@ const RevenueDisplay = () => {
 
   // Datos de ejemplo
   const revenue = {
-    monthly: 125000,
-    annual: 1500000,
+    monthly: 100000,
+    annual: 1100000,
   }
 
   const previousRevenue = {
