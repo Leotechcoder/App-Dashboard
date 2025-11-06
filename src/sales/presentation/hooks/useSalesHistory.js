@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 export function useSalesHistory() {
   const dispatch = useDispatch()
-  const { orders, cashRegisterHistory, filters, loading } = useSelector((state) => state.sales)
+  const { closedOrders, cashRegisterHistory, filters, loading } = useSelector((state) => state.sales)
 
   // 🔄 Ejecuta la carga de datos cuando cambian los filtros de fecha
   useEffect(() => {
@@ -17,6 +17,7 @@ export function useSalesHistory() {
   // 📅 Carga las órdenes cerradas y el historial de caja
   const loadSalesData = () => {
     const { startDate, endDate } = getDateRange()
+    console.log("Loading sales data from", startDate, "to", endDate)
     dispatch(fetchClosedOrders({ startDate, endDate }))
     dispatch(fetchCashRegisterHistory())
   }
@@ -73,14 +74,14 @@ export function useSalesHistory() {
 
   // 🧠 Filtra las órdenes por método de pago (además de la fecha)
   const filteredOrders = useMemo(() => {
-    if (!orders || orders.length === 0) return []
-    if (!filters.paymentMethod || filters.paymentMethod === "all") return orders
+    if (!closedOrders || closedOrders.length === 0) return []
+    if (!filters.paymentMethod || filters.paymentMethod === "all") return closedOrders
 
-    return orders.filter(order => {
+    return closedOrders.filter(order => {
       const methods = order.payment_info?.methods || order.paymentInfo?.methods || []
       return methods.includes(filters.paymentMethod)
     })
-  }, [orders, filters.paymentMethod])
+  }, [closedOrders, filters.paymentMethod])
 
   // 🧭 Actualiza los filtros globales
   const updateFilters = (newFilters) => {

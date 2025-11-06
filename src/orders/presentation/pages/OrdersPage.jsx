@@ -13,55 +13,43 @@ import OrdersTableEnhanced from "../components/OrdersTableEnhanced";
 
 // Redux slices
 import {
-  getDataOrders,
   setClearMessage,
   setSelectedOrder,
-  setShowHelpOrders,
   setFilteredOrders,
   setCurrentPageOrders,
   deleteDataOrder,
 } from "../../application/orderSlice";
-import { getData, voidItemSelected } from "../../application/itemSlice";
-import { voidSelectedProduct } from "../../../products/application/productSlice";
 
 // Hook de tabla
 import { useTableData } from "@/shared/hook/useTableDataO";
-import { closeOrder, fetchPendingOrders } from "@/sales/application/salesThunks";
+import {
+  closeOrder,
+  fetchPendingOrders,
+} from "@/sales/application/salesThunks";
+import { voidItemSelected } from "@/orders/application/itemSlice";
+import { voidSelectedProduct } from "@/products/application/productSlice";
 
-const OrdersPage = ({ pendingOrders }) => {
+const OrdersPage = () => {
   const dispatch = useDispatch();
-  const hasFetched = useRef(false);
   const shownMessageRef = useRef("");
 
-  const { isLoading, error, showHelp, message } = useSelector(
-    (state) => state.orders
-  );
-
+  const { selectedOrder, isLoading, error, message } = useSelector((state) => state.orders);
+  const dataOrders = useSelector((state) => state.orders.data);
   const [activeTab, setActiveTab] = useState("delivery");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [openOrderDetails, setOpenOrderDetails] = useState(false);
-
-  const scrollRef = useRef(null);
+  const [createOrder, setCreateOrder] = useState(false);
 
   // Hook centralizado de tabla
   const table = useTableData({
     stateKey: "orders",
     itemsPerPage: 10,
-    searchFields: ["id", "customerName"],
+    searchFields: ["id", "userName"],
     setFilteredData: setFilteredOrders,
     setCurrentPage: setCurrentPageOrders,
     externalFilter: (order) =>
       order.deliveryType === activeTab && order.status === "pending",
   });
-
-  // Ciclo de vida
-  useEffect(() => {
-    if (!hasFetched.current) {
-      hasFetched.current = true;
-      dispatch(fetchPendingOrders());
-      dispatch(getData());
-    }
-  }, [dispatch]);
 
   // Toast por mensajes
   useEffect(() => {
@@ -71,12 +59,15 @@ const OrdersPage = ({ pendingOrders }) => {
         shownMessageRef.current = message;
         dispatch(setClearMessage());
       }, 2000);
+      shownMessageRef.current = "";
     }
   }, [message, dispatch]);
 
-
   // Handlers
-  const handleCreateOrder = () => setOpenOrderDetails(true);
+  const handleCreateOrder = () => {
+    setOpenOrderDetails(true);
+    setCreateOrder(true);
+  };
 
   const handleOpenOrderDetails = (order) => {
     dispatch(setSelectedOrder(order));
@@ -85,10 +76,12 @@ const OrdersPage = ({ pendingOrders }) => {
 
   const handleBack = async () => {
     setOpenOrderDetails(false);
-    dispatch(setSelectedOrder(null));
-    dispatch(voidSelectedProduct());
-    dispatch(voidItemSelected());
-    await dispatch(fetchPendingOrders());
+    setCreateOrder(false);
+    setTimeout(() => {
+      dispatch(voidSelectedProduct());
+      dispatch(voidItemSelected());
+      dispatch(setSelectedOrder(null));
+    }, 100);
   };
 
   const handleDeleteOrder = async (orderId) => {
@@ -96,8 +89,8 @@ const OrdersPage = ({ pendingOrders }) => {
       "¿Estás seguro que querés eliminar esta orden? Esta acción no se puede deshacer."
     );
     if (!confirmDelete) return;
-    await dispatch(deleteDataOrder(orderId));
-    await dispatch(getDataOrders());
+    await dispatch(deleteDataOrder(orderId)); //Ya actualiza el state orders mas adelante revisar
+    dispatch(fetchPendingOrders()); //Actualiza los datos en sales.orders
   };
 
   const handleCloseOrder = async (orderId, paymentInfo) => {
@@ -110,9 +103,7 @@ const OrdersPage = ({ pendingOrders }) => {
   if (error) return <Message text={`Error: ${error}`} type="error" />;
 
   return (
-    <main
-      className="w-full pb-4 pt-6 "
-    >
+    <main className="w-full pb-4 pt-6 ">
       {/* HEADER DE ACCIONES */}
       <HeaderActions
         activeTab={activeTab}
@@ -164,7 +155,7 @@ const OrdersPage = ({ pendingOrders }) => {
 
       {/* MODAL DE ORDER DETAILS */}
       <AnimatePresence>
-        {(openOrderDetails) && (
+        {((openOrderDetails && selectedOrder) || createOrder) && (
           <motion.div
             className="fixed inset-0 z-50 flex items-start justify-end backdrop-blur-sm px-4 pt-6"
             initial={{ opacity: 0 }}

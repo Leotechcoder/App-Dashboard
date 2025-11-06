@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import {
   deleteUserData,
-  getUserData,
   setFilteredUser,
   setCurrentPageUsers,
   toggleOpenForm,
+  getUserData,
 } from "../../application/userSlice.js";
 import { Pencil, Trash, Eye } from "lucide-react";
 import Pagination from "../../../shared/presentation/components/Pagination.jsx";
@@ -22,6 +22,7 @@ const UserList = () => {
 
   const [openModal, setOpenModal] = useState(null); // "edit" | "details" | null
   const [selectedUser, setSelectedUser] = useState(null);
+  const hasFetched = useRef(false);
 
   const {
     searchTerm,
@@ -39,8 +40,12 @@ const UserList = () => {
   });
 
   useEffect(() => {
+    if (!hasFetched.current) {
+      hasFetched.current = true;
+      dispatch(getUserData());
+    }
     dispatch(getUserData());
-  }, [dispatch]);
+  }, []);
 
   const handleEditar = (user) => {
     setSelectedUser(user);
@@ -60,7 +65,6 @@ const UserList = () => {
   const handleEliminar = async (id) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
       await dispatch(deleteUserData(String(id)));
-      dispatch(getUserData());
     }
   };
 
@@ -89,10 +93,10 @@ const UserList = () => {
           onClick={handleOpenForm}
           className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors duration-200 font-semibold shadow-md"
         >
-          + Nuevo Cliente
+          + Cliente Online
         </button>
         <SearchBar
-          tipo={"clientes"}
+          tipo={"cliente"}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />

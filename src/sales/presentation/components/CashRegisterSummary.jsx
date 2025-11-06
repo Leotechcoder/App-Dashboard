@@ -6,9 +6,17 @@ import { DollarSign, Clock, Calendar, TrendingUp, Banknote, CreditCard, Wallet, 
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 import { formatCurrency } from "@/shared/utils/formatPriceLocal"
+import { useEffect } from "react"
+import { useSelector } from "react-redux"
 
 export function CashRegisterSummary({ cashRegister, analysis }) {
   if (!cashRegister) return null
+
+  const { closedOrders } = useSelector((state) => state.sales);
+
+  useEffect(() => {
+    console.log("Closed Orders:", closedOrders)
+  }, [closedOrders]);
 
   const duration = cashRegister.closedAt
     ? new Date(cashRegister.closedAt) - new Date(cashRegister.openedAt)

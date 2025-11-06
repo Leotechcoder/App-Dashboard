@@ -31,6 +31,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import PaginationOrders from "./PaginationOrders";
+import { getDataOrders } from "@/orders/application/orderSlice";
+import { fetchActiveCashRegister, fetchPendingOrders } from "@/sales/application/salesThunks";
 
 const paymentOptions = [
   { key: "efectivo", label: "Efectivo", icon: DollarSign },
@@ -131,7 +133,7 @@ const OrdersTableEnhanced = ({
 
   // ===== Comparación segura con tolerancia de decimales
   const totalsMatch = useMemo(() => {
-    const expected = Number(selectedOrderModal?.total || 0);
+    const expected = Number(selectedOrderModal?.totalAmount || 0);
     const entered = Number(totalEntered || 0);
     return Math.abs(expected - entered) < 0.01; // margen de error decimal
   }, [totalEntered, selectedOrderModal]);
@@ -150,6 +152,9 @@ const OrdersTableEnhanced = ({
     };
 
     onCloseOrder?.(selectedOrderModal.id, paymentInfo);
+    dispatch(fetchActiveCashRegister());
+    dispatch(fetchPendingOrders());
+    dispatch(getDataOrders());
     setIsDialogOpen(false);
     setSelectedOrderModal(null);
   };
@@ -205,13 +210,13 @@ const OrdersTableEnhanced = ({
                     {order.id}
                   </TableCell>
                   <TableCell className="w-32 px-2 py-4 text-sm overflow-hidden">
-                    {order.customerId}
+                    {order.userId}
                   </TableCell>
                   <TableCell className="w-32 px-2 py-4 text-sm overflow-hidden">
-                    {order.customerName}
+                    {order.userName}
                   </TableCell>
                   <TableCell className="px-3 py-4 text-sm">
-                    ${order.total}
+                    ${order.totalAmount}
                   </TableCell>
                   <TableCell className="px-3 py-4 text-sm">
                     {order.status}
@@ -272,13 +277,13 @@ const OrdersTableEnhanced = ({
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Cliente:</span>
                   <span className="font-medium">
-                    {selectedOrderModal.customerName}
+                    {selectedOrderModal.userName}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Total:</span>
                   <span className="font-bold text-lg">
-                    ${selectedOrderModal.total}
+                    ${selectedOrderModal.totalAmount}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-700">

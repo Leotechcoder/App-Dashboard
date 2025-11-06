@@ -1,15 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  User,
-  Package,
-  Clock,
-  Truck,
-  ShoppingCart,
-} from "lucide-react";
+import { ArrowLeft, User, Package, Clock, ShoppingCart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { idGenerator } from "../../../../shared/infrastructure/utils/idGenerator";
 import {
@@ -19,10 +11,12 @@ import {
   updateDataItems,
 } from "../../../application/itemSlice";
 import { getUserData } from "../../../../users/application/userSlice";
-import { setSelectedProduct } from "../../../../products/application/productSlice";
+import {
+  setSelectedProduct,
+  voidSelectedProduct,
+} from "../../../../products/application/productSlice";
 import {
   createDataOrder,
-  getDataOrders,
   updateDataOrder,
 } from "../../../application/orderSlice";
 import { Item } from "../../../domain/item";
@@ -31,17 +25,17 @@ import ItemModal from "./ItemModal";
 import OrderItemsTable from "./OrderItemsTable";
 import DateTime from "../DateTime";
 
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import clsx from "clsx";
 import { fetchPendingOrders } from "@/sales/application/salesThunks";
 
@@ -52,11 +46,11 @@ export default function OrderDetails({ onBack, className }) {
   const users = useSelector((store) => store.users.data);
 
   const isEditing = !!selectedOrder;
-  
+
   const [items, setItems] = useState(selectedOrder?.items || []);
   const [orderDetails, setOrderDetails] = useState({
     userId: idGenerator("Users"),
-    userName: "Invitado",
+    userName: "",
     status: "pending",
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -64,11 +58,7 @@ export default function OrderDetails({ onBack, className }) {
   const [deliveryType, setDeliveryType] = useState("local");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-
-  useEffect(() => {
-    dispatch(getUserData());
-    dispatch(getData());
-  }, [dispatch]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
 
   useEffect(() => {
     if (selectedOrder) {
@@ -126,6 +116,24 @@ export default function OrderDetails({ onBack, className }) {
     (t, i) => t + Number(i.unitPrice) * Number(i.quantity),
     0
   );
+
+  const handleKeyDown = (e) => {
+    if (!showSuggestions) return;
+
+    if (e.key === "ArrowDown") {
+      setSelectedIndex((prev) =>
+        prev < filteredUsers.length - 1 ? prev + 1 : 0
+      );
+    } else if (e.key === "ArrowUp") {
+      setSelectedIndex((prev) =>
+        prev > 0 ? prev - 1 : filteredUsers.length - 1
+      );
+    } else if (e.key === "Enter") {
+      if (selectedIndex >= 0 && selectedIndex < filteredUsers.length) {
+        handleSelectUser(filteredUsers[selectedIndex]);
+      }
+    }
+  };
 
   const handleOrderSave = async () => {
     if (!items.length) return;
@@ -217,16 +225,18 @@ export default function OrderDetails({ onBack, className }) {
     } else {
       await dispatch(createDataOrder(newOrder));
     }
-    
-    dispatch(getData());
+
     onBack();
   };
 
   return (
     <main
-      className={clsx(`py-6 px-8 min-h-screen transition-colors duration-500 ${
-        isEditing ? "bg-blue-50/40" : "bg-emerald-50/30"
-      }` , className)}
+      className={clsx(
+        `py-6 px-8 min-h-screen transition-colors duration-500 ${
+          isEditing ? "bg-blue-50/40" : "bg-emerald-50/30"
+        }`,
+        className
+      )}
     >
       {isModalOpen && (
         <ItemModal
@@ -285,9 +295,7 @@ export default function OrderDetails({ onBack, className }) {
             <Package className="w-4 h-4" />
             <div>
               <Label className="text-xs opacity-70">Orden N°</Label>
-              <p className="font-medium">
-                {selectedOrder?.id || "Pendiente"}
-              </p>
+              <p className="font-medium">{selectedOrder?.id || "Pendiente"}</p>
             </div>
           </div>
 
@@ -324,7 +332,13 @@ export default function OrderDetails({ onBack, className }) {
         </div>
 
         {/* Formulario de usuario / tipo de entrega */}
-        <CardContent className={!isEditing ? "p-6 grid grid-cols-2 gap-6 border-b border-gray-100" : "px-6 pt-5 flex justify-end border-b border-gray-100"}>
+        <CardContent
+          className={
+            !isEditing
+              ? "p-6 grid grid-cols-2 gap-6 border-b border-gray-100"
+              : "px-6 pt-5 flex justify-end border-b border-gray-100"
+          }
+        >
           {!isEditing && (
             <>
               <div>
@@ -335,39 +349,55 @@ export default function OrderDetails({ onBack, className }) {
                   value={orderDetails.userName}
                   onChange={handleUserInput}
                   placeholder="Ej: Juan Pérez"
-                  className="border-emerald-200 focus:ring-emerald-500 focus:border-emerald-500"
+                  onKeyDown={(e) => handleKeyDown(e)}
+                  className="border-emerald-200 focus:ring-emerald-500 focus:border-emerald-500 bg-white/100"
                 />
                 {showSuggestions && filteredUsers.length > 0 && (
-                  <div className="mt-2 bg-white border border-gray-200 rounded-lg shadow-md">
-                    {filteredUsers.map((user) => (
-                      <div
+                  <ul
+                    className="mt-2 bg-white border border-gray-200 rounded-lg shadow-md max-h-48 overflow-auto"
+                    role="listbox"
+                  >
+                    {filteredUsers.map((user, index) => (
+                      <li
                         key={user.id}
+                        role="option"
+                        aria-selected={index === selectedIndex}
+                        tabIndex={0}
                         onClick={() => handleSelectUser(user)}
-                        className="px-3 py-2 cursor-pointer hover:bg-emerald-50 transition-colors"
+                        className={`px-3 py-2 cursor-pointer transition-colors ${
+                          index === selectedIndex
+                            ? "bg-emerald-100"
+                            : "hover:bg-emerald-50"
+                        }`}
                       >
                         {user.username}
-                      </div>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 )}
               </div>
-
             </>
           )}
-              <div className={isEditing? 'ml-auto' : ''}>
-                <Label className="text-sm text-gray-700 mb-2 block">
-                  Tipo de entrega
-                </Label>
-                <Select value={deliveryType} onValueChange={setDeliveryType}>
-                  <SelectTrigger className={!isEditing ? "border-emerald-200 focus:ring-emerald-500 focus:border-emerald-500" : "border-blue-300 focus:ring-blue-500 focus:boder-blue-500 w-48"}>
-                    <SelectValue placeholder="Seleccionar tipo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="local">Retiro en local</SelectItem>
-                    <SelectItem value="delivery">Delivery</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          <div className={isEditing ? "ml-auto" : ""}>
+            <Label className="text-sm text-gray-700 mb-2 block">
+              Tipo de entrega
+            </Label>
+            <Select value={deliveryType} onValueChange={setDeliveryType}>
+              <SelectTrigger
+                className={
+                  !isEditing
+                    ? "border-emerald-200 focus:ring-emerald-500 focus:border-emerald-500"
+                    : "border-blue-300 focus:ring-blue-500 focus:boder-blue-500 w-48"
+                }
+              >
+                <SelectValue placeholder="Seleccionar tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="local">Retiro en local</SelectItem>
+                <SelectItem value="delivery">Delivery</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </CardContent>
 
         {/* Tabla de productos */}

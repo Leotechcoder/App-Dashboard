@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { fetchPendingOrders, closeOrder } from "../../application/salesThunks";
+import { useState, useEffect, useRef } from "react";
+import { fetchPendingOrders } from "../../application/salesThunks";
 import { useSalesData } from "../hooks/useSalesData";
 import { useCashRegister } from "../hooks/useCashRegister";
 import { useSalesHistory } from "../hooks/useSalesHistory";
@@ -25,13 +25,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import OrderCard from "../components/OrderSalesSheet";
 import OrdersPage from "@/orders/presentation/pages/OrdersPage";
+import { getData } from "@/orders/application/itemSlice";
+import { getUserData } from "@/users/application/userSlice";
+import { getDataOrders } from "@/orders/application/orderSlice";
 
 export function SalesDashboardView() {
   const dispatch = useDispatch();
   const {
     orders,
     totalEarnings,
-    chartData,
     cashRegister,
     cashRegisterAnalysis,
     sessionOrders,
@@ -42,9 +44,17 @@ export function SalesDashboardView() {
   const { handleOpenCashRegister, handleCloseCashRegister } = useCashRegister();
   const { updateFilters } = useSalesHistory();
 
+
   const [openDialog, setOpenDialog] = useState(false);
   const [closeDialog, setCloseDialog] = useState(false);
   const [selectedOrderCard, setSelectedOrderCard] = useState(null);
+
+  useEffect(() => {
+      dispatch(fetchPendingOrders());
+      dispatch(getData())
+      dispatch(getUserData())
+      dispatch(getDataOrders())
+  }, []);
 
   // Evita scroll en la página padre mientras el modal está abierto
   useEffect(() => {
@@ -54,18 +64,6 @@ export function SalesDashboardView() {
       document.body.style.overflow = "auto";
     };
   }, [selectedOrderCard, openDialog, closeDialog]);
-
-  //Al renderizar el componente
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await dispatch(fetchPendingOrders());
-      } catch (err) {
-        console.error("Error al cargar órdenes pendientes:", err);
-      }
-    };
-    fetchData();
-  }, [dispatch]);
 
   //HANDLERS
   const handleFilterChange = (newFilters) => updateFilters(newFilters);
@@ -81,10 +79,6 @@ export function SalesDashboardView() {
       endDate: new Date().setHours(23, 59, 59, 999),
     });
   };
-  // const handleCloseOrder = async (orderId, paymentInfo) => {
-  //   await dispatch(closeOrder({ orderId, paymentInfo }));
-  //   dispatch(fetchPendingOrders());
-  // };
 
   const isCashRegisterOpen = cashRegister && cashRegister.status === "open";
 
@@ -136,8 +130,7 @@ export function SalesDashboardView() {
           {/* ----- TAB VENTAS CERRADAS ----- */}
           <TabsTrigger
             value="sales"
-            className="gap-2 flex-1 md:flex-none transition-all 
-          "
+            className="gap-2 flex-1 md:flex-none transition-all cursor-pointer"
           >
             <Package className="h-4 w-4 text-muted-foreground" /> Ventas
             Cerradas
