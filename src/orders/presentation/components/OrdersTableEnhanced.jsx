@@ -139,7 +139,7 @@ const OrdersTableEnhanced = ({
   }, [totalEntered, selectedOrderModal]);
 
   //Confirmar cierre de orden (modal)
-  const handleConfirmCloseOrder = () => {
+  const handleConfirmCloseOrder = async () => {
     if (!selectedOrderModal) return;
     if (!totalsMatch) {
       setWarning(true);
@@ -151,7 +151,7 @@ const OrdersTableEnhanced = ({
       amounts,
     };
 
-    onCloseOrder?.(selectedOrderModal.id, paymentInfo);
+    await onCloseOrder?.(selectedOrderModal.id, paymentInfo);
     dispatch(fetchActiveCashRegister());
     dispatch(fetchPendingOrders());
     dispatch(getDataOrders());

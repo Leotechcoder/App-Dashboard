@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { removeMessage } from "../../../users/application/userSlice.js";
 import { Toaster, toast } from "sonner";
-import LoadingScreen from "../components/LoadingScreen.jsx";
 
 const RootLayout = () => {
   const { loading, message, error } = useSelector((store) => store.users);
@@ -54,8 +53,6 @@ const RootLayout = () => {
     return () => clearTimeout(timer);
   }, [loading, message, error, dispatch]);
 
-  if (logOutUser) return <LoadingScreen />;
-
   return (
     <>
       <Toaster richColors position="top-right" />
@@ -79,7 +76,7 @@ const RootLayout = () => {
 
             {/* Footer fijo al fondo del scroll, no visible hasta scrollear */}
           </div>
-            <Footer />  
+          <Footer />
         </div>
       </div>
     </>

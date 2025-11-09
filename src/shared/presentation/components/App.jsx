@@ -7,9 +7,8 @@ import Dashboard from "../pages/Home.jsx"
 import Contact from "../../../users/presentation/pages/Contact.jsx"
 import Products from "../../../products/presentation/pages/ProductsPage.jsx"
 import { SalesDashboardView } from "@/sales/presentation/pages/SalesDashboardView.jsx"
-import PreviewPage from "@/../pruebas/PreviewPage.jsx"
 import ProtectedRoute from "@/shared/middleware/ProtectedRoutes.jsx"
-import WorkComponent from "./WorkComponent.jsx"
+import Pruebas from "@/../pruebas/PreviewPage.jsx"
 
 
 
@@ -26,15 +25,15 @@ const router = createBrowserRouter([
         element: <RootLayout />,
         errorElement: <Error />,
         children: [
-          { path: "home", element: <Dashboard/> },
+          { path: "home", element: <Dashboard/>},
           { path: "contact", element: <Contact /> },
           { path: "products", element: <Products /> },
           { path: "ventas", element: <SalesDashboardView /> },
-          { path: "pruebas", element: <PreviewPage /> },
           { path: "*", element: <ErrorUrl /> },
         ],
       },
       { path: "*", element: <ErrorUrl /> },
+      { path: "/pruebas", element: <Pruebas /> },
     ],
   }
   

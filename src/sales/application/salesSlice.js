@@ -17,7 +17,7 @@ const initialState = {
   loading: false,
   error: null,
   filters: {
-    dateRange: "today",
+    dateRange: "week",
     startDate: null,
     endDate: null,
     paymentMethod: "all", // nuevo filtro

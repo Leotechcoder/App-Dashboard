@@ -20,11 +20,11 @@ const WelcomeHeader = () => {
             <LayoutDashboard className="w-7 h-7 text-indigo-600" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-semibold text-slate-800">
+            <CardTitle className="text-2xl font-semibold text-indigo-600">
               ¡Bienvenido, {username || "usuario"}!
             </CardTitle>
             <CardDescription className="text-slate-600 mt-1">
-              Aquí tienes un resumen del rendimiento y las métricas de las ventas en la aplicación.
+              Aquí tienes un resumen del rendimiento de las ventas.
             </CardDescription>
           </div>
         </CardHeader>
