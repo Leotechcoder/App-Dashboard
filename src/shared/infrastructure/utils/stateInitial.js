@@ -12,7 +12,7 @@ export const filtros = {
   
   export const paginacionUsers = {
     currentPage: 1,
-    itemsPerPage: 8,
+    itemsPerPage: 5,
     total: 0,
   }
   

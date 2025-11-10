@@ -8,6 +8,7 @@ import { setShowHelpUsers, setEditingUser, setFormView } from "../../application
 import InfoButton from "../../../orders/presentation/components/InfoButton.jsx";
 import UserSheet from "../components/UserSheet.jsx";
 import UserList from "../components/UserList.jsx";
+import { useScrollTo } from "@/shared/hook/useScrollTo.js";
 
 // =========================
 // 🎞️ Animaciones base
@@ -27,11 +28,8 @@ const Contact = () => {
   const { showHelp, isFormView, editingUser } = useSelector((state) => state.users);
 
   const handleToggleHelp = () => dispatch(setShowHelpUsers());
-  // const handleOpenForm = (user = null) => {
-  //   dispatch(setEditingUser(user));
-  //   dispatch(setFormView(true));
-  // };
   const handleCloseForm = () => dispatch(setFormView(false));
+  const{ setScrollTo, tableRef } = useScrollTo({ offset: 18})
 
   return (
     <main className="pl-8 pt-8 bg-gray-50 rounded-lg min-h-[95vh] overflow-hidden">
@@ -75,8 +73,8 @@ const Contact = () => {
               </motion.div>
             )}
 
-            <section className="px-6 mb-3">
-              <UserList />
+            <section ref={tableRef} className="px-6 mb-3">
+              <UserList setScrollTo={setScrollTo}/>
             </section>
           </motion.div>
         )}

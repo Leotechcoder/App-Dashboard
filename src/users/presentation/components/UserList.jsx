@@ -17,7 +17,7 @@ import UserCard from "./UserSheet.jsx";
 import UserForm from "./UserForm.jsx"; // 👈 importamos tu componente
 import { useScrollLock } from "@/shared/hook/useScrollLock.js";
 
-const UserList = () => {
+const UserList = ({ setScrollTo }) => {
   const dispatch = useDispatch();
   const { paginationUsers, isOpen } = useSelector((store) => store.users, shallowEqual);
 
@@ -166,6 +166,7 @@ const UserList = () => {
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
+        setScrollTo={setScrollTo}
       />
     </>
   );
