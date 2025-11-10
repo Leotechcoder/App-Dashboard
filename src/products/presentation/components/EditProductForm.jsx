@@ -88,7 +88,7 @@ const EditProductForm = () => {
     const { name, value } = e.target;
     setForm({
       ...form,
-      [name]: name === "available" ? value === "true" : value, // 👈 conversión automática
+      [name]: name === "available" ? value === "true" : value, // 
     });
 
     if (errors[name]) {
@@ -153,7 +153,7 @@ const EditProductForm = () => {
               Nombre del producto
             </label>
             <input
-              name="name_"
+              name="name"
               value={form.name}
               onChange={handleInput}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
