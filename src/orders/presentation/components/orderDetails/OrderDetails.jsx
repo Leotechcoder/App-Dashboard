@@ -232,7 +232,7 @@ export default function OrderDetails({ onBack, className }) {
   return (
     <main
       className={clsx(
-        `py-6 px-8 min-h-screen transition-colors duration-500 ${
+        `p-8 min-h-screen transition-colors duration-500 ${
           isEditing ? "bg-blue-50/40" : "bg-emerald-50/30"
         }`,
         className

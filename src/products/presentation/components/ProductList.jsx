@@ -19,7 +19,7 @@ import { FiltrosCategorias } from "../components/CategoryFilter.jsx";
 import { toast } from "sonner"; // 👈 usamos sonner
 import { motion } from "framer-motion";
 
-const ProductList = () => {
+const ProductList = ({ setScrollTo }) => {
   const dispatch = useDispatch();
   const shownMessageRef = useRef("");
   const { pagination, isLoading, data, message, error } = useSelector(
@@ -252,6 +252,7 @@ return (
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
+        setScrollTo={setScrollTo}
       />
     </motion.div>
   </>

@@ -29,6 +29,7 @@ import { getData } from "@/orders/application/itemSlice";
 import { getUserData } from "@/users/application/userSlice";
 import { getDataOrders } from "@/orders/application/orderSlice";
 import { useScrollLock } from "@/shared/hook/useScrollLock";
+import { useScrollTo } from "@/shared/hook/useScrollTo";
 
 export function SalesDashboardView() {
   const dispatch = useDispatch();
@@ -57,7 +58,9 @@ export function SalesDashboardView() {
       dispatch(getUserData())
       dispatch(getDataOrders())
   }, []);
-
+  
+  const { setScrollTo, tableRef } = useScrollTo({offset: 20});
+  
   // Evita scroll en la página padre mientras el modal está abierto
   useScrollLock(!!selectedOrderCard || openDialog || closeDialog);
 
@@ -135,9 +138,9 @@ export function SalesDashboardView() {
 
         {/* Pending Orders Tab */}
         <TabsContent value="pending" className=" ">
-          <Card>
+          <Card ref={tableRef}>
             <CardContent className="p-0">
-              <OrdersPage />
+              <OrdersPage setScrollTo={setScrollTo}/>
             </CardContent>
           </Card>
         </TabsContent>
@@ -274,7 +277,7 @@ export function SalesDashboardView() {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className=" w-full max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-lg"
+              className=" w-full my-auto max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-lg"
               initial={{ scale: 0.9, x: 100 }}
               animate={{ scale: 1, x: 0 }}
               exit={{ scale: 0.9, x: 100 }}
@@ -283,7 +286,7 @@ export function SalesDashboardView() {
               <OrderCard
                 order={selectedOrderCard}
                 onBack={() => setSelectedOrderCard(null)}
-                className={"h-[calc(100dvh-145px)] overflow-y-auto pt-6"}
+                className={"h-[calc(100dvh-145px)] overflow-y-auto"}
               />
             </motion.div>
           </motion.div>

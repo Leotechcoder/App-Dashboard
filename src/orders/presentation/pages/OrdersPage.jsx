@@ -30,7 +30,7 @@ import { voidItemSelected } from "@/orders/application/itemSlice";
 import { voidSelectedProduct } from "@/products/application/productSlice";
 import { useScrollLock } from "@/shared/hook/useScrollLock";
 
-const OrdersPage = () => {
+const OrdersPage = ({ setScrollTo }) => {
   const dispatch = useDispatch();
   const shownMessageRef = useRef("");
 
@@ -54,6 +54,7 @@ const OrdersPage = () => {
 
   //Hook para bloquear scroll cuando se abre el modal de detalles
   useScrollLock(openOrderDetails || createOrder);
+  
   // Toast por mensajes
   useEffect(() => {
     if (message && shownMessageRef.current !== message) {
@@ -100,6 +101,11 @@ const OrdersPage = () => {
     await dispatch(closeOrder({ orderId, paymentInfo }));
   };
 
+  const handleActiveTab = (value) => {
+    setActiveTab(value);
+    setScrollTo(true);
+  }
+  
   // Estados intermedios
   if (isLoading && !isRefreshing)
     return <Message text="Cargando órdenes..." type="loading" />;
@@ -110,7 +116,7 @@ const OrdersPage = () => {
       {/* HEADER DE ACCIONES */}
       <HeaderActions
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        handleActiveTab={handleActiveTab}
         onCreateOrder={handleCreateOrder}
         searchTerm={table.searchTerm}
         setSearchTerm={table.setSearchTerm}
@@ -166,7 +172,7 @@ const OrdersPage = () => {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="w-full max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-xl"
+              className="w-full flex items-center max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-xl"
               initial={{ scale: 0.9, x: 100 }}
               animate={{ scale: 1, x: 0 }}
               exit={{ scale: 0.9, x: 100 }}
@@ -174,7 +180,7 @@ const OrdersPage = () => {
             >
               <OrderDetails
                 onBack={handleBack}
-                className="h-[calc(100dvh-145px)] overflow-y-auto pt-6"
+                className="h-[calc(100dvh-145px)] overflow-y-auto w-full"
               />
             </motion.div>
           </motion.div>
@@ -196,7 +202,7 @@ const Message = ({ text, type }) => {
 
 const HeaderActions = ({
   activeTab,
-  setActiveTab,
+  handleActiveTab,
   onCreateOrder,
   searchTerm,
   setSearchTerm,
@@ -206,12 +212,12 @@ const HeaderActions = ({
       <TabButton
         label="Entrega por delivery"
         isActive={activeTab === "delivery"}
-        onClick={() => setActiveTab("delivery")}
+        onClick={() => handleActiveTab("delivery")}
       />
       <TabButton
         label="Retiro en local"
         isActive={activeTab === "local"}
-        onClick={() => setActiveTab("local")}
+        onClick={() => handleActiveTab("local")}
       />
     </div>
     <div className="flex items-center space-x-3">

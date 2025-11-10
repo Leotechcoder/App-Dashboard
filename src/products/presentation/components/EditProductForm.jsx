@@ -6,7 +6,7 @@ import { updateData, setFormView } from "../../application/productSlice";
 import { ArrowLeft, Image } from "lucide-react";
 import { toast } from "sonner";
 
-const EditProductForm = () => {
+const EditProductForm = ({ setScrollTo }) => {
   const dispatch = useDispatch();
   const { isEditing, categorias } = useSelector((store) => store.products);
   const product = isEditing;
@@ -18,6 +18,11 @@ const EditProductForm = () => {
       setForm(product);
     }
   }, [product]);
+
+  useEffect(() => {
+   window.scrollTo({top: 42, behavior: 'smooth'})
+  }, [])
+  
 
   const validateForm = () => {
     const newErrors = {};
@@ -98,6 +103,7 @@ const EditProductForm = () => {
 
   const handleGoBack = () => {
     dispatch(setFormView(false));
+    setScrollTo(true)
   };
 
   return (

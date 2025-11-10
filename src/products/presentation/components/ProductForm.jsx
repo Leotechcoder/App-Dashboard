@@ -35,6 +35,11 @@ const ProductForm = () => {
     setErrors({});
   }, [isEditing, productToEdit]);
 
+  useEffect(() => {
+    window.scrollTo({top: 40, behavior: 'smooth'})
+  }, [])
+  
+
   const validateForm = () => {
     const newErrors = {};
     if (!form.name.trim())

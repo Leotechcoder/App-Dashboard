@@ -9,6 +9,7 @@ import TablaProductos from "../components/ProductList.jsx";
 import { Info } from "lucide-react";
 import InfoButton from "../../../orders/presentation/components/InfoButton.jsx";
 import { setShowHelpProducts } from "../../application/productSlice.js";
+import { useScrollTo } from "@/shared/hook/useScrollTo.js";
 
 // =========================
 // 🧭 Componente principal
@@ -18,6 +19,8 @@ const Products = () => {
   const { isFormView, isEditing, showHelp } = useSelector(
     (store) => store.products
   );
+
+  const { setScrollTo, tableRef } = useScrollTo({ offset: 8});
 
   // 🔄 Alternar vista de ayuda
   const handleToggleHelp = () => dispatch(setShowHelpProducts());
@@ -34,7 +37,11 @@ const Products = () => {
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.4 }}
           >
-            {isEditing ? <EditProductForm /> : <FormProduct />}
+            {isEditing ? (
+              <EditProductForm setScrollTo={setScrollTo} />
+            ) : (
+              <FormProduct />
+            )}
           </motion.div>
         ) : (
           <motion.div
@@ -75,8 +82,11 @@ const Products = () => {
             )}
 
             {/* Tabla de productos */}
-            <section className="ml-8 px-6 bg-gray-100 rounded-lg">
-              <TablaProductos />
+            <section
+              ref={tableRef}
+              className="ml-8 px-6 bg-gray-100 rounded-lg"
+            >
+              <TablaProductos setScrollTo={setScrollTo} />
             </section>
           </motion.div>
         )}
@@ -106,14 +116,15 @@ const HelpContent = ({ onClose }) => (
         Gestión de Productos
       </h2>
       <p className="text-gray-600 leading-relaxed text-sm pr-2">
-        En esta sección podés <strong>agregar, editar o eliminar productos</strong>{" "}
-        del catálogo de tu tienda. Cada producto incluye información clave como
-        nombre, precio, disponibilidad y categoría.
+        En esta sección podés{" "}
+        <strong>agregar, editar o eliminar productos</strong> del catálogo de tu
+        tienda. Cada producto incluye información clave como nombre, precio,
+        disponibilidad y categoría.
       </p>
       <p className="text-gray-600 mt-2 leading-relaxed text-sm pr-2">
-        Usá el formulario para cargar nuevos artículos o seleccioná uno existente
-        para editarlo. Mantené tu inventario siempre actualizado para mejorar la
-        gestión y la experiencia de los clientes.
+        Usá el formulario para cargar nuevos artículos o seleccioná uno
+        existente para editarlo. Mantené tu inventario siempre actualizado para
+        mejorar la gestión y la experiencia de los clientes.
       </p>
     </div>
   </div>

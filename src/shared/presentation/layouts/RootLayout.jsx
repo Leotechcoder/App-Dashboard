@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { removeMessage } from "../../../users/application/userSlice.js";
 import { Toaster, toast } from "sonner";
+import ScrollToTop from "../components/ScrollToTop.jsx";
 
 const RootLayout = () => {
   const { loading, message, error } = useSelector((store) => store.users);
@@ -56,7 +57,7 @@ const RootLayout = () => {
   return (
     <>
       <Toaster richColors position="top-right" />
-
+      <ScrollToTop />
       <div className="flex min-h-screen bg-gray-100">
         {/* Sidebar */}
         <aside className="w-64 p-4 bg-white shadow-md flex-shrink-0">

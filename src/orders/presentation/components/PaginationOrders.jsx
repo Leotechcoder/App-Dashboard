@@ -3,6 +3,10 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const PaginationOrders = ({ currentPage, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
 
+  const handleScrollToChangePage = (value) => {
+    onPageChange(value)
+  }
+
   return (
     <div className="px-6 py-3 flex items-center justify-between border-t">
       <div className="text-sm text-gray-500">
@@ -10,7 +14,7 @@ const PaginationOrders = ({ currentPage, totalPages, onPageChange }) => {
       </div>
       <div className="flex gap-2">
         <button
-          onClick={() => onPageChange(currentPage - 1)}
+          onClick={() => handleScrollToChangePage(currentPage - 1)}
           disabled={currentPage === 1}
           className="p-1 rounded border disabled:opacity-50"
         >
@@ -20,7 +24,7 @@ const PaginationOrders = ({ currentPage, totalPages, onPageChange }) => {
         {[...Array(totalPages)].map((_, index) => (
           <button
             key={index + 1}
-            onClick={() => onPageChange(index + 1)}
+            onClick={() => handleScrollToChangePage(index + 1)}
             className={`px-3 py-1 rounded ${
               currentPage === index + 1
                 ? "bg-orange-600 text-white"
@@ -32,7 +36,7 @@ const PaginationOrders = ({ currentPage, totalPages, onPageChange }) => {
         ))}
 
         <button
-          onClick={() => onPageChange(currentPage + 1)}
+          onClick={() => handleScrollToChangePage(currentPage + 1)}
           disabled={currentPage === totalPages}
           className="p-1 rounded border disabled:opacity-50"
         >
