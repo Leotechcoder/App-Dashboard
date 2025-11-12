@@ -33,6 +33,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import PaginationOrders from "./PaginationOrders";
 import { getDataOrders } from "@/orders/application/orderSlice";
 import { fetchActiveCashRegister, fetchPendingOrders } from "@/sales/application/salesThunks";
+import { formatCurrency } from "@/shared/utils/formatPriceLocal";
 
 const paymentOptions = [
   { key: "efectivo", label: "Efectivo", icon: DollarSign },
@@ -216,7 +217,7 @@ const OrdersTableEnhanced = ({
                     {order.userName}
                   </TableCell>
                   <TableCell className="px-3 py-4 text-sm">
-                    ${order.totalAmount}
+                    ${formatCurrency(order.totalAmount)}
                   </TableCell>
                   <TableCell className="px-3 py-4 text-sm">
                     {order.status}
@@ -283,7 +284,7 @@ const OrdersTableEnhanced = ({
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Total:</span>
                   <span className="font-bold text-lg">
-                    ${selectedOrderModal.totalAmount}
+                    ${formatCurrency(selectedOrderModal.totalAmount)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-700">
@@ -295,7 +296,7 @@ const OrdersTableEnhanced = ({
                         : "text-red-500 font-bold"
                     }
                   >
-                    ${totalEntered.toFixed(2)}
+                    ${formatCurrency(totalEntered)}
                   </span>
                 </div>
                 {!totalsMatch && warning && (

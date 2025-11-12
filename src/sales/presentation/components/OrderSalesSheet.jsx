@@ -26,6 +26,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { getData } from "@/orders/application/itemSlice";
 import clsx from "clsx";
+import { formatCurrency } from "@/shared/utils/formatPriceLocal";
 
 const OrderCard = ({ order, onBack, className = "" }) => {
   const items = useSelector((state) => state.items.data || []);
@@ -178,7 +179,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
                 <strong>Actualización:</strong> {updatedAt}
               </p>
               <p className="text-sm text-gray-600">
-                <strong>Total:</strong> ${Number(order.total).toFixed(2)}
+                <strong>Total:</strong> ${formatCurrency(order.total)}
               </p>
             </div>
           </div>
@@ -226,7 +227,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
                       className={`flex flex-col items-center px-4 py-2 rounded-xl bg-${p.color}-50 text-${p.color}-700 font-semibold`}
                     >
                       <span className="capitalize">{p.method}</span>
-                      <span className="text-sm font-normal">${p.amount}</span>
+                      <span className="text-sm font-normal">${formatCurrency(p.amount)}</span>
                     </motion.div>
                   ))
                 ) : (
@@ -276,9 +277,9 @@ const OrderCard = ({ order, onBack, className = "" }) => {
                       <TableRow key={item.id}>
                         <TableCell>{item.productName}</TableCell>
                         <TableCell>{item.quantity}</TableCell>
-                        <TableCell>${Number(item.unitPrice).toFixed(2)}</TableCell>
+                        <TableCell>${formatCurrency(item.unitPrice)}</TableCell>
                         <TableCell className="text-right font-medium">
-                          ${(Number(item.unitPrice) * item.quantity).toFixed(2)}
+                          ${formatCurrency(Number(item.unitPrice) * item.quantity)}
                         </TableCell>
                       </TableRow>
                     ))

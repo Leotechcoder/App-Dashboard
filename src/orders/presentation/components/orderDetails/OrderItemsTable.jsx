@@ -4,6 +4,7 @@ import { Trash2, RefreshCw, ShoppingBag } from "lucide-react";
 import { formatPrice } from "../../../../shared/utils/formatPriceOrders";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SearchItemsProduct from "./SearchItemsProduct";
+import { formatCurrency } from "@/shared/utils/formatPriceLocal";
 
 const OrderItemsTable = ({
   items,
@@ -83,13 +84,13 @@ const OrderItemsTable = ({
                     {item.description}
                   </td>
                   <td className="text-center text-gray-800">
-                    {formatPrice(item.unitPrice)}
+                    {formatCurrency(item.unitPrice)}
                   </td>
                   <td className="text-center text-gray-700 font-semibold">
                     {item.quantity}
                   </td>
                   <td className="text-center font-semibold text-emerald-600">
-                    {formatPrice(item.unitPrice * item.quantity)}
+                    {formatCurrency(item.unitPrice * item.quantity)}
                   </td>
                   <td className="flex items-center justify-center gap-2 py-2">
                     <button
@@ -120,7 +121,7 @@ const OrderItemsTable = ({
           Total Neto
         </span>
         <span className="text-2xl font-bold text-emerald-600">
-          ${calculateSubTotal.toFixed(2)}
+          ${formatCurrency(calculateSubTotal)}
         </span>
       </div>
     </div>

@@ -18,6 +18,7 @@ import { useTableData } from "../../../shared/hook/useTableDataP.js";
 import { FiltrosCategorias } from "../components/CategoryFilter.jsx";
 import { toast } from "sonner"; // 👈 usamos sonner
 import { motion } from "framer-motion";
+import { formatCurrency } from "@/shared/utils/formatPriceLocal.js";
 
 const ProductList = ({ setScrollTo }) => {
   const dispatch = useDispatch();
@@ -215,7 +216,7 @@ return (
                   {product.available ? "Sí" : "No"}
                 </td>
                 <td className="px-2 py-3 text-sm text-gray-500">
-                  {product.price}
+                  {formatCurrency(product.price)}
                 </td>
                 <td className="px-2 py-3">
                   <div className="flex gap-2">

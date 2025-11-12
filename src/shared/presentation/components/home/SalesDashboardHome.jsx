@@ -11,6 +11,7 @@ import { PaymentMethodsChart } from "./SalesMethodsChart";
 import SalesChartHome from "./SalesTrendChart";
 import TopProductsTable from "./TopProductsTable";
 import { useEffect } from "react";
+import { formatCurrency } from "@/shared/utils/formatPriceLocal";
 
 export default function SalesDashboardHome() {
   const { totalEarnings, chartData, loading: dataLoading, filters, orders } = useSalesData();
@@ -78,7 +79,7 @@ export default function SalesDashboardHome() {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-indigo-600">
-                {isLoading ? "Cargando..." : `$${totalEarnings.toLocaleString("es-AR")}`}
+                {isLoading ? "Cargando..." : `$${formatCurrency(totalEarnings, 0)}`}
               </p>
             </CardContent>
           </Card>

@@ -30,6 +30,7 @@ import { getUserData } from "@/users/application/userSlice";
 import { getDataOrders } from "@/orders/application/orderSlice";
 import { useScrollLock } from "@/shared/hook/useScrollLock";
 import { useScrollTo } from "@/shared/hook/useScrollTo";
+import { formatCurrency } from "@/shared/utils/formatPriceLocal";
 
 export function SalesDashboardView() {
   const dispatch = useDispatch();
@@ -145,7 +146,6 @@ export function SalesDashboardView() {
           </Card>
         </TabsContent>
 
-        {/* Sales Tab */}
         <TabsContent value="sales" className="space-y-4">
           {/* Filters */}
           <SalesFilters
@@ -164,7 +164,7 @@ export function SalesDashboardView() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  ${totalEarnings.toFixed(2)}
+                  ${formatCurrency(totalEarnings)}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   De {orders.length} órdenes cerradas

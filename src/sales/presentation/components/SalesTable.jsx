@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
+import { formatCurrency } from "@/shared/utils/formatPriceLocal"
 
 export function SalesTable({ orders, onSelectOrder }) {
   const getStatusBadge = (status) => {
@@ -51,7 +52,7 @@ export function SalesTable({ orders, onSelectOrder }) {
                 <TableCell>{order.customerName || "Cliente"}</TableCell>
                 <TableCell>{format(new Date(order.createdAt), "dd MMM yyyy, HH:mm", { locale: es })}</TableCell>
                 <TableCell>{getStatusBadge(order.status)}</TableCell>
-                <TableCell className="text-right font-medium">${order.total.toFixed(2)}</TableCell>
+                <TableCell className="text-right font-medium">${formatCurrency(order.total)}</TableCell>
               </TableRow>
             ))
           )}

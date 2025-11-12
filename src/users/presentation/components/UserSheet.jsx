@@ -30,6 +30,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { fetchClosedOrders } from "@/sales/application/salesThunks";
 import { getData } from "@/orders/application/itemSlice";
 import OrderCard from "@/sales/presentation/components/OrderSalesSheet";
+import { formatCurrency } from "@/shared/utils/formatPriceLocal";
 
 const UserCard = ({ user, onBack }) => {
   const dispatch = useDispatch();
@@ -250,8 +251,8 @@ const UserInfo = ({ user }) => (
 const UserMetrics = ({ totalOrders, totalSpent, averagePerOrder, progressValue, purchaseGoal }) => {
   const metrics = [
     { label: "Total Órdenes", value: totalOrders, color: "blue" },
-    { label: "Total Gastado", value: `$${totalSpent.toFixed(2)}`, color: "green" },
-    { label: "Promedio por Orden", value: `$${averagePerOrder}`, color: "purple" },
+    { label: "Total Gastado", value: `$${formatCurrency(totalSpent, 1)}`, color: "green" },
+    { label: "Promedio por Orden", value: `$${formatCurrency(averagePerOrder)}`, color: "purple" },
   ];
 
   return (
@@ -281,7 +282,7 @@ const UserMetrics = ({ totalOrders, totalSpent, averagePerOrder, progressValue, 
         <p className="text-sm font-medium mb-2">Progreso de Compras</p>
         <Progress value={progressValue} className="h-3" />
         <p className="text-xs text-gray-500 mt-1">
-          {progressValue.toFixed(0)}% hacia el objetivo de ${purchaseGoal}
+          {progressValue.toFixed(0)}% hacia el objetivo de ${formatCurrency(purchaseGoal, 0)}
         </p>
       </div>
     </div>
@@ -338,7 +339,7 @@ const UserOrdersTable = ({ userOrders, onSelectOrder }) => {
                   </TableCell>
                   <TableCell>{getStatusBadge(order.status)}</TableCell>
                   <TableCell className="text-right font-medium">
-                    ${order.total.toFixed(2)}
+                    ${formatCurrency(order.total)}
                   </TableCell>
                 </TableRow>
               ))
