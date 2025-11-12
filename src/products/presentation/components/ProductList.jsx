@@ -196,7 +196,7 @@ return (
                 <td className="w-32 px-2 text-xs text-gray-500 uppercase">
                   {product.id}
                 </td>
-                <td className="w-44 px-1 text-sm text-gray-500">
+                <td className="w-44 px-1 text-sm font-semibold text-gray-500">
                   {product.name}
                 </td>
                 <td className="w-72 px-1 text-sm text-gray-500">
@@ -215,7 +215,7 @@ return (
                 >
                   {product.available ? "Sí" : "No"}
                 </td>
-                <td className="px-2 py-3 text-sm text-gray-500">
+                <td className="px-2 py-3 text-sm font-semibold text-gray-500">
                   {formatCurrency(product.price)}
                 </td>
                 <td className="px-2 py-3">
@@ -223,12 +223,14 @@ return (
                     <button
                       onClick={() => handleEditar(product)}
                       className="p-1 hover:bg-gray-100 rounded"
+                      title="Editar Producto"
                     >
                       <Pencil className="h-4 w-4 text-gray-500" />
                     </button>
                     <button
                       onClick={() => handleEliminar(product.id)}
                       className="p-1 hover:bg-gray-100 rounded"
+                      title="Eliminar Producto"
                     >
                       <Trash className="h-4 w-4 text-gray-500" />
                     </button>

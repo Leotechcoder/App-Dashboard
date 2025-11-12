@@ -230,18 +230,21 @@ const OrdersTableEnhanced = ({
                       <button
                         onClick={() => handleEditOrder(order)}
                         className="text-gray-600 hover:text-blue-600"
+                        title="Editar Orden"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => onDelete?.(order.id)}
                         className="text-gray-600 hover:text-red-600"
+                        title="Eliminar Orden"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleOpenDialog(order)}
                         className="text-gray-600 hover:text-green-600 flex items-center gap-1"
+                        title="Cerrar Orden"
                       >
                         <CheckCircle2 className="w-4 h-4" />
                         Cerrar

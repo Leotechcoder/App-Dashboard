@@ -76,7 +76,7 @@ export const PaymentMethodsChart = () => {
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-md">
-      <h3 className="text-lg font-semibold text-indigo-600 mb-4">
+      <h3 className="text-lg font-semibold text-indigo-400 mb-4">
         Métodos de Pago más Usados
       </h3>
 

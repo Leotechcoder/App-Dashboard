@@ -54,7 +54,7 @@ export default function SalesDashboardHome() {
         className="text-center space-y-2 flex justify-between w-full"
       >
         <div>
-          <h3 className="text-3xl md:text-2xl font-semibold text-indigo-600">
+          <h3 className="text-3xl md:text-2xl font-semibold text-indigo-400">
             Ventas recientes
           </h3>
         </div>

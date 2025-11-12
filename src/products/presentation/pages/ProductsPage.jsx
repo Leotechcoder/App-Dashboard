@@ -112,7 +112,7 @@ const HelpContent = ({ onClose }) => (
     <Info className="text-blue-500 w-6 h-6 mt-1 flex-shrink-0" />
 
     <div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-2">
+      <h2 className="text-2xl font-bold text-gray-800 mb-2 tracking-tight">
         Gestión de Productos
       </h2>
       <p className="text-gray-600 leading-relaxed text-sm pr-2">

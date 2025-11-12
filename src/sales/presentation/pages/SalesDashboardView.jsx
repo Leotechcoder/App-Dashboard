@@ -31,6 +31,7 @@ import { getDataOrders } from "@/orders/application/orderSlice";
 import { useScrollLock } from "@/shared/hook/useScrollLock";
 import { useScrollTo } from "@/shared/hook/useScrollTo";
 import { formatCurrency } from "@/shared/utils/formatPriceLocal";
+import { cn } from "@/lib/utils";
 
 export function SalesDashboardView() {
   const dispatch = useDispatch();
@@ -83,11 +84,11 @@ export function SalesDashboardView() {
   const isCashRegisterOpen = cashRegister && cashRegister.status === "open";
 
   return (
-    <div className="space-y-6 pb-20 px-4 md:px-6 lg:px-16 py-8">
+    <div className="space-y-6 pb-20 px-4 md:px-6 lg:pl-16 py-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight font-mono">
+        <div className="p-4">
+          <h2 className="text-2xl font-semibold text-gray-800 tracking-tight">
             Control de Caja e Historial de Ventas
           </h2>
         </div>
@@ -116,8 +117,7 @@ export function SalesDashboardView() {
           {/* ----- TAB PENDIENTES ----- */}
           <TabsTrigger
             value="pending"
-            className="gap-2 flex-1 md:flex-none transition-all
-          "
+            className={cn("gap-2 flex-1 md:flex-none transition-all data-[state=active]:bg-blue-200 data-[state=active]:border-solid")}
           >
             <ClipboardList className="h-4 w-4" /> Órdenes Pendientes
             {pendingOrders.length > 0 && (
@@ -130,7 +130,7 @@ export function SalesDashboardView() {
           {/* ----- TAB VENTAS CERRADAS ----- */}
           <TabsTrigger
             value="sales"
-            className="gap-2 flex-1 md:flex-none transition-all cursor-pointer"
+            className={cn("gap-2 flex-1 md:flex-none transition-all data-[state=active]:bg-blue-200")}
           >
             <Package className="h-4 w-4 text-muted-foreground" /> Ventas
             Cerradas
@@ -155,12 +155,12 @@ export function SalesDashboardView() {
 
           {/* Metrics Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <Card>
+            <Card className="bg-green-50 border border-green-300 shadow-md">
               <CardHeader className="flex items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">
                   Total de Ganancias
                 </CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <DollarSign className="h-4 w-4 text-muted-foreground text-green-700" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
@@ -172,12 +172,12 @@ export function SalesDashboardView() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-yellow-50 border border-yellow-300 shadow-md"  >
               <CardHeader className="flex items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">
                   Fecha Actual
                 </CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <Calendar className="h-4 w-4 text-muted-foreground text-yellow-700" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
@@ -189,12 +189,12 @@ export function SalesDashboardView() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-blue-50 border border-blue-300 shadow-md">
               <CardHeader className="flex items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">
                   Órdenes Cerradas
                 </CardTitle>
-                <Package className="h-4 w-4 text-muted-foreground" />
+                <Package className="h-4 w-4 text-muted-foreground text-blue-700" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{orders.length}</div>

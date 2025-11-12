@@ -20,7 +20,7 @@ const Dashboard = () => {
   
 
   return (
-    <div className="container mx-auto flex flex-col gap-4 p-8">
+    <div className="container mx-auto flex flex-col gap-4 py-8 pl-10 pr-4">
       <WelcomeHeader />
       <SalesDashboardHome />
     </div>

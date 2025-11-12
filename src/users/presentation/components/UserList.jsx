@@ -127,7 +127,7 @@ const UserList = ({ setScrollTo }) => {
             {paginatedData.map((user) => (
               <tr key={user.id} className="hover:bg-gray-50">
                 <td className="px-2 py-4 text-sm text-gray-500">{user.id}</td>
-                <td className="px-2 py-4 text-sm text-gray-500">{user.username}</td>
+                <td className="px-2 py-4 text-sm font-semibold text-gray-500">{user.username}</td>
                 <td className="px-2 py-4 text-sm text-gray-500">{user.email}</td>
                 <td className="px-2 py-4 text-sm text-gray-500">{user.phone}</td>
                 <td className="px-2 py-4 text-sm text-gray-500">{user.address}</td>

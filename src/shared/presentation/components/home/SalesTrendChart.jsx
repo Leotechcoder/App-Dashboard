@@ -19,7 +19,7 @@ const SalesChartHome = ({data}) => {
 
   return (
     <>
-      <h3 className="text-lg font-semibold text-indigo-600 mb-4 flex items-center gap-2">
+      <h3 className="text-lg font-semibold text-indigo-400 mb-4 flex items-center gap-2">
         <BarChart3 className="h-5 w-5 text-indigo-500" /> Tendencia de Ventas
       </h3>
 

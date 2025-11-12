@@ -1,7 +1,5 @@
-"use client";
 
-import { Trash2, RefreshCw, ShoppingBag } from "lucide-react";
-import { formatPrice } from "../../../../shared/utils/formatPriceOrders";
+import { Trash2, ShoppingBag, Pencil } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SearchItemsProduct from "./SearchItemsProduct";
 import { formatCurrency } from "@/shared/utils/formatPriceLocal";
@@ -94,18 +92,18 @@ const OrderItemsTable = ({
                   </td>
                   <td className="flex items-center justify-center gap-2 py-2">
                     <button
+                      onClick={() => updateProduct(item.id)}
+                      className="p-1.5 rounded-md hover:bg-blue-50 transition"
+                      title="Editar producto"
+                    >
+                      <Pencil className="w-4 h-4 text-gray-600 hover:text-blue-500" />
+                    </button>
+                    <button
                       onClick={() => removeProduct(item.id)}
                       className="p-1.5 rounded-md hover:bg-red-50 transition"
                       title="Eliminar producto"
                     >
                       <Trash2 className="w-4 h-4 text-gray-600 hover:text-red-600" />
-                    </button>
-                    <button
-                      onClick={() => updateProduct(item.id)}
-                      className="p-1.5 rounded-md hover:bg-blue-50 transition"
-                      title="Actualizar producto"
-                    >
-                      <RefreshCw className="w-4 h-4 text-gray-600 hover:text-blue-500" />
                     </button>
                   </td>
                 </tr>

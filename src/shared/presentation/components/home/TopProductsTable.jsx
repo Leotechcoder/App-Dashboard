@@ -46,7 +46,7 @@ const TopProductsTable = ({ orders }) => {
   return (
     <div className="bg-white shadow-md border border-gray-200 rounded-xl p-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-indigo-600 flex items-center">
+        <h2 className="text-xl font-semibold text-indigo-400 flex items-center">
           <ShoppingBag className="w-6 h-6 mr-2 text-purple-500" />
           Productos Más Vendidos
         </h2>
