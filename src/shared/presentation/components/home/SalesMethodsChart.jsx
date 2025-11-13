@@ -1,8 +1,6 @@
-"use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchClosedOrders } from "@/sales/application/salesThunks";
 import {
   ResponsiveContainer,
   BarChart,
@@ -18,12 +16,6 @@ import { formatDateToArg } from "@/shared/utils/formatDateToArg";
 export const PaymentMethodsChart = () => {
   const dispatch = useDispatch();
   const { closedOrders } = useSelector((store) => store.sales);
-
-  useEffect(() => {
-    if (!closedOrders || closedOrders.length === 0) {
-      dispatch(fetchClosedOrders());
-    }
-  }, [dispatch]);
 
   // 🔹 Preparamos la data para el gráfico
   const data = useMemo(() => {

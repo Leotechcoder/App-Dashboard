@@ -39,10 +39,10 @@ const OrderCard = ({ order, onBack, className = "" }) => {
     );
   }
 
-  //Al cargar el componente
-  useEffect(() => {
-    dispatch(getData());
-  }, []);
+  // //Al cargar el componente
+  // useEffect(() => {
+  //   dispatch(getData());
+  // }, []);
 
   // 🔹 Obtener ítems de la orden
   const orderItems = useMemo(() => {

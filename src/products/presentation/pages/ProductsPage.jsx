@@ -26,7 +26,7 @@ const Products = () => {
   const handleToggleHelp = () => dispatch(setShowHelpProducts());
 
   return (
-    <main className="bg-gray-100 p-8">
+    <main className="bg-gray-100 py-8">
       <AnimatePresence mode="wait">
         {/* Vista: Formulario o Tabla */}
         {isFormView ? (

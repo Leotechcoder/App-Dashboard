@@ -1,18 +1,13 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { ShoppingBag, ArrowUp, ArrowDown } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import { getData } from "@/orders/application/itemSlice";
+import { useSelector } from "react-redux";
 
 const TopProductsTable = ({ orders }) => {
   const items = useSelector((store) => store.items.data || []);
   const [sortOrder, setSortOrder] = useState("desc");
-  const dispatch = useDispatch()
 
-  useEffect(() => {
-    dispatch(getData())
-  }, [])
   
   // 🔹 Calculamos los productos más vendidos de todas las órdenes cerradas
   const topProductsOverall = useMemo(() => {

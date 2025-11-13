@@ -16,20 +16,21 @@ export const LoginPage = () => {
   // Referencia para el toast de carga
   const toastId = useRef(null)
 //Estados segun respuesta del servidor
-  const { loading, message, error } = useSelector((store) => store.users)
-  const dispatch  = useDispatch()
-  const navigate = useNavigate() // 👈 para redirigir
+  const { username, loading } = useSelector((store) => store.users);
+  const { message, error } = useSelector((store) => store.app);
+  const dispatch  = useDispatch();
+  const navigate = useNavigate();
 
   // Manejar redirección al dashboard después del login
   useEffect(() => {
     let timer
-    if (!loading && message && message === "Sesión iniciada exitosamente!") {
+    if (!loading && username) {
       timer = setTimeout(() => {
         navigate("/admin/home", { replace: true })
       }, 2000) // <- 2 segundos
     }
     return () => clearTimeout(timer)
-  }, [message, loading, navigate])
+  }, [username, loading, navigate])
 
   // Manejar la expansion del formulario en pantallas pequeñas
   const handleFormExpand = useCallback((expanded) => {
@@ -68,17 +69,26 @@ useEffect(() => {
   if (loading) {
     if (!toastId.current) {
       toastId.current = toast.loading("Cargando...");
+      setTimeout(() => {
+        dispatch(removeMessage());
+        toast.dismiss(toastId.current);
+        toastId.current = null;
+      }, 3000);
     }
   } else {
     timer = setTimeout(() => {
-      if (toastId.current) {
-        toast.dismiss(toastId.current);
-        toastId.current = null;
+      // 🔸 Primero leemos si hay mensaje guardado en sessionStorage
+      const storedMessage = sessionStorage.getItem("logoutMessage");
+
+      if (storedMessage) {
+        toast.success(storedMessage);
+        sessionStorage.removeItem("logoutMessage");
+        return; // ya mostramos el toast, no hace falta seguir
       }
 
-      if (message && message === "Sesión cerrada exitosamente!") {
-          toast.success(message);
-        // Limpio el mensaje con un poco de delay para que sí se vea
+      // 🔸 Luego los casos normales
+      if (message && message === "Sesión Cerrada Exitosamente!") {
+        toast.success(message);
         setTimeout(() => {
           dispatch(removeMessage());
         }, 2000);
@@ -93,9 +103,6 @@ useEffect(() => {
   return () => clearTimeout(timer);
 }, [loading, message, error, dispatch]);
 
-if(message === "Sesión iniciada exitosamente!"){
-  return <LoadingScreen />
-}
 
  return (
   <>

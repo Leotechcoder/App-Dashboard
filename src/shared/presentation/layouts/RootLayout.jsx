@@ -9,19 +9,9 @@ import ScrollToTop from "../components/ScrollToTop.jsx";
 
 const RootLayout = () => {
   const { loading, message, error } = useSelector((store) => store.users);
-  const [logOutUser, setLogOutUser] = useState(false);
   const dispatch = useDispatch();
   const toastId = useRef(null);
-  const navigate = useNavigate();
   const shownMessageRef = useRef("");
-
-  // 🔁 Redirección tras logout
-  useEffect(() => {
-    if (logOutUser) {
-      const timer = setTimeout(() => navigate("/", { replace: true }), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [logOutUser, navigate]);
 
   // ⚙️ Control de mensajes y toasts
   useEffect(() => {
@@ -61,7 +51,7 @@ const RootLayout = () => {
       <div className="flex min-h-screen bg-gray-100">
         {/* Sidebar */}
         <aside className="w-64 p-4 bg-white shadow-md flex-shrink-0">
-          <Sidebar setLogOutUser={setLogOutUser} />
+          <Sidebar/>
         </aside>
 
         {/* Main Content */}

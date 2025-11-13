@@ -244,7 +244,6 @@ const userSlice = createSlice({
       .addCase(getUserAuth.rejected, (state, action) => {
         state.loading = false
         state.error = action.error.message || "Error al cargar el usuario"
-        windows
       })
 
       // LOGIN GOOGLE

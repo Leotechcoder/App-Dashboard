@@ -1,3 +1,4 @@
+//Este slice no esta en uso, es para ordenar un poco el codigo en el futuro//
 import { createSlice } from "@reduxjs/toolkit"
 
 export const createBaseSlice = (name, initialState, reducers, extraReducers) => {

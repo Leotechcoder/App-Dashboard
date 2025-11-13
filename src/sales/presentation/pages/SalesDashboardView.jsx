@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-import { fetchPendingOrders } from "../../application/salesThunks";
+import { useState } from "react";
 import { useSalesData } from "../hooks/useSalesData";
 import { useCashRegister } from "../hooks/useCashRegister";
 import { useSalesHistory } from "../hooks/useSalesHistory";
@@ -22,19 +21,15 @@ import {
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import OrderCard from "../components/OrderSalesSheet";
 import OrdersPage from "@/orders/presentation/pages/OrdersPage";
-import { getData } from "@/orders/application/itemSlice";
-import { getUserData } from "@/users/application/userSlice";
-import { getDataOrders } from "@/orders/application/orderSlice";
 import { useScrollLock } from "@/shared/hook/useScrollLock";
 import { useScrollTo } from "@/shared/hook/useScrollTo";
 import { formatCurrency } from "@/shared/utils/formatPriceLocal";
 import { cn } from "@/lib/utils";
 
 export function SalesDashboardView() {
-  const dispatch = useDispatch();
   const {
     orders,
     totalEarnings,
@@ -52,15 +47,6 @@ export function SalesDashboardView() {
   const [openDialog, setOpenDialog] = useState(false);
   const [closeDialog, setCloseDialog] = useState(false);
   const [selectedOrderCard, setSelectedOrderCard] = useState(null);
-
-  //Al cargar la vista, carga los datos necesarios (Mejorar esto para que no se cargue todo cada vez)
-  useEffect(() => {
-      dispatch(fetchPendingOrders());
-      dispatch(getData())
-      dispatch(getUserData())
-      dispatch(getDataOrders())
-  }, []);
-  
   const { setScrollTo, tableRef } = useScrollTo({offset: 20});
   
   // Evita scroll en la página padre mientras el modal está abierto
@@ -84,10 +70,10 @@ export function SalesDashboardView() {
   const isCashRegisterOpen = cashRegister && cashRegister.status === "open";
 
   return (
-    <div className="space-y-6 pb-20 px-4 md:px-6 lg:pl-16 py-8">
+    <div className="space-y-6 pb-20 px-4 md:px-6 lg:pl-14 py-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="p-4">
+        <div className="py-4">
           <h2 className="text-2xl font-semibold text-gray-800 tracking-tight">
             Control de Caja e Historial de Ventas
           </h2>

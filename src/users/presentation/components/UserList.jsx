@@ -42,13 +42,13 @@ const UserList = ({ setScrollTo }) => {
     setCurrentPage: setCurrentPageUsers,
   });
 
-  useEffect(() => {
-    if (!hasFetched.current) {
-      hasFetched.current = true;
-      dispatch(getUserData());
-    }
-    dispatch(getUserData());
-  }, []);
+  // useEffect(() => {
+  //   if (!hasFetched.current) {
+  //     hasFetched.current = true;
+  //     dispatch(getUserData());
+  //   }
+  //   dispatch(getUserData());
+  // }, []);
 
   const handleEditar = (user) => {
     setSelectedUser(user);

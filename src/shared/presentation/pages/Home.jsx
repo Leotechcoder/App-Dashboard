@@ -1,23 +1,8 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getUserAuth,
-} from "../../../users/application/userSlice.js";
 
 import WelcomeHeader from "../components/home/WelcomeHeader.jsx";
 import SalesDashboardHome from "../components/home/SalesDashboardHome.jsx";
 
-const Dashboard = () => {
-  const username = useSelector((store) => store.users.username);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (!username) {
-      dispatch(getUserAuth());
-      dispatch()
-    }
-  }, [username]);
-  
+const Dashboard = () => {  
 
   return (
     <div className="container mx-auto flex flex-col gap-4 py-8 pl-10 pr-4">

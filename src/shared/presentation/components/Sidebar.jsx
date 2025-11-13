@@ -13,15 +13,15 @@ import {
 } from "lucide-react";
 import { CheckCheckIcon as CiMoneyCheck1 } from "lucide-react";
 import { useState } from "react";
+import { setMessage } from "@/shared/application/slices/appSlice.js";
 
-const Sidebar = ({ setLogOutUser }) => {
+const Sidebar = () => {
   const dispatch = useDispatch();
-  const { username } = useSelector((store) => store.users);
   const [isExpanded, setIsExpanded] = useState(true);
 
   const handleClick = () => {
     dispatch(logOutUser());
-    setLogOutUser(true);
+    sessionStorage.setItem("logOutMessage", "Sesión Cerrada Exitosamente!")
   };
 
   return (

@@ -53,11 +53,11 @@ const ProductList = ({ setScrollTo }) => {
   });
 
   // 🚀 Traer productos al cargar
-  useEffect(() => {
-    if (!isLoading && data.length === 0) {
-      dispatch(getDataProducts());
-    }
-  }, [dispatch, isLoading, data.length]);
+  // useEffect(() => {
+  //   if (!isLoading && data.length === 0) {
+  //     dispatch(getDataProducts());
+  //   }
+  // }, [dispatch, isLoading, data.length]);
 
   // 🚀 Aplicar filtros (categoría + data de redux)
   useEffect(() => {

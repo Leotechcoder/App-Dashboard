@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import {
-  fetchActiveCashRegister,
   openCashRegister,
   closeCashRegister,
   fetchClosedOrders,
@@ -12,10 +11,6 @@ export function useCashRegister() {
   const { activeCashRegister, loading, error } = useSelector(
     (state) => state.sales
   );
-
-  useEffect(() => {
-    dispatch(fetchActiveCashRegister());
-  }, [dispatch]);
 
   const handleOpenCashRegister = async (
     initialAmount,
