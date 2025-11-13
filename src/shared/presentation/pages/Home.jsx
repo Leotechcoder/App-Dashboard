@@ -5,7 +5,7 @@ import SalesDashboardHome from "../components/home/SalesDashboardHome.jsx";
 const Dashboard = () => {  
 
   return (
-    <div className="container mx-auto flex flex-col gap-4 py-8 pl-10 pr-4">
+    <div className="container mx-auto flex flex-col gap-2 pl-8">
       <WelcomeHeader />
       <SalesDashboardHome />
     </div>

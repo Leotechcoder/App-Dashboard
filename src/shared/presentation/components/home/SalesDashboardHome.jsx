@@ -10,7 +10,6 @@ import { formatDateToArg } from "@/shared/utils/formatDateToArg";
 import { PaymentMethodsChart } from "./SalesMethodsChart";
 import SalesChartHome from "./SalesTrendChart";
 import TopProductsTable from "./TopProductsTable";
-import { useEffect } from "react";
 import { formatCurrency } from "@/shared/utils/formatPriceLocal";
 
 export default function SalesDashboardHome() {
@@ -41,7 +40,7 @@ export default function SalesDashboardHome() {
 
   return (
     <motion.div
-      className="min-h-screen w-full bg-gradient-to-br from-gray-50 via-white to-indigo-50 text-gray-800 p-6 md:p-10 space-y-10 border-slate-200 shadow-sm rounded-xl"
+      className="min-h-screen w-full bg-gradient-to-br from-gray-50 via-white to-indigo-50 text-gray-800 p-6 md:p-10 space-y-10 border-slate-200 shadow-sm rounded-2xl"
       variants={containerVariants}
       initial="hidden"
       animate="show"

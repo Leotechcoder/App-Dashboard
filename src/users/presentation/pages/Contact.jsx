@@ -29,10 +29,10 @@ const Contact = () => {
 
   const handleToggleHelp = () => dispatch(setShowHelpUsers());
   const handleCloseForm = () => dispatch(setFormView(false));
-  const{ setScrollTo, tableRef } = useScrollTo({ offset: 18})
+  const{ setScrollTo, tableRef } = useScrollTo()
 
   return (
-    <main className="pl-8 pt-8 bg-gray-50 rounded-lg min-h-[95vh] overflow-hidden">
+    <main className="pl-8 bg-gray-50 rounded-lg min-h-[95vh] overflow-hidden">
       <AnimatePresence mode="wait">
         {isFormView && editingUser ? (
           // =========================
@@ -56,7 +56,7 @@ const Contact = () => {
                 className="flex items-center justify-between mb-6"
                 {...fadeSlide}
               >
-                <h1 className="text-2xl font-semibold text-sky-950 pl-4">
+                <h1 className="text-2xl font-semibold text-sky-950 px-8">
                   Gestión de Clientes
                 </h1>
                 <InfoButton showHelp={handleToggleHelp} />

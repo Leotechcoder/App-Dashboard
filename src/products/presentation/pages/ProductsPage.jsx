@@ -26,7 +26,7 @@ const Products = () => {
   const handleToggleHelp = () => dispatch(setShowHelpProducts());
 
   return (
-    <main className="bg-gray-100 py-8">
+    <main className="bg-gray-100">
       <AnimatePresence mode="wait">
         {/* Vista: Formulario o Tabla */}
         {isFormView ? (
@@ -60,7 +60,7 @@ const Products = () => {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.5 }}
               >
-                <h1 className="text-2xl font-semibold text-gray-800 pl-2">
+                <h1 className="text-2xl font-semibold text-gray-800 px-6">
                   Gestión de Productos
                 </h1>
                 <InfoButton showHelp={handleToggleHelp} />

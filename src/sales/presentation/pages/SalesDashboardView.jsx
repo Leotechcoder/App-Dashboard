@@ -70,7 +70,7 @@ export function SalesDashboardView() {
   const isCashRegisterOpen = cashRegister && cashRegister.status === "open";
 
   return (
-    <div className="space-y-6 pb-20 px-4 md:px-6 lg:pl-14 py-8">
+    <div className="space-y-6 px-4 md:px-6 lg:pl-14">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="py-4">

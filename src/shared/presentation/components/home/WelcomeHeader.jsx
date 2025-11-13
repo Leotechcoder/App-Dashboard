@@ -14,7 +14,7 @@ const WelcomeHeader = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      <Card className="bg-gradient-to-br from-indigo-50 via-white to-blue-50 border border-slate-200 shadow-sm rounded-2xl">
+      <Card className="bg-gradient-to-br from-indigo-50 via-white to-blue-50 ">
         <CardHeader className="flex flex-row items-center space-x-4 p-6">
           <div className="bg-indigo-100 p-3 rounded-xl shadow-sm">
             <LayoutDashboard className="w-7 h-7 text-indigo-600" />

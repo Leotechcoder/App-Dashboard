@@ -59,7 +59,7 @@ const RootLayout = () => {
           {/* Este contenedor fuerza que el main tenga siempre altura suficiente */}
           <div className="flex flex-col min-h-screen">
             <main className="flex-1 overflow-y-auto">
-              <div className="min-h-[calc(100vh-100px)] p-4">
+              <div className="min-h-[calc(100vh-100px)]">
                 {/* Ajustá 100px según la altura de tu footer */}
                 <Outlet />
               </div>
@@ -67,7 +67,7 @@ const RootLayout = () => {
 
             {/* Footer fijo al fondo del scroll, no visible hasta scrollear */}
           </div>
-          <Footer />
+          {/* <Footer /> */}
         </div>
       </div>
     </>
