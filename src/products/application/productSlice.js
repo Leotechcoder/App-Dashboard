@@ -24,8 +24,8 @@ export const createData = createAsyncThunk("products/createData", async (product
   const { createdProduct, message } = await productService.createProduct(product)
   return {data: toPlainProducts(createdProduct), message}
 })
-export const updateData = createAsyncThunk("products/updateData", async (product)=>{
-  const {updateProduct, message} = await productService.updateProduct(product)
+export const updateData = createAsyncThunk("products/updateData", async ({id, product})=>{
+  const {updateProduct, message} = await productService.updateProduct(id, product)
   return {data: toPlainProducts(updateProduct), message}
 })
 export const deleteData = createAsyncThunk("products/deleteData", async(id)=>{

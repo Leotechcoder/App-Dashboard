@@ -16,9 +16,11 @@ export class ProductService {
           p.stock, 
           p.imageUrl, 
           p.description, 
-          p.available, 
+          p.available,
+          p.cloudinaryId, 
           p.createdAt, 
-          p.updatedAt)
+          p.updatedAt
+        )
         )
     }
   
@@ -36,14 +38,15 @@ export class ProductService {
         product.stock, 
         product.imageUrl, 
         product.description, 
-        product.available, 
+        product.available,
+        product.cloudinaryId, 
         product.createdAt, 
       )
       return ({ createdProduct, message })
     }
   
-  async  updateProduct(data) {
-      const {product, message} = await this.productRepository.update(data);
+  async  updateProduct(id, data) {
+      const {product, message} = await this.productRepository.update(id, data);
       const updateProduct = new Product(
         product.id,
         product.name, 
@@ -53,6 +56,7 @@ export class ProductService {
         product.imageUrl, 
         product.description, 
         product.available, 
+        product.cloudinaryId,
         product.createdAt, 
         product.updatedAt
       )

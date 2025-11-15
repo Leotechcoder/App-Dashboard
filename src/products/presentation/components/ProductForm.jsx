@@ -26,6 +26,9 @@ const ProductForm = () => {
   const [form, setForm] = useState(initialState);
   const [errors, setErrors] = useState({});
 
+  //Guardamos el archivo de imagen que el usuario sube en este state
+  const [file, setFile] = useState(null);
+
   useEffect(() => {
     if (isEditing && productToEdit) {
       setForm(productToEdit);
@@ -63,38 +66,55 @@ const ProductForm = () => {
       reader.onload = () => {
         setForm((prev) => ({ ...prev, image_url: reader.result }));
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); //Convierte la imagen en un string enorme
     }
   };
 
   const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setForm((prev) => ({ ...prev, image_url: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const f = e.target.files[0];
+  if (f) {
+    setFile(f);
+
+    // Vista previa
+    const reader = new FileReader();
+    reader.onload = () => {
+      setForm(prev => ({ ...prev, image_url: reader.result }));
+    };
+    reader.readAsDataURL(f);
+  }
+};
+
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      try {
-        const stock = parseInt(form.stock);
-        const price = parseFloat(form.price);
-        const available = stock > 0;
-        await dispatch(
-          createData({ ...form, stock, price, available })
-        ).unwrap();
-        setForm(initialState);
-        dispatch(setFormView());
-      } catch (error) {
-        toast.error(error.message || "Error al guardar el producto");
-      }
-    }
-  };
+  e.preventDefault();
+  if (!validateForm()) return;
+
+  const stock = parseInt(form.stock);
+  const price = parseFloat(form.price);
+  const available = stock > 0;
+
+  const formData = new FormData();
+  formData.append("name", form.name);
+  formData.append("description", form.description);
+  formData.append("price", price);
+  formData.append("stock", stock);
+  formData.append("category", form.category);
+  formData.append("available", available);
+
+  if (file) {
+    formData.append("image", file); // archivo real para Cloudinary
+  }
+
+  try {
+    await dispatch(createData(formData)).unwrap();
+    setForm(initialState);
+    setFile(null);
+    dispatch(setFormView());
+  } catch (error) {
+    toast.error(error.message || "Error al guardar el producto");
+  }
+};
+
 
   const handleInput = (e) => {
     const { name, value } = e.target;

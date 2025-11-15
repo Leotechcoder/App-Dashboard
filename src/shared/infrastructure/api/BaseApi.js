@@ -5,21 +5,29 @@ class BaseApi {
 
   async request(endpoint, method = "GET", data = null) {
     const url = `${this.baseURL}${endpoint}`;
+
+    // Detectar si viene un FormData
+    const isFormData = data instanceof FormData;
+
     const options = {
       method,
-      headers: { "Content-Type": "application/json" },
       credentials: "include",
-      withCredentials: true,
     };
 
+    // Aplicamos headers SOLO si NO es FormData
+    if (!isFormData) {
+      options.headers = { "Content-Type": "application/json" };
+    }
+
+    // Cuerpo de la petición
     if (data) {
-      options.body = JSON.stringify(data);
+      options.body = isFormData ? data : JSON.stringify(data);
     }
 
     try {
       const response = await fetch(url, options);
 
-      // Leemos como texto primero para evitar "Unexpected end of JSON input"
+      // Leemos como texto primero
       const text = await response.text();
       let result = {};
 
@@ -27,7 +35,7 @@ class BaseApi {
         try {
           result = JSON.parse(text);
         } catch {
-          result = { message: text }; // fallback si no es JSON válido
+          result = { message: text };
         }
       }
 
@@ -35,7 +43,6 @@ class BaseApi {
         throw new Error(result?.error || result?.message || `Error ${response.status}`);
       }
 
-      // Asegurar que siempre tengamos un message
       return result?.message ? result : { ...result, message: "Operación completada" };
     } catch (error) {
       console.error(`❌ Error en ${method} ${url}:`, error);

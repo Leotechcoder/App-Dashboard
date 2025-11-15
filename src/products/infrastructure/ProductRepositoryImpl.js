@@ -19,8 +19,8 @@ export class ProductRepositoryImpl extends ProductRepository {
     return await this.api.createProduct(product)
   }
 
-  async update(product) {
-    return await this.api.updateProduct(product)
+  async update(id, product) {
+    return await this.api.updateProduct(id, product)
   }
 
   async delete(id) {

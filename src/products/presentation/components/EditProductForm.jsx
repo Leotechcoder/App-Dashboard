@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateData, setFormView } from "../../application/productSlice";
-import { ArrowLeft, Image } from "lucide-react";
+import { ArrowLeft, Image, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 const EditProductForm = ({ setScrollTo }) => {
@@ -13,6 +13,8 @@ const EditProductForm = ({ setScrollTo }) => {
   const [form, setForm] = useState(product);
   const [errors, setErrors] = useState({});
 
+  const fileInputRef = useRef(null);
+
   useEffect(() => {
     if (product) {
       setForm(product);
@@ -20,9 +22,8 @@ const EditProductForm = ({ setScrollTo }) => {
   }, [product]);
 
   useEffect(() => {
-   window.scrollTo({top: 42, behavior: 'smooth'})
-  }, [])
-  
+    window.scrollTo({ top: 42, behavior: "smooth" });
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -45,41 +46,54 @@ const EditProductForm = ({ setScrollTo }) => {
   const handleFileDrop = (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setForm((prev) => ({ ...prev, image_url: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    setForm((prev) => ({
+      ...prev,
+      newImageFile: file,
+    }));
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setForm((prev) => ({ ...prev, image_url: reader.result }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setForm((prev) => ({ ...prev, image_url: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    setForm((prev) => ({
+      ...prev,
+      newImageFile: file, // archivo real
+    }));
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setForm((prev) => ({ ...prev, image_url: reader.result }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const newForm = {
-          id: form.id,
-          name: form.name,
-          price: Number(form.price),
-          category: form.category,
-          stock: Number(form.stock),
-          imageUrl: form.imageUrl,
-          description: form.description,
-          available: form.available, // ahora siempre boolean
-        };
-        await dispatch(updateData(newForm)).unwrap();
+        const formData = new FormData();
+        formData.append("id", form.id);
+        formData.append("name", form.name);
+        formData.append("price", Number(form.price));
+        formData.append("category", form.category);
+        formData.append("stock", Number(form.stock));
+        formData.append("description", form.description);
+        formData.append("available", form.available);
+
+        // Solo si el usuario seleccionó una nueva imagen
+        if (form.newImageFile) {
+          formData.append("image", form.newImageFile);
+        }
+        await dispatch(updateData({ id: form.id, product: formData })).unwrap();
         dispatch(setFormView(false));
       } catch (error) {
         toast.error(
@@ -93,7 +107,7 @@ const EditProductForm = ({ setScrollTo }) => {
     const { name, value } = e.target;
     setForm({
       ...form,
-      [name]: name === "available" ? value === "true" : value, // 
+      [name]: name === "available" ? value === "true" : value, //
     });
 
     if (errors[name]) {
@@ -103,7 +117,7 @@ const EditProductForm = ({ setScrollTo }) => {
 
   const handleGoBack = () => {
     dispatch(setFormView(false));
-    setScrollTo(true)
+    setScrollTo(true);
   };
 
   return (
@@ -119,16 +133,27 @@ const EditProductForm = ({ setScrollTo }) => {
       </div>
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-md overflow-hidden lg:scale-90 lg:flex lg:items-stretch">
         <div
-          className="w-full lg:w-1/2 h-64 lg:h-auto bg-gray-50 flex items-center justify-center"
+          className="w-full lg:w-1/2 h-64 lg:h-auto bg-gray-50 flex flex-col items-center justify-center p-3"
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleFileDrop}
         >
           {form.image_url ? (
-            <img
-              src={form.image_url || "/placeholder.svg"}
-              alt="Vista previa"
-              className="h-full w-full object-cover"
-            />
+            <>
+              <img
+                src={form.image_url}
+                alt="Vista previa"
+                className="h-full w-full object-contain"
+              />
+
+              {/* Botón para cambiar imagen */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current.click()}
+                className="mt-3 px-4 py-2 bg-blue-400 text-white rounded-full hover:bg-blue-600"
+              >
+                <Pencil />
+              </button>
+            </>
           ) : (
             <label
               htmlFor="image"
@@ -138,16 +163,19 @@ const EditProductForm = ({ setScrollTo }) => {
               <span className="text-sm text-gray-500">
                 Arrastra una imagen o haz clic para seleccionar
               </span>
-              <input
-                type="file"
-                id="image"
-                name="image"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileSelect}
-              />
             </label>
           )}
+
+          {/* Input oculto que sirve siempre */}
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            className="hidden"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+          />
         </div>
 
         <form
@@ -228,7 +256,9 @@ const EditProductForm = ({ setScrollTo }) => {
               onChange={handleInput}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             >
-              <option value="" disabled>Seleccione una categoría</option>
+              <option value="" disabled>
+                Seleccione una categoría
+              </option>
               {categorias.data.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
@@ -250,9 +280,11 @@ const EditProductForm = ({ setScrollTo }) => {
               onChange={handleInput}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             >
-                <option value="" disabled>Selecciona un estado</option>
-                <option value="true">Disponible</option>
-                <option value="false">No Disponible</option>
+              <option value="" disabled>
+                Selecciona un estado
+              </option>
+              <option value="true">Disponible</option>
+              <option value="false">No Disponible</option>
             </select>
             {errors.available && (
               <p className="text-sm text-red-500 mt-1">{errors.available}</p>
