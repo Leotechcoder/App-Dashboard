@@ -1,8 +1,8 @@
 "use client";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { logOutUser } from "../../../users/application/userSlice.js";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { PATH } from "../../../shared/infrastructure/utils/PATH.js";
 import {
   FingerprintIcon as FiHome,
@@ -13,15 +13,16 @@ import {
 } from "lucide-react";
 import { CheckCheckIcon as CiMoneyCheck1 } from "lucide-react";
 import { useState } from "react";
-import { setMessage } from "@/shared/application/slices/appSlice.js";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(true);
 
-  const handleClick = () => {
-    dispatch(logOutUser());
+  const handleClick = async () => {
+    await dispatch(logOutUser());
     sessionStorage.setItem("logOutMessage", "Sesión Cerrada Exitosamente!")
+    navigate(PATH.login, {replace: true})
   };
 
   return (

@@ -17,8 +17,8 @@ class ProductApi extends BaseApi {
     return this.post("/products", product)
   }
 
-  updateProduct = async (product) => {
-    return this.patch(`/products/${product.id}`, product)
+  updateProduct = async (id, product) => {
+    return this.patch(`/products/${id}`, product)
   }
 
   deleteProduct = async (id) => {
