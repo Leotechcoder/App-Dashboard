@@ -39,10 +39,6 @@ const OrderCard = ({ order, onBack, className = "" }) => {
     );
   }
 
-  // //Al cargar el componente
-  // useEffect(() => {
-  //   dispatch(getData());
-  // }, []);
 
   // 🔹 Obtener ítems de la orden
   const orderItems = useMemo(() => {
@@ -124,10 +120,10 @@ const OrderCard = ({ order, onBack, className = "" }) => {
     <TooltipProvider>
       <motion.div
         layout
-        className={`w-full h-full bg-gradient-to-br from-white to-gray-50 rounded-lg shadow-xl border-0 overflow-hidden ${className}`}
+        className={`w-full h-full bg-linear-to-br from-white to-gray-50 rounded-lg shadow-xl border-0 overflow-hidden ${className}`}
       >
         {/* HEADER */}
-        <CardHeader className="sticky top-0 z-20 bg-gradient-to-r from-cyan-400 to-cyan-600 text-white rounded-t-lg shadow-md">
+        <CardHeader className="sticky top-0 z-20 bg-linear-to-r from-cyan-400 to-cyan-600 text-white rounded-t-lg shadow-md">
           <CardTitle className="flex items-center justify-between">
             <div className="flex flex-col space-y-1">
               <h3 className="text-2xl font-bold">

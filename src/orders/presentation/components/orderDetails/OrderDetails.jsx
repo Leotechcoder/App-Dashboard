@@ -350,7 +350,7 @@ export default function OrderDetails({ onBack, className }) {
                   onChange={handleUserInput}
                   placeholder="Ej: Juan Pérez"
                   onKeyDown={(e) => handleKeyDown(e)}
-                  className="border-emerald-200 focus:ring-emerald-500 focus:border-emerald-500 bg-white/100"
+                  className="border-emerald-200 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
                 />
                 {showSuggestions && filteredUsers.length > 0 && (
                   <ul

@@ -50,19 +50,16 @@ const RootLayout = () => {
       <ScrollToTop />
       <div className="flex min-h-screen bg-gray-100">
         {/* Sidebar */}
-        <aside className="w-64 p-4 bg-white shadow-md flex-shrink-0">
+        <aside className="w-64 p-4 bg-white shadow-md shrink-0">
           <Sidebar/>
         </aside>
 
         {/* Main Content */}
         <div className="flex flex-col flex-1 overflow-hidden">
           {/* Este contenedor fuerza que el main tenga siempre altura suficiente */}
-          <div className="flex flex-col min-h-screen">
-            <main className="flex-1 overflow-y-auto">
-              <div className="min-h-[calc(100vh-100px)]">
-                {/* Ajustá 100px según la altura de tu footer */}
+          <div className="flex flex-col">
+            <main className="flex-1">
                 <Outlet />
-              </div>
             </main>
 
             {/* Footer fijo al fondo del scroll, no visible hasta scrollear */}

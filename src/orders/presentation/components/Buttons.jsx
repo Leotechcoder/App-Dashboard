@@ -4,13 +4,13 @@ import Input from "../../../shared/presentation/components/Input.jsx";
 export const ButtonAddOrder = ({ handleClick, className }) => (
   <button
     onClick={handleClick}
-    className={`w-60 flex items-center justify-center gap-2 bg-brown-750 
-      hover:bg-brown-600 text-slate-300 border border-gray-300 
-      px-4 py-2 rounded transition 
+    className={`w-60 flex items-center font-medium justify-center gap-2 bg-brown-600 
+      hover:bg-brown-750 text-slate-300 border border-gray-300 
+      px-4 py-2 rounded transition hover:cursor-pointer
       ${className || ""
     }`}
   >
-    <Plus className="w-4 h-4" />
+    <Plus className="w-5 h-5 font-medium" />
     Nueva Orden
   </button>
 );

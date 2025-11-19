@@ -29,11 +29,11 @@ const router = createBrowserRouter([
           { path: "contact", element: <Contact /> },
           { path: "products", element: <Products /> },
           { path: "ventas", element: <SalesDashboardView /> },
+          { path: "pruebas", element: <Pruebas /> },
           { path: "*", element: <ErrorUrl /> },
         ],
       },
       { path: "*", element: <ErrorUrl /> },
-      { path: "/pruebas", element: <Pruebas /> },
     ],
   }
   

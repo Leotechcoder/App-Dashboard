@@ -121,14 +121,14 @@ const UserForm = () => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 bg-black bg-opacity-10 rounded-lg rounded-s-3xl flex items-center justify-end p-4 z-50 scale-95"
+          className="fixed inset-0 backdrop-blur-sm rounded-lg rounded-s-3xl flex items-center justify-end p-4 z-50"
           variants={backdropVariants}
           initial="hidden"
           animate="visible"
           exit="hidden"
         >
           <motion.div
-            className="bg-gray-100 dark:bg-gray-700 rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 relative overflow-y-auto max-h-[100vh] no-scrollbar"
+            className="bg-gray-100 border border-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 relative overflow-y-auto max-h-screen no-scrollbar"
             variants={formVariants}
             initial="hidden"
             animate="visible"
@@ -138,13 +138,13 @@ const UserForm = () => {
             <button
               onClick={handleClose}
               aria-label="Cerrar formulario"
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors hover:cursor-pointer"
             >
               <X size={22} />
             </button>
 
             {/* Título */}
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">
               Crear cliente online
             </h2>
 
@@ -188,7 +188,7 @@ const UserForm = () => {
                 <div key={id} className="space-y-1">
                   <Label
                     htmlFor={id}
-                    className="text-gray-700 dark:text-gray-200 text-sm sm:text-base"
+                    className="text-gray-700  text-sm sm:text-base"
                   >
                     {label}
                   </Label>
@@ -205,13 +205,13 @@ const UserForm = () => {
                       placeholder={label}
                       aria-invalid={!!errors[id]}
                       className="pl-10 w-full rounded-md border-gray-300 text-gray-900 bg-white 
-                                 dark:border-gray-600 dark:bg-gray-800 dark:text-white 
+                                  
                                  focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400 
-                                 dark:placeholder-gray-400 transition-all duration-200"
+                                 transition-all duration-200"
                     />
                   </div>
                   {errors[id] && (
-                    <p className="text-xs sm:text-sm text-red-500 dark:text-red-400">
+                    <p className="text-xs sm:text-sm text-red-500 ">
                       {errors[id]}
                     </p>
                   )}
@@ -221,7 +221,7 @@ const UserForm = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full text-white font-bold py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Guardando..." : "Guardar"}
               </Button>

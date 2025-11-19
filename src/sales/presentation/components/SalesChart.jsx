@@ -27,7 +27,7 @@ export function SalesChart({ orders = [] }) {
 
   if (chartData.length === 0) {
     return (
-      <Card>
+      <Card className={'bg-gray-50'}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
@@ -42,7 +42,7 @@ export function SalesChart({ orders = [] }) {
   }
 
   return (
-    <Card>
+    <Card className={'bg-gray-50'}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5" />

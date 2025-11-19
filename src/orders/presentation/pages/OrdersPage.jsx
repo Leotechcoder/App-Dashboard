@@ -112,7 +112,7 @@ const OrdersPage = ({ setScrollTo }) => {
   if (error) return <Message text={`Error: ${error}`} type="error" />;
 
   return (
-    <main className="w-full pb-4 pt-6 ">
+    <main className="w-full pb-4 pt-6 bg-gray-50 rounded-2xl">
       {/* HEADER DE ACCIONES */}
       <HeaderActions
         activeTab={activeTab}
@@ -223,7 +223,7 @@ const HeaderActions = ({
     <div className="flex items-center space-x-3">
       <ButtonAddOrder
         handleClick={onCreateOrder}
-        className="bg-amber-500 hover:bg-amber-600 text-white text-md h-10 px-5 rounded-lg shadow-md"
+        className="bg-amber-600 hover:bg-amber-700 text-gray-300 text-md h-10 px-5 rounded-lg shadow-md"
       />
       <SearchOrder
         searchTerm={searchTerm}
@@ -236,10 +236,10 @@ const HeaderActions = ({
 
 const TabButton = ({ label, isActive, onClick }) => (
   <button
-    className={`px-4 py-2 rounded-full transition-colors font-medium ${
+    className={`px-4 py-2 rounded-full transition-colors font-medium hover:cursor-pointer ${
       isActive
-        ? "bg-amber-600 text-white shadow-sm"
-        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+        ? "bg-amber-600 hover:bg-amber-700 text-gray-300 shadow-sm"
+        : "bg-gray-100 text-gray-600 hover:bg-gray-200 "
     }`}
     onClick={onClick}
   >
