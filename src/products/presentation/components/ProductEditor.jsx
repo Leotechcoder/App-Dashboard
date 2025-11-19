@@ -7,6 +7,7 @@ import {
   createData,
   updateData,
   setFormView,
+  getDataProducts,
 } from "../../application/productSlice";
 
 import { Button } from "@/components/ui/button";
@@ -189,6 +190,7 @@ export function ProductEditor({
         toast.success("Producto creado");
       }
 
+      dispatch(getDataProducts())
       onSave?.();
       dispatch(setFormView(false));
     } catch (err) {
