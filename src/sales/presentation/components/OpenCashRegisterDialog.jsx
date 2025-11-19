@@ -72,10 +72,12 @@ export function OpenCashRegisterDialog({ open, onOpenChange }) {
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
+            <Button type="button" variant="outline" 
+            onClick={() => onOpenChange(false)} disabled={loading}
+            className={'hover:cursor-pointer'}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className={' hover:cursor-pointer'} variant="outline">
               {loading ? "Abriendo..." : "Abrir Caja"}
             </Button>
           </DialogFooter>

@@ -9,6 +9,7 @@ import InfoButton from "../../../orders/presentation/components/InfoButton.jsx";
 import UserSheet from "../components/UserSheet.jsx";
 import UserList from "../components/UserList.jsx";
 import { useScrollTo } from "@/shared/hook/useScrollTo.js";
+import { useEffect } from "react";
 
 // =========================
 // 🎞️ Animaciones base
@@ -31,8 +32,13 @@ const Contact = () => {
   const handleCloseForm = () => dispatch(setFormView(false));
   const{ setScrollTo, tableRef } = useScrollTo()
 
+  useEffect(() => {
+    window.scrollTo({ behavior: "smooth" });    
+  }, [])
+  
+
   return (
-    <main className="pl-8 bg-gray-50 rounded-lg min-h-[95vh] overflow-hidden">
+    <main className=" bg-gray-50 rounded-lg min-h-[95vh] overflow-hidden">
       <AnimatePresence mode="wait">
         {isFormView && editingUser ? (
           // =========================
@@ -95,7 +101,7 @@ const HelpContent = ({ onClose }) => (
       ✕
     </button>
 
-    <Info className="text-blue-500 w-6 h-6 mt-1 flex-shrink-0" />
+    <Info className="text-blue-500 w-6 h-6 mt-1 shrink-0" />
     <div>
       <h2 className="text-2xl font-bold text-gray-800 mb-2">Gestión de Clientes</h2>
       <p className="text-gray-600 leading-relaxed text-sm pr-2">

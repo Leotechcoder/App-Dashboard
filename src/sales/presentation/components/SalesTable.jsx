@@ -24,7 +24,7 @@ export function SalesTable({ orders, onSelectOrder }) {
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border bg-background-normal">
       <Table>
         <TableHeader>
           <TableRow>

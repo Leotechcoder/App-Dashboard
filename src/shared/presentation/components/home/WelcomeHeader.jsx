@@ -1,20 +1,21 @@
 "use client";
-
 import { motion } from "framer-motion";
 import { LayoutDashboard } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
+const fadeDown = {
+  hidden: { opacity: 0, y: -15 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+  exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
+};
+
 const WelcomeHeader = () => {
   const username = useSelector((store) => store.users.username);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
-      <Card className="bg-gradient-to-br from-indigo-50 via-white to-blue-50 ">
+    <motion.div variants={fadeDown}>
+      <Card className="bg-transparent shadow-none border-none">
         <CardHeader className="flex flex-row items-center space-x-4 p-6">
           <div className="bg-indigo-100 p-3 rounded-xl shadow-sm">
             <LayoutDashboard className="w-7 h-7 text-indigo-600" />

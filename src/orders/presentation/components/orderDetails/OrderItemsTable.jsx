@@ -30,7 +30,7 @@ const OrderItemsTable = ({
       {/* 🧾 Tabla de productos */}
       <ScrollArea className="flex-1 max-h-[45vh]">
         <table className="min-w-full text-sm border-t border-gray-100">
-          <thead className="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 text-xs">
+          <thead className="bg-linear-to-r from-gray-50 to-gray-100 sticky top-0 text-xs">
             <tr>
               <th className="w-16 px-3 py-2 text-left font-medium text-gray-500 uppercase">
                 ID
@@ -72,7 +72,7 @@ const OrderItemsTable = ({
                   key={item.id}
                   className="hover:bg-emerald-50/50 transition-colors duration-150"
                 >
-                  <td className="pl-3 py-2 text-gray-700 truncate max-w-[32px]">
+                  <td className="pl-3 py-2 text-gray-700 truncate max-w-8">
                     {item.id}
                   </td>
                   <td className="pl-3 py-2 font-medium text-gray-900 truncate max-w-[70px]">
@@ -114,7 +114,7 @@ const OrderItemsTable = ({
       </ScrollArea>
 
       {/* 💰 Total */}
-      <div className="p-4 border-t border-gray-100 bg-gradient-to-r from-white to-gray-50 flex justify-between items-center rounded-b-xl">
+      <div className="p-4 border-t border-gray-100 bg-linear-to-r from-white to-gray-50 flex justify-between items-center rounded-b-xl">
         <span className="text-base font-semibold text-gray-800">
           Total Neto
         </span>

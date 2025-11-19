@@ -8,7 +8,7 @@ const SearchBar = ({ tipo, searchTerm, setSearchTerm }) => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative scale-90">
       <input
         type="text"
         placeholder={`Buscar ${tipo}...`}

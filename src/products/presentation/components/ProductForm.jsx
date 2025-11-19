@@ -1,277 +1,127 @@
+// src/modules/products/components/ProductForm.jsx
 "use client";
 
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/text-area";
 import {
-  createData,
-  getDataProducts,
-  setFormView,
-} from "../../application/productSlice";
-import { ArrowLeft, Image } from "lucide-react";
-import { toast } from "sonner";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const initialState = {
-  name: "",
-  price: "",
-  category: "",
-  stock: "",
-  image_url: "",
-  description: "",
-  available: true,
-};
+export function ProductForm({ initialData = {}, categories = [], onChange }) {
+  const [formData, setFormData] = useState({
+    name: initialData.name || "",
+    description: initialData.description || "",
+    price: initialData.price ?? "",
+    stock: initialData.stock ?? "",
+    category: initialData.category || "",
+    available:
+      initialData.available !== undefined
+        ? String(initialData.available)
+        : "true",
+  });
 
-const ProductForm = () => {
-  const dispatch = useDispatch();
-  const { isEditing, productToEdit, categorias } = useSelector((store) => store.products);
-  const [form, setForm] = useState(initialState);
   const [errors, setErrors] = useState({});
 
-  //Guardamos el archivo de imagen que el usuario sube en este state
-  const [file, setFile] = useState(null);
-
   useEffect(() => {
-    if (isEditing && productToEdit) {
-      setForm(productToEdit);
-    } else {
-      setForm(initialState);
-    }
-    setErrors({});
-  }, [isEditing, productToEdit]);
+    onChange?.(formData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData]);
 
-  useEffect(() => {
-    window.scrollTo({top: 40, behavior: 'smooth'})
-  }, [])
-  
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!form.name.trim())
-      newErrors.name = "El nombre del producto es requerido";
-    if (!form.description.trim())
-      newErrors.description = "La descripción es requerida";
-    if (!form.price || Number(form.price) <= 0)
-      newErrors.price = "El precio debe ser un número positivo";
-    if (!form.category.trim()) newErrors.category = "La categoría es requerida";
-    if (!form.stock || Number(form.stock) < 0)
-      newErrors.stock = "El stock debe ser un número no negativo";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleFileDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setForm((prev) => ({ ...prev, image_url: reader.result }));
-      };
-      reader.readAsDataURL(file); //Convierte la imagen en un string enorme
-    }
-  };
-
-  const handleFileSelect = (e) => {
-  const f = e.target.files[0];
-  if (f) {
-    setFile(f);
-
-    // Vista previa
-    const reader = new FileReader();
-    reader.onload = () => {
-      setForm(prev => ({ ...prev, image_url: reader.result }));
-    };
-    reader.readAsDataURL(f);
-  }
-};
-
-
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!validateForm()) return;
-
-  const stock = parseInt(form.stock);
-  const price = parseFloat(form.price);
-  const available = stock > 0;
-
-  const formData = new FormData();
-  formData.append("name", form.name);
-  formData.append("description", form.description);
-  formData.append("price", price);
-  formData.append("stock", stock);
-  formData.append("category", form.category);
-  formData.append("available", available);
-
-  if (file) {
-    formData.append("image", file); // archivo real para Cloudinary
-  }
-
-  try {
-    await dispatch(createData(formData)).unwrap();
-    setForm(initialState);
-    setFile(null);
-    dispatch(setFormView());
-  } catch (error) {
-    toast.error(error.message || "Error al guardar el producto");
-  }
-};
-
-
-  const handleInput = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-    if (errors[name]) {
-      setErrors({ ...errors, [name]: "" });
-    }
-  };
-
-  const handleGoBack = () => {
-    dispatch(setFormView());
+  const updateField = (name, value) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   return (
-    <div className="h-full flex flex-col items-center py-6 px-4 bg-gray-100 lg:px-12">
-      <div className="flex justify-start w-full pl-5">
-        <button
-          onClick={handleGoBack}
-          className="mb-6 flex items-center gap-2 text-gray-700 hover:text-gray-900"
-        >
-          <ArrowLeft className="w-6 h-6" />
-          <span>Volver</span>
-        </button>
+    <div className="space-y-6">
+      {/* Nombre */}
+      <div className="space-y-2">
+        <Label htmlFor="name">Nombre</Label>
+        <Input
+          id="name"
+          value={formData.name}
+          onChange={(e) => updateField("name", e.target.value)}
+        />
       </div>
-      <div className="w-full max-w-4xl bg-white rounded-lg shadow-md overflow-hidden lg:flex lg:items-center lg:gap-6">
-        <div
-          className="w-full ml-4 lg:w-1/2 h-64 lg:h-auto bg-gray-100 flex items-center justify-center"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleFileDrop}
-        >
-          {form.image_url ? (
-            <img
-              src={form.image_url || "/placeholder.svg"}
-              alt="Vista previa"
-              className="h-full object-cover"
-            />
-          ) : (
-            <label
-              htmlFor="image"
-              className="flex flex-col items-center justify-center cursor-pointer"
-            >
-              <Image className="text-gray-500 w-16 h-16" />
-              <span className="text-sm text-gray-500">
-                Arrastra una imagen o haz clic para seleccionar
-              </span>
-              <input
-                type="file"
-                id="image"
-                name="image"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileSelect}
-              />
-            </label>
-          )}
+
+      {/* Descripción */}
+      <div className="space-y-2">
+        <Label htmlFor="description">Descripción</Label>
+        <Textarea
+          id="description"
+          rows={4}
+          value={formData.description}
+          onChange={(e) => updateField("description", e.target.value)}
+        />
+      </div>
+
+      {/* Precio / Stock */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="price">Precio</Label>
+          <Input
+            id="price"
+            type="number"
+            step="0.01"
+            min="0"
+            value={formData.price}
+            onChange={(e) => updateField("price", e.target.value)}
+          />
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="stock">Stock</Label>
+          <Input
+            id="stock"
+            type="number"
+            min="0"
+            value={formData.stock}
+            onChange={(e) => updateField("stock", e.target.value)}
+          />
+        </div>
+      </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="w-full lg:w-1/2 p-6 lg:p-8 space-y-4"
+      {/* Categoría */}
+      <div className="space-y-2">
+        <Label htmlFor="category">Categoría</Label>
+        <Select
+          value={formData.category}
+          onValueChange={(value) => updateField("category", value)}
         >
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Nombre del producto
-            </label>
-            <input
-              name="name"
-              value={form.name}
-              onChange={handleInput}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
-            />
-            {errors.name_ && (
-              <p className="text-sm text-red-500 mt-1">{errors.name_}</p>
-            )}
-          </div>
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccionar categoría" />
+          </SelectTrigger>
+          <SelectContent className="bg-gray-50">
+            {categories.map((cat) => (
+              <SelectItem key={cat} value={cat}>
+                {cat}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Descripción
-            </label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleInput}
-              rows={3}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
-            ></textarea>
-            {errors.description && (
-              <p className="text-sm text-red-500 mt-1">{errors.description}</p>
-            )}
-          </div>
-
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700">
-                Precio
-              </label>
-              <input
-                name="price"
-                type="number"
-                value={form.price}
-                onChange={handleInput}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
-              />
-              {errors.price && (
-                <p className="text-sm text-red-500 mt-1">{errors.price}</p>
-              )}
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700">
-                Stock
-              </label>
-              <input
-                name="stock"
-                type="number"
-                value={form.stock}
-                onChange={handleInput}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
-              />
-              {errors.stock && (
-                <p className="text-sm text-red-500 mt-1">{errors.stock}</p>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Categoría
-            </label>
-            <select
-              name="category"
-              value={form.category || ""}
-              onChange={handleInput}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
-            >
-              <option value="" disabled>Seleccione una categoría</option>
-              {categorias.data.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-            {errors.category && (
-              <p className="text-sm text-red-500 mt-1">{errors.category}</p>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-orange-600 text-white py-2 px-4 rounded-lg hover:bg-orange-700"
-          >
-            Guardar
-          </button>
-        </form>
+      {/* Estado */}
+      <div className="space-y-2">
+        <Label htmlFor="available">Estado</Label>
+        <Select
+          value={String(formData.available)}
+          onValueChange={(val) => updateField("available", val)}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-gray-50">
+            <SelectItem value="true">Disponible</SelectItem>
+            <SelectItem value="false">No disponible</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
-};
-
-export default ProductForm;
+}

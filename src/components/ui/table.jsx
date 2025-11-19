@@ -1,44 +1,51 @@
 import React from "react"
 import { cn } from "@/lib/utils"
 
+/* Contenedor principal */
 export function Table({ className, ...props }) {
   return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto">
+    <div
+      data-slot="table-container"
+      className={cn("relative w-full overflow-x-auto", className)}
+    >
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
+        className="w-full caption-bottom text-base"
         {...props}
       />
     </div>
   )
 }
 
+/* Encabezado de la tabla */
 export function TableHeader({ className, ...props }) {
   return (
     <thead
       data-slot="table-header"
-      className={cn("[&_tr]:border-b", className)}
+      className={cn("border-b", className)}
       {...props}
     />
   )
 }
 
+/* Cuerpo de la tabla */
 export function TableBody({ className, ...props }) {
   return (
     <tbody
       data-slot="table-body"
-      className={cn("[&_tr:last-child]:border-0", className)}
+      className={cn("", className)}
       {...props}
     />
   )
 }
 
+/* Footer */
 export function TableFooter({ className, ...props }) {
   return (
     <tfoot
       data-slot="table-footer"
       className={cn(
-        "bg-muted/50 border-t font-medium [&>tr]:last:border-b-0",
+        "bg-muted/50 border-t font-medium last:[&_tr]:border-b-0",
         className
       )}
       {...props}
@@ -46,6 +53,7 @@ export function TableFooter({ className, ...props }) {
   )
 }
 
+/* Filas */
 export function TableRow({ className, ...props }) {
   return (
     <tr
@@ -59,12 +67,15 @@ export function TableRow({ className, ...props }) {
   )
 }
 
+/* Cabecera de columnas */
 export function TableHead({ className, ...props }) {
   return (
     <th
       data-slot="table-head"
       className={cn(
-        "h-10 px-2 text-left align-middle font-medium text-foreground whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "h-10 px-2 text-left align-middle font-medium text-foreground whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "*:[[role=checkbox]]:translate-y-0.5",
         className
       )}
       {...props}
@@ -72,12 +83,15 @@ export function TableHead({ className, ...props }) {
   )
 }
 
+/* Celdas */
 export function TableCell({ className, ...props }) {
   return (
     <td
       data-slot="table-cell"
       className={cn(
-        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "p-2 align-middle whitespace-nowrap",
+        "[&:has([role=checkbox])]:pr-0",
+        "*:[[role=checkbox]]:translate-y-0.5",
         className
       )}
       {...props}
@@ -85,11 +99,12 @@ export function TableCell({ className, ...props }) {
   )
 }
 
+/* Caption */
 export function TableCaption({ className, ...props }) {
   return (
     <caption
       data-slot="table-caption"
-      className={cn("mt-4 text-sm text-muted-foreground", className)}
+      className={cn("mt-4 text-base text-muted-foreground", className)}
       {...props}
     />
   )

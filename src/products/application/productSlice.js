@@ -1,37 +1,72 @@
-import { createAsyncThunk } from "@reduxjs/toolkit"
-import { categorias, paginacionProducts } from "../../shared/infrastructure/utils/stateInitial"
-import { createBaseSlice } from "../../shared/application/slices/baseSlice"
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  categorias,
+  paginacionProducts,
+} from "../../shared/infrastructure/utils/stateInitial";
+import { createBaseSlice } from "../../shared/application/slices/baseSlice";
 //Capas de la arquitectura limpia products
-import { ProductService } from "./ProductService"
-import { ProductRepositoryImpl } from "../infrastructure/ProductRepositoryImpl"
+import { ProductService } from "./ProductService";
+import { ProductRepositoryImpl } from "../infrastructure/ProductRepositoryImpl";
 
 // 🔹 Inyectamos dependencia
-const productRepo = new ProductRepositoryImpl()
-const productService = new ProductService(productRepo)
+const productRepo = new ProductRepositoryImpl();
+const productService = new ProductService(productRepo);
 
 //Helper para aplanar instancia de products
-const toPlainProducts = (p) => ({ ...p })
+const toPlainProducts = (p) => ({ ...p });
 
-export const getDataProducts = createAsyncThunk("products/getData", async ()=>{
-  const products = await productService.getAllProducts()
-  return products.map(toPlainProducts)
-})
-export const getDataById = createAsyncThunk("products/getDataById", async (id)=>{
-  const product = await productService.getProductById(id)
-  return toPlainProducts(product)
-})
-export const createData = createAsyncThunk("products/createData", async (product)=>{
-  const { createdProduct, message } = await productService.createProduct(product)
-  return {data: toPlainProducts(createdProduct), message}
-})
-export const updateData = createAsyncThunk("products/updateData", async ({id, product})=>{
-  const {updateProduct, message} = await productService.updateProduct(id, product)
-  return {data: toPlainProducts(updateProduct), message}
-})
-export const deleteData = createAsyncThunk("products/deleteData", async(id)=>{
-  await productService.deleteProduct(id)
-  return id
-})
+export const getDataProducts = createAsyncThunk(
+  "products/getData",
+  async () => {
+    const products = await productService.getAllProducts();
+    return products.map(toPlainProducts);
+  }
+);
+export const getDataById = createAsyncThunk(
+  "products/getDataById",
+  async (id) => {
+    const product = await productService.getProductById(id);
+    return toPlainProducts(product);
+  }
+);
+export const createData = createAsyncThunk(
+  "products/createData",
+  async (formData, { rejectWithValue }) => {
+    try {
+      // formData llega desde el ProductEditor como FormData ya armado
+      const { createdProduct, message } = await productService.createProduct(
+        formData
+      );
+      return { data: toPlainProducts(createdProduct), message };
+    } catch (error) {
+      return rejectWithValue(error.message || "Error al crear producto");
+    }
+  }
+);
+
+export const updateData = createAsyncThunk(
+  "products/updateData",
+  async ({ id, product }, { rejectWithValue }) => {
+    try {
+      // product es FormData ya construido por ProductEditor
+      const { updateProduct, message } = await productService.updateProduct(
+        id,
+        product
+      );
+      return { data: toPlainProducts(updateProduct), message };
+    } catch (error) {
+      return rejectWithValue(error.message || "Error al actualizar producto");
+    }
+  }
+);
+
+export const deleteData = createAsyncThunk(
+  "products/deleteData",
+  async (id) => {
+    await productService.deleteProduct(id);
+    return id;
+  }
+);
 
 const initialState = {
   data: [],
@@ -49,7 +84,7 @@ const initialState = {
   isEditing: null,
   message: null,
   showHelp: false,
-}
+};
 
 const productSlice = createBaseSlice(
   "products",
@@ -81,12 +116,12 @@ const productSlice = createBaseSlice(
     clearMessage: (state) => {
       state.message = null;
     },
-    clearError: (state) =>{
+    clearError: (state) => {
       state.error = null;
     },
     setShowHelpProducts: (state) => {
       state.showHelp = !state.showHelp;
-    }
+    },
   },
   (builder) => {
     builder
@@ -140,7 +175,7 @@ const productSlice = createBaseSlice(
       })
       .addCase(updateData.fulfilled, (state, action) => {
         state.isLoading = false;
-        const updatedProduct = action.payload.data; 
+        const updatedProduct = action.payload.data;
         state.data = state.data.map((p) =>
           p.id === updatedProduct.id ? updatedProduct : p
         );
@@ -185,5 +220,3 @@ export const {
 } = productSlice.actions;
 
 export default productSlice.reducer;
-
-

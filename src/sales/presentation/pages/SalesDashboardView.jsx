@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSalesData } from "../hooks/useSalesData";
 import { useCashRegister } from "../hooks/useCashRegister";
 import { useSalesHistory } from "../hooks/useSalesHistory";
@@ -18,16 +18,14 @@ import {
   Plus,
   ClipboardList,
 } from "lucide-react";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import OrderCard from "../components/OrderSalesSheet";
 import OrdersPage from "@/orders/presentation/pages/OrdersPage";
 import { useScrollLock } from "@/shared/hook/useScrollLock";
 import { useScrollTo } from "@/shared/hook/useScrollTo";
-import { formatCurrency } from "@/shared/utils/formatPriceLocal";
 import { cn } from "@/lib/utils";
+import { SalesMetrics } from "../components/SalesMetrics";
 
 export function SalesDashboardView() {
   const {
@@ -42,6 +40,11 @@ export function SalesDashboardView() {
   const { pendingOrders } = useSelector((state) => state.sales);
   const { handleOpenCashRegister, handleCloseCashRegister } = useCashRegister();
   const { updateFilters } = useSalesHistory();
+
+  useEffect(() => {
+    window.scrollTo({ behavior: "smooth" });    
+  }, [])
+  
 
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -69,15 +72,27 @@ export function SalesDashboardView() {
 
   const isCashRegisterOpen = cashRegister && cashRegister.status === "open";
 
+  const fadeUp = {
+    initial: { opacity: 0, y: -20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6, ease: "easeOut" }
+  };
+
   return (
-    <div className="space-y-6 px-4 md:px-6 lg:pl-14">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6 px-4 md:px-6"
+    >
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <motion.div {...fadeUp} className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="py-4">
           <h2 className="text-2xl font-semibold text-gray-800 tracking-tight">
-            Control de Caja e Historial de Ventas
+            Gestión de Ventas
           </h2>
         </div>
+
         {isCashRegisterOpen && (
           <Button
             onClick={() => setCloseDialog(true)}
@@ -87,137 +102,98 @@ export function SalesDashboardView() {
             Cerrar Caja
           </Button>
         )}
-      </div>
+      </motion.div>
 
       {/* Cash Register Summary */}
       {cashRegister && (
-        <CashRegisterSummary
-          cashRegister={cashRegister}
-          analysis={cashRegisterAnalysis}
-        />
+        <motion.div {...fadeUp}>
+          <CashRegisterSummary
+            cashRegister={cashRegister}
+            analysis={cashRegisterAnalysis}
+          />
+        </motion.div>
       )}
 
       {/* Tabs */}
-      <Tabs defaultValue="pending" className="space-y-4">
-        <TabsList className="flex flex-wrap gap-2 justify-start">
-          {/* ----- TAB PENDIENTES ----- */}
-          <TabsTrigger
-            value="pending"
-            className={cn("gap-2 flex-1 md:flex-none transition-all data-[state=active]:bg-blue-200 data-[state=active]:border-solid")}
-          >
-            <ClipboardList className="h-4 w-4" /> Órdenes Pendientes
-            {pendingOrders.length > 0 && (
-              <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-                {pendingOrders.length}
-              </span>
-            )}
-          </TabsTrigger>
+      <motion.div {...fadeUp}>
+        <Tabs defaultValue="pending" className="space-y-2">
+          <TabsList className="flex flex-wrap gap-2 justify-start">
 
-          {/* ----- TAB VENTAS CERRADAS ----- */}
-          <TabsTrigger
-            value="sales"
-            className={cn("gap-2 flex-1 md:flex-none transition-all data-[state=active]:bg-blue-200")}
-          >
-            <Package className="h-4 w-4 text-muted-foreground" /> Ventas
-            Cerradas
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Pending Orders Tab */}
-        <TabsContent value="pending" className=" ">
-          <Card ref={tableRef}>
-            <CardContent className="p-0">
-              <OrdersPage setScrollTo={setScrollTo}/>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="sales" className="space-y-4">
-          {/* Filters */}
-          <SalesFilters
-            filters={filters}
-            onFiltersChange={handleFilterChange}
-          />
-
-          {/* Metrics Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <Card className="bg-green-50 border border-green-300 shadow-md">
-              <CardHeader className="flex items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total de Ganancias
-                </CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground text-green-700" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  ${formatCurrency(totalEarnings)}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  De {orders.length} órdenes cerradas
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-yellow-50 border border-yellow-300 shadow-md"  >
-              <CardHeader className="flex items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Fecha Actual
-                </CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground text-yellow-700" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {format(new Date(), "dd MMM", { locale: es })}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {format(new Date(), "yyyy", { locale: es })}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-blue-50 border border-blue-300 shadow-md">
-              <CardHeader className="flex items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Órdenes Cerradas
-                </CardTitle>
-                <Package className="h-4 w-4 text-muted-foreground text-blue-700" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{orders.length}</div>
-                <p className="text-xs text-muted-foreground">
-                  Pagadas o entregadas
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Chart */}
-          <SalesChart orders={orders} />
-
-          {/* Sales Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Historial de Ventas Cerradas</CardTitle>
-            </CardHeader>
-            <CardContent className="overflow-x-auto">
-              {loading ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  Cargando órdenes...
-                </div>
-              ) : orders.length > 0 ? (
-                <SalesTable
-                  orders={orders}
-                  onSelectOrder={setSelectedOrderCard}
-                />
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  No hay órdenes cerradas en este período
-                </div>
+            <TabsTrigger
+              value="pending"
+              className={cn(
+                "gap-2 flex-1 md:flex-none transition-all data-[state=inactive]:hover:bg-blue-100 data-[state=inactive]:bg-blue-50 data-[state=active]:bg-blue-200"
               )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            >
+              <ClipboardList className="h-4 w-4" /> Órdenes Pendientes
+              {pendingOrders.length > 0 && (
+                <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                  {pendingOrders.length}
+                </span>
+              )}
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="sales"
+              className={cn(
+                "gap-2 flex-1 data-[state=inactive]:hover:bg-blue-100 data-[state=inactive]:bg-blue-50 md:flex-none transition-all data-[state=active]:bg-blue-200"
+              )}
+            >
+              <Package className="h-4 w-4 text-muted-foreground" /> Ventas Cerradas
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Pending Orders */}
+          <TabsContent value="pending">
+            <motion.div {...fadeUp}>
+              <Card ref={tableRef}>
+                <CardContent className="p-0">
+                  <OrdersPage setScrollTo={setScrollTo} />
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
+
+          {/* Sales */}
+          <TabsContent value="sales" className="space-y-4">
+
+            <motion.div {...fadeUp}>
+              <SalesFilters filters={filters} onFiltersChange={updateFilters} />
+            </motion.div>
+
+            <motion.div {...fadeUp}>
+              <SalesMetrics orders={orders} totalEarnings={totalEarnings} />
+            </motion.div>
+
+            <motion.div {...fadeUp}>
+              <SalesChart orders={orders} />
+            </motion.div>
+
+            <motion.div {...fadeUp}>
+              <Card className="bg-gray-50">
+                <CardHeader>
+                  <CardTitle>Historial de Ventas Cerradas</CardTitle>
+                </CardHeader>
+
+                <CardContent className="overflow-x-auto">
+                  {loading ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      Cargando órdenes...
+                    </div>
+                  ) : orders.length > 0 ? (
+                    <SalesTable orders={orders} onSelectOrder={setSelectedOrderCard} />
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No hay órdenes cerradas en este período
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
+
+          </TabsContent>
+        </Tabs>
+      </motion.div>
 
       {/* Floating Button */}
       <AnimatePresence>
@@ -231,7 +207,6 @@ export function SalesDashboardView() {
             <Button
               size="lg"
               className="h-14 w-14 rounded-full shadow-md border-b-2"
-              style={{ borderColor: "#F3F4F6" }}
               onClick={() => setOpenDialog(true)}
             >
               <Plus className="h-6 w-6" />
@@ -241,29 +216,20 @@ export function SalesDashboardView() {
       </AnimatePresence>
 
       {/* Dialogs */}
-      <OpenCashRegisterDialog
-        open={openDialog}
-        onOpenChange={setOpenDialog}
-        onConfirm={handleOpen}
-      />
-      <CloseCashRegisterDialog
-        open={closeDialog}
-        onOpenChange={setCloseDialog}
-        onConfirm={handleClose}
-        cashRegister={cashRegister}
-        orders={sessionOrders}
-      />
+      <OpenCashRegisterDialog open={openDialog} onOpenChange={setOpenDialog} onConfirm={handleOpen} />
+      <CloseCashRegisterDialog open={closeDialog} onOpenChange={setCloseDialog} onConfirm={handleClose} cashRegister={cashRegister} orders={sessionOrders} />
 
+      {/* Order Modal */}
       <AnimatePresence>
         {selectedOrderCard && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-start justify-end backdrop-blur-sm px-4 -top-6"
+            className="fixed inset-0 z-50 flex items-center justify-end backdrop-blur-sm px-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className=" w-full my-auto max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-lg"
+              className="w-full my-auto max-w-5xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-lg"
               initial={{ scale: 0.9, x: 100 }}
               animate={{ scale: 1, x: 0 }}
               exit={{ scale: 0.9, x: 100 }}
@@ -272,12 +238,12 @@ export function SalesDashboardView() {
               <OrderCard
                 order={selectedOrderCard}
                 onBack={() => setSelectedOrderCard(null)}
-                className={"h-[calc(100dvh-145px)] overflow-y-auto"}
+                className="h-[calc(100dvh-145px)] overflow-y-auto"
               />
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }

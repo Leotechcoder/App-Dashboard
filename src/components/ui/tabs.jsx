@@ -7,6 +7,8 @@ import {
 } from "@radix-ui/react-tabs"
 import { cn } from "@/lib/utils"
 
+// ---- ROOT --------------------------------------------------
+
 export function Tabs({ className, ...props }) {
   return (
     <TabsRoot
@@ -17,12 +19,14 @@ export function Tabs({ className, ...props }) {
   )
 }
 
+// ---- LIST --------------------------------------------------
+
 export function TabsList({ className, ...props }) {
   return (
     <TabsListPrimitive
       data-slot="tabs-list"
       className={cn(
-        "inline-flex h-9 w-fit items-center justify-center rounded-lg bg-muted p-[3px] text-muted-foreground",
+        "inline-flex h-9 w-fit items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground",
         className
       )}
       {...props}
@@ -30,18 +34,44 @@ export function TabsList({ className, ...props }) {
   )
 }
 
+// ---- TRIGGER --------------------------------------------------
+
 export function TabsTrigger({ className, ...props }) {
   return (
     <TabsTriggerPrimitive
       data-slot="tabs-trigger"
       className={cn(
-        "inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium text-foreground transition focus-visible:outline-1 focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background dark:data-[state=active]:bg-input/30 dark:data-[state=active]:text-foreground data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        `
+        inline-flex items-center justify-center gap-1.5 
+        rounded-md px-3 py-1.5 text-sm font-medium
+        text-foreground
+        transition-colors
+
+        border border-transparent
+        hover:bg-accent hover:text-accent-foreground
+        hover:cursor-pointer
+
+        focus-visible:outline-none 
+        focus-visible:ring-2 focus-visible:ring-ring
+        disabled:pointer-events-none disabled:opacity-50
+
+        data-[state=active]:bg-background
+        data-[state=active]:text-foreground
+        data-[state=active]:shadow-sm
+        dark:data-[state=active]:bg-card
+        
+        [&_svg]:pointer-events-none
+        [&_svg]:shrink-0 
+        [&_svg:not([class*='size-'])]:size-4
+        `,
         className
       )}
       {...props}
     />
   )
 }
+
+// ---- CONTENT --------------------------------------------------
 
 export function TabsContent({ className, ...props }) {
   return (

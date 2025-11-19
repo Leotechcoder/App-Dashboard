@@ -2,6 +2,7 @@
 import React from "react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
+import Home from "./productFormEdit/page-media"
 
 // Mock: Reducer simple para items
 const mockItemsReducer = () => ({
@@ -214,12 +215,13 @@ const handleBack = () => {
 
 export default function Pruebas() {
   return (
-    <Provider store={store}>
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-10">
-        <div className="max-w-4xl w-full">
-          {/* Coloca aca tu componente para probar con el store de este componente*/}
-        </div>
-      </div>
-    </Provider>
+    // <Provider store={store}>
+    //   <div className="min-h-screen bg-gray-100 flex items-center justify-center p-10">
+    //     <div className="max-w-4xl w-full">
+    //       {/* Coloca aca tu componente para probar con el store de este componente*/}
+    //     </div>
+    //   </div>
+    // </Provider>
+    <Home />
   );
 }

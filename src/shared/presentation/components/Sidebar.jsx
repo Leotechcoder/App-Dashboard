@@ -27,12 +27,12 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`fixed z-10 top-0 left-0 h-full transition-all duration-300 bg-gray-800 text-white shadow-lg ${
-        isExpanded ? "w-72" : "w-16"
+      className={`fixed z-10 top-0 left-0 h-full transition-all duration-300 bg-gray-800/85 text-white shadow-lg ${
+        isExpanded ? "w-3xs" : "w-16"
       }`}
     >
       <nav className="flex flex-col h-full">
-        <ul className="flex-grow my-auto">
+        <ul className="grow my-auto">
           {/* Header */}
           <li className="flex items-center gap-4 p-2">
             <div

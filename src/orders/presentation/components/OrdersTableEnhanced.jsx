@@ -201,7 +201,7 @@ const OrdersTableEnhanced = ({
                       : { backgroundColor: "#ffffff" }
                   }
                   animate={{
-                    backgroundColor: isSelected ? "#fde68a" : "#ffffff",
+                    backgroundColor: isSelected ? "#FDC988" : "#ffffff",
                   }}
                   transition={{ duration: 0.5 }}
                   className="cursor-pointer hover:bg-gray-50"
@@ -229,21 +229,21 @@ const OrdersTableEnhanced = ({
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => handleEditOrder(order)}
-                        className="text-gray-600 hover:text-blue-600"
+                        className="text-gray-600 hover:text-blue-600 hover:cursor-pointer"
                         title="Editar Orden"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => onDelete?.(order.id)}
-                        className="text-gray-600 hover:text-red-600"
+                        className="text-gray-600 hover:text-red-600 hover:cursor-pointer"
                         title="Eliminar Orden"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleOpenDialog(order)}
-                        className="text-gray-600 hover:text-green-600 flex items-center gap-1"
+                        className="text-gray-600 hover:text-green-600 flex items-center gap-1 hover:cursor-pointer"
                         title="Cerrar Orden"
                       >
                         <CheckCircle2 className="w-4 h-4" />

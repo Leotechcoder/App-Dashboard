@@ -50,9 +50,9 @@ const EditUserForm = ({ user, setEditModal }) => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ duration: 0.25, ease: 'easeInOut' }}
-          className="w-full max-w-lg"
+          className="w-full max-w-lg rounded-2xl"
         >
-          <Card className="bg-background shadow-lg border border-border rounded-2xl overflow-hidden">
+          <Card className="bg-background-normal shadow-lg border border-border rounded-2xl overflow-hidden">
             <CardHeader className="flex items-center justify-between pb-3 border-b">
               <div className="flex items-center gap-4 w-full">
                 <Button
@@ -60,7 +60,7 @@ const EditUserForm = ({ user, setEditModal }) => {
                   variant="ghost"
                   size="icon"
                   onClick={handleOnCancel}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-muted-foreground hover:text-foregroun hover:cursor-pointer transition-colors"
                 >
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
@@ -114,12 +114,13 @@ const EditUserForm = ({ user, setEditModal }) => {
               <CardFooter className="flex justify-end gap-3 py-4">
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="secondary"
                   onClick={handleOnCancel}
+                  className="hover:cursor-pointer hover:bg-neutral-100"
                 >
                   Cancelar
                 </Button>
-                <Button type="submit" className="flex items-center gap-2">
+                <Button type="submit" className="flex items-center gap-2 hover:cursor-pointer" variant="outline">
                   <Save className="h-4 w-4" />
                   Guardar Cambios
                 </Button>

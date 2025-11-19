@@ -13,7 +13,7 @@ export function useScrollTo({ top = 30, offset = 0 } = {}) {
 
       window.scrollTo({ top: scrollPosition, behavior: "smooth" });
     } else {
-      window.scrollTo({ top, behavior: "smooth" });
+      window.scrollTo({ behavior: "smooth" });
     }
 
     setScrollTo(false);

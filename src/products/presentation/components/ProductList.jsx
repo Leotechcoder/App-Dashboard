@@ -52,13 +52,6 @@ const ProductList = ({ setScrollTo }) => {
     externalFilteredData: filteredData,
   });
 
-  // 🚀 Traer productos al cargar
-  // useEffect(() => {
-  //   if (!isLoading && data.length === 0) {
-  //     dispatch(getDataProducts());
-  //   }
-  // }, [dispatch, isLoading, data.length]);
-
   // 🚀 Aplicar filtros (categoría + data de redux)
   useEffect(() => {
     let result = data;
@@ -106,6 +99,7 @@ const ProductList = ({ setScrollTo }) => {
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  exit: { opacity: 0, y: -20, transition: { duration: 0.6, ease: "easeInOut" } },
 };
 
 return (
@@ -116,21 +110,20 @@ return (
       variants={fadeUp}
       initial="hidden"
       animate="visible"
+      exit='exit'
     >
       <button
         onClick={handleAddProduct}
-        className="bg-blue-600 text-white h-3/4 px-4 py-2 rounded-lg hover:bg-blue-700 scale-90 shadow-sm hover:shadow-md transition-all"
+        className="bg-blue-500 text-white h-3/4 px-4 py-2 rounded-lg hover:cursor-pointer hover:bg-blue-700 scale-85 shadow-sm hover:shadow-md transition-all"
       >
         <span className="font-normal text-lg">+</span> Nuevo Producto
       </button>
 
-      <div className="scale-90">
         <SearchBar
           tipo="producto"
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
-      </div>
     </motion.div>
 
     {/* 🔹 Filtros */}
@@ -153,9 +146,9 @@ return (
       variants={fadeUp}
       initial="hidden"
       animate="visible"
-      transition={{ delay: 0.15 }}
+      transition={{ delay: 0.25 }}
     >
-      <table className="min-w-full">
+      <table className="w-full">
         <thead className="bg-gray-50 border-b">
           <tr>
             {[
@@ -222,14 +215,14 @@ return (
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEditar(product)}
-                      className="p-1 hover:bg-gray-100 rounded"
+                      className="p-1 hover:bg-gray-100 rounded hover:cursor-pointer"
                       title="Editar Producto"
                     >
                       <Pencil className="h-4 w-4 text-gray-500" />
                     </button>
                     <button
                       onClick={() => handleEliminar(product.id)}
-                      className="p-1 hover:bg-gray-100 rounded"
+                      className="p-1 hover:bg-gray-100 rounded hover:cursor-pointer"
                       title="Eliminar Producto"
                     >
                       <Trash className="h-4 w-4 text-gray-500" />
@@ -245,7 +238,6 @@ return (
 
     {/* 🔹 Paginación */}
     <motion.div
-      className="scale-95"
       variants={fadeUp}
       initial="hidden"
       animate="visible"

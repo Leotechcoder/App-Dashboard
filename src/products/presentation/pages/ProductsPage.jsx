@@ -3,20 +3,19 @@
 // =========================
 import { useSelector, useDispatch } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
-import FormProduct from "../components/ProductForm.jsx";
-import EditProductForm from "../components/EditProductForm.jsx";
 import TablaProductos from "../components/ProductList.jsx";
 import { Info } from "lucide-react";
 import InfoButton from "../../../orders/presentation/components/InfoButton.jsx";
 import { setShowHelpProducts } from "../../application/productSlice.js";
 import { useScrollTo } from "@/shared/hook/useScrollTo.js";
+import { ProductEditor } from "../components/ProductEditor.jsx";
 
 // =========================
 // 🧭 Componente principal
 // =========================
 const Products = () => {
   const dispatch = useDispatch();
-  const { isFormView, isEditing, showHelp } = useSelector(
+  const { isFormView, isEditing, showHelp, categorias } = useSelector(
     (store) => store.products
   );
 
@@ -26,7 +25,7 @@ const Products = () => {
   const handleToggleHelp = () => dispatch(setShowHelpProducts());
 
   return (
-    <main className="bg-gray-100">
+    <main className="bg-gray-100 px-6 relative min-h-[600px]">
       <AnimatePresence mode="wait">
         {/* Vista: Formulario o Tabla */}
         {isFormView ? (
@@ -38,9 +37,11 @@ const Products = () => {
             transition={{ duration: 0.4 }}
           >
             {isEditing ? (
-              <EditProductForm setScrollTo={setScrollTo} />
+              // <EditProductForm setScrollTo={setScrollTo} />
+              <ProductEditor initialProduct={isEditing} categories={categorias.data}/>
             ) : (
-              <FormProduct />
+              // <FormProduct />
+              <ProductEditor categories={categorias.data}/>
             )}
           </motion.div>
         ) : (
@@ -54,13 +55,13 @@ const Products = () => {
             {!showHelp && (
               <motion.div
                 key="header"
-                className="flex items-center justify-between pl-10 scale-90 px-2"
+                className="flex items-center justify-between"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.5 }}
               >
-                <h1 className="text-2xl font-semibold text-gray-800 px-6">
+                <h1 className="text-2xl font-semibold text-gray-800">
                   Gestión de Productos
                 </h1>
                 <InfoButton showHelp={handleToggleHelp} />
@@ -84,7 +85,7 @@ const Products = () => {
             {/* Tabla de productos */}
             <section
               ref={tableRef}
-              className="ml-8 px-6 bg-gray-100 rounded-lg"
+              className="bg-gray-100 rounded-lg"
             >
               <TablaProductos setScrollTo={setScrollTo} />
             </section>
@@ -109,7 +110,7 @@ const HelpContent = ({ onClose }) => (
       ✕
     </button>
 
-    <Info className="text-blue-500 w-6 h-6 mt-1 flex-shrink-0" />
+    <Info className="text-blue-500 w-6 h-6 mt-1 shrink-0" />
 
     <div>
       <h2 className="text-2xl font-bold text-gray-800 mb-2 tracking-tight">

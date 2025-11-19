@@ -33,7 +33,7 @@ export function SalesFilters({ filters, onFiltersChange }) {
 
   return (
     <Card>
-      <CardContent className="pt-6">
+      <CardContent className="pt-6 bg-gray-50 rounded-xl">
         <div className="flex flex-col gap-4 md:flex-row md:items-end">
           {/* --- Filtro de fecha --- */}
           <div className="flex-1 space-y-2">
@@ -41,11 +41,12 @@ export function SalesFilters({ filters, onFiltersChange }) {
             <Select
               value={filters.dateRange}
               onValueChange={handleDateRangeChange}
+              
             >
-              <SelectTrigger id="dateRange">
+              <SelectTrigger id="dateRange" className={'w-36'}>
                 <SelectValue placeholder="Seleccionar rango" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={'bg-background-normal'}>
                 <SelectItem value="today">Hoy</SelectItem>
                 <SelectItem value="week">Última Semana</SelectItem>
                 <SelectItem value="month">Último Mes</SelectItem>
@@ -94,10 +95,10 @@ export function SalesFilters({ filters, onFiltersChange }) {
               value={filters.paymentMethod || "all"}
               onValueChange={handlePaymentChange}
             >
-              <SelectTrigger id="paymentMethod">
+              <SelectTrigger id="paymentMethod" className={'w-36'}>
                 <SelectValue placeholder="Seleccionar método" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={'bg-background-normal'}>
                 <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="efectivo">Efectivo</SelectItem>
                 <SelectItem value="debito">Débito</SelectItem>
