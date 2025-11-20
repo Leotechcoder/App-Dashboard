@@ -1,9 +1,8 @@
 /** @type {import('tailwindcss').Config} */
-import colors from "tailwindcss/colors";
-
 export default {
   darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+
   theme: {
     extend: {
       borderRadius: {
@@ -11,9 +10,8 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      colors: {
-        // ...colors,
 
+      colors: {
         success: "hsl(var(--success))",
         "success-foreground": "hsl(var(--success-foreground))",
 
@@ -25,10 +23,8 @@ export default {
         soft: {
           green: "hsl(var(--soft-green))",
           "green-border": "hsl(var(--soft-green-border))",
-
           yellow: "hsl(var(--soft-yellow))",
           "yellow-border": "hsl(var(--soft-yellow-border))",
-
           blue: "hsl(var(--soft-blue))",
           "blue-border": "hsl(var(--soft-blue-border))",
         },
@@ -63,5 +59,6 @@ export default {
       },
     },
   },
+
   plugins: [require("tailwindcss-animate")],
 };

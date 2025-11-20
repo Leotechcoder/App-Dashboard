@@ -6,7 +6,7 @@ const ScrollToTop = () => {
 
   useEffect(() => {
     // Cuando cambia la ruta, scrollea al inicio
-    window.scrollTo({ top: 28, behavior: "smooth" });
+    window.scrollTo({ behavior: "smooth" });
   }, [pathname]);
 
   return null; // No renderiza nada

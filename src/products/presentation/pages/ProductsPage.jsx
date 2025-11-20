@@ -25,7 +25,7 @@ const Products = () => {
   const handleToggleHelp = () => dispatch(setShowHelpProducts());
 
   return (
-    <main className="bg-gray-100 px-6 relative min-h-[600px]">
+    <main className="bg-gray-50 rounded-xl px-6 relative min-h-[600px]">
       <AnimatePresence mode="wait">
         {/* Vista: Formulario o Tabla */}
         {isFormView ? (
@@ -85,7 +85,6 @@ const Products = () => {
             {/* Tabla de productos */}
             <section
               ref={tableRef}
-              className="bg-gray-100 rounded-lg"
             >
               <TablaProductos setScrollTo={setScrollTo} />
             </section>

@@ -11,7 +11,7 @@ const Dashboard = () => {
   }, [])
   
   return (
-    <div className="container mx-auto flex flex-col gap-2 bg-gray-100">
+    <div className="container mx-auto flex flex-col gap-2 bg-gray-50 rounded-xl">
       <AnimatePresence mode="wait">
         <WelcomeHeader key="welcome" />
         <SalesDashboardHome key="home" />

@@ -23,7 +23,7 @@ const SalesChartHome = ({data}) => {
         <BarChart3 className="h-5 w-5 text-indigo-500" /> Tendencia de Ventas
       </h3>
 
-      <div className="h-80">
+      <div className="h-80 bg-background rounded-sm">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <XAxis dataKey="date" stroke="#94a3b8" tick={{ fill: "#64748b" }} />

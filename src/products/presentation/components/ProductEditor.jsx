@@ -227,7 +227,7 @@ export function ProductEditor({
 
   return (
     <motion.div
-      className="w-full bg-gray-100 overflow-hidden"
+      className="w-full overflow-hidden"
       initial="hidden"
       animate="visible"
       variants={fadeIn}
@@ -249,7 +249,7 @@ export function ProductEditor({
           >
             <div className="flex items-center gap-3">
               {showBackButton && (
-                <Button variant="ghost" size="sm" onClick={handleCancel}>
+                <Button className={'hover:cursor-pointer'} variant="ghost" size="sm" onClick={handleCancel}>
                   <ArrowLeft className="w-4 h-4" />
                   Volver
                 </Button>
