@@ -80,6 +80,7 @@ const initialState = {
   showHelp: false,
   editingUser: null,
   formView: "list",
+  sessionClosed: false,
 }
 
 // 🔹 Slice
@@ -118,6 +119,9 @@ const userSlice = createSlice({
     setFormView: (state, action) => {
       state.formView = action.payload
     },
+    setClosedSession: (state) => {
+      state.sessionClosed = true;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -203,6 +207,7 @@ const userSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false
+        state.sessionClosed = false;
         state.user = action.payload.user
         state.message = "Sesión iniciada exitosamente!"
       })
@@ -254,6 +259,7 @@ const userSlice = createSlice({
       .addCase(loginUserGoogle.fulfilled, (state) => {
         state.loading = false
         state.message = "Sesión iniciada exitosamente!"
+        state.sessionClosed = false;
       })
       .addCase(loginUserGoogle.rejected, (state) => {
         state.loading = false
@@ -268,6 +274,7 @@ const userSlice = createSlice({
       .addCase(loginUserFacebook.fulfilled, (state) => {
         state.loading = false
         state.message = "Sesión iniciada exitosamente!"
+        state.sessionClosed = false;
       })
       .addCase(loginUserFacebook.rejected, (state) => {
         state.loading = false
@@ -287,6 +294,7 @@ export const {
   setShowHelpUsers,
   setEditingUser,
   setFormView,
+  setClosedSession,
 } = userSlice.actions
 
 export default userSlice.reducer

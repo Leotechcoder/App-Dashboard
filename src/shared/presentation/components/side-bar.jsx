@@ -18,7 +18,7 @@ import {
 import { LogOut, Home, Package, ShoppingCart, Users } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { logOutUser } from "../../../users/application/userSlice";
+import { logOutUser, setClosedSession } from "../../../users/application/userSlice";
 
 const menuItems = [
   { title: "Inicio", to: "/admin/home", icon: Home },
@@ -31,8 +31,9 @@ export default function Sidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await dispatch(logOutUser());
+  const handleLogout = () => {
+    dispatch(setClosedSession())
+    setTimeout(() =>{dispatch(logOutUser());} , 500) 
     navigate("/login", {replace: true});
   };
 

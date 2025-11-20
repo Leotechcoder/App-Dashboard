@@ -175,7 +175,7 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
             <button
               type="button"
               onClick={() => setMostrarPassword(!mostrarPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              className="absolute hover:cursor-pointer inset-y-0 right-0 pr-3 flex items-center"
             >
               {mostrarPassword ? (
                 <EyeOff className="h-5 w-5 text-gray-400" />
@@ -188,7 +188,7 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+          className="w-full hover:cursor-pointer bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out"
         >
           {esInicioSesion ? "Iniciar Sesión" : "Registrarse"}
         </button>
@@ -207,14 +207,14 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
           <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               onClick={handleLoginGoogle}
-              className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              className="w-full hover:cursor-pointer inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
             >
               <Github className="h-5 w-5" />
               <span className="ml-2">Google</span>
             </button>
             <button
               onClick={handleLoginFacebook}
-              className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              className="w-full hover:cursor-pointer inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
             >
               <Facebook className="h-5 w-5 text-blue-600" />
               <span className="ml-2">Facebook</span>
@@ -223,7 +223,7 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
         </div>
       )}
       <div className="mt-4 text-center">
-        <button onClick={cambiarFormulario} className="text-sm text-blue-600 hover:text-blue-500">
+        <button onClick={cambiarFormulario} className="text-sm hover:cursor-pointer text-blue-600 hover:text-blue-500">
           {esInicioSesion ? "¿No tienes una cuenta? Regístrate" : "¿Ya tienes una cuenta? Inicia sesión"}
         </button>
       </div>
