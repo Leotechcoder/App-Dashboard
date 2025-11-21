@@ -18,13 +18,17 @@ import {
 import { LogOut, Home, Package, ShoppingCart, Users } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { logOutUser, setClosedSession } from "../../../users/application/userSlice";
+import {
+  logOutUser,
+  setClosedSession,
+} from "../../../users/application/userSlice";
+import { PATH } from "../../../shared/infrastructure/utils/PATH.js";
 
 const menuItems = [
-  { title: "Inicio", to: "/admin/home", icon: Home },
-  { title: "Productos", to: "/admin/products", icon: Package },
-  { title: "Órdenes", to: "/admin/ventas", icon: ShoppingCart },
-  { title: "Usuarios", to: "/admin/contact", icon: Users },
+  { title: "Inicio", to: PATH.home, icon: Home },
+  { title: "Productos", to: PATH.products, icon: Package },
+  { title: "Órdenes", to: PATH.ventas, icon: ShoppingCart },
+  { title: "Usuarios", to: PATH.contact, icon: Users },
 ];
 
 export default function Sidebar() {
@@ -32,9 +36,9 @@ export default function Sidebar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(setClosedSession(true))
-    setTimeout(() =>{dispatch(logOutUser());} , 500) 
-    navigate("/login", {replace: true});
+    dispatch(setClosedSession(true));
+    setTimeout(() => dispatch(logOutUser()), 500);
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -57,21 +61,24 @@ export default function Sidebar() {
               <SidebarMenu>
                 {menuItems.map((item) => (
                   <SidebarMenuItem key={item.to}>
-                    <SidebarMenuButton asChild className={'bg-gray-400'}>
-                      <NavLink
-                        to={item.to}
-                        className={({ isActive }) =>
-                          `flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
+                    <NavLink
+                      to={item.to}
+                      end
+                      className={({ isActive }) => "block"}
+                    >
+                      {({ isActive }) => (
+                        <SidebarMenuButton
+                          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-200 ${
                             isActive
-                              ? "bg-blue-600 text-white shadow-sm"
+                              ? "bg-blue-400 text-white shadow-sm"
                               : "text-gray-700 hover:bg-gray-200"
-                          }`
-                        }
-                      >
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
-                      </NavLink>
-                    </SidebarMenuButton>
+                          }`}
+                        >
+                          <item.icon className="h-5 w-5" />
+                          <span>{item.title}</span>
+                        </SidebarMenuButton>
+                      )}
+                    </NavLink>
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>
