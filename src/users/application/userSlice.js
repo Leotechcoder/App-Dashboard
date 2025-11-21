@@ -207,7 +207,7 @@ const userSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false
-        state.user = action.payload.user.username
+        state.username = action.payload.user.username
         state.message = "Sesión iniciada exitosamente!"
       })
       .addCase(loginUser.rejected, (state, action) => {

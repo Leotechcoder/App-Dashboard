@@ -20,7 +20,7 @@ export const LoginPage = () => {
 
   const toastId = useRef(null);
 
-  const { user, loading, error } = useSelector((s) => s.users);
+  const { username, loading, error } = useSelector((s) => s.users);
   const { message } = useSelector((s) => s.app);
 
   const dispatch = useDispatch();
@@ -45,13 +45,13 @@ export const LoginPage = () => {
   // 2️⃣ REDIRECCIÓN POST LOGIN
   // ===========================
   useEffect(() => {
-    if (!loading && user) {
+    if (!loading && username) {
       const timer = setTimeout(() => {
         navigate("/admin/home", { replace: true });
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [user, loading, navigate]);
+  }, [username, loading, navigate]);
 
   // ===========================
   // 3️⃣ EXPANSIÓN FORM
