@@ -32,7 +32,7 @@ export default function Sidebar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(setClosedSession())
+    dispatch(setClosedSession(true))
     setTimeout(() =>{dispatch(logOutUser());} , 500) 
     navigate("/login", {replace: true});
   };

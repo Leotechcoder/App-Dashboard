@@ -53,10 +53,11 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
     if (!validarFormulario()) return;
 
     if (esInicioSesion) {
-      dispatch(setClosedSession())
+      dispatch(setClosedSession(false))
       dispatch(loginUser(formLog));
     } else {
       dispatch(registerUser(formReg));
+      cambiarFormulario()
     }
 
     setFormLog(estadoInicialLog);

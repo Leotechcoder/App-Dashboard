@@ -119,8 +119,8 @@ const userSlice = createSlice({
     setFormView: (state, action) => {
       state.formView = action.payload
     },
-    setClosedSession: (state) => {
-      state.sessionClosed = !state.sessionClosed;
+    setClosedSession: (state, action) => {
+      state.sessionClosed = action.payload;
     }
   },
   extraReducers: (builder) => {
