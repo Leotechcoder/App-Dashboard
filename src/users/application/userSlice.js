@@ -120,7 +120,7 @@ const userSlice = createSlice({
       state.formView = action.payload
     },
     setClosedSession: (state) => {
-      state.sessionClosed = true;
+      state.sessionClosed = !state.sessionClosed;
     }
   },
   extraReducers: (builder) => {
@@ -207,8 +207,7 @@ const userSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false
-        state.sessionClosed = false;
-        state.user = action.payload.user
+        state.user = action.payload.user.username
         state.message = "Sesión iniciada exitosamente!"
       })
       .addCase(loginUser.rejected, (state, action) => {

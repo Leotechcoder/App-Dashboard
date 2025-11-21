@@ -12,6 +12,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { formatDateToArg } from "@/shared/utils/formatDateToArg";
+import { BarChart3 } from "lucide-react";
 
 export const PaymentMethodsChart = () => {
   const dispatch = useDispatch();
@@ -60,16 +61,16 @@ export const PaymentMethodsChart = () => {
     return (
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-md">
       <p className="text-muted-foreground text-sm">
-        No hay datos suficientes para mostrar el gráfico de métodos de pago.
+        No hay datos suficientes para mostrar el gráfico.
       </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-md">
-      <h3 className="text-lg font-semibold text-indigo-400 mb-4">
-        Métodos de Pago más Usados
+    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-md ">
+      <h3 className="text-lg font-semibold text-indigo-400 mb-4 flex items-center gap-2">
+       <BarChart3 className="h-5 w-5 text-indigo-500" /> Tendencia de Ventas con Métodos de Pago
       </h3>
 
       <ResponsiveContainer width="100%" height={350}>

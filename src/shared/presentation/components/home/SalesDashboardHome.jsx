@@ -104,9 +104,9 @@ export default function SalesDashboardHome() {
       </motion.div>
 
       {/* Charts */}
-      <motion.div variants={fadeUp}>
+      {/* <motion.div variants={fadeUp}>
         <SalesChartHome data={transformOrdersDates} />
-      </motion.div>
+      </motion.div> */}
 
       <motion.div variants={fadeUp}>
         <PaymentMethodsChart />

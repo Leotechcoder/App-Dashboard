@@ -20,46 +20,44 @@ export const LoginPage = () => {
 
   const toastId = useRef(null);
 
-  const { username, loading } = useSelector((s) => s.users);
-  const { message, error } = useSelector((s) => s.app);
+  const { user, loading, error } = useSelector((s) => s.users);
+  const { message } = useSelector((s) => s.app);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // ===========================
-  // 1️⃣ LOADING ANTES DE CARGAR LA PÁGINA + IMAGEN
+  // 1️⃣ LOADING + CARGA DE IMAGEN
   // ===========================
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (bgLoaded) setInitialLoading(false);
-    }, 1000); 
-
-    return () => clearTimeout(timer);
-  }, [bgLoaded]);
-
   useEffect(() => {
     const img = new Image();
     img.src = BG_IMAGE;
     img.onload = () => setBgLoaded(true);
   }, []);
 
-  // ===========================
-  // 2️⃣ REDIRECCIÓN POST-LOGIN
-  // ===========================
   useEffect(() => {
-    if (!loading && username) {
-      const timer = setTimeout(() => {
-        navigate("/admin/home", { replace: true });
-      }, 1200);
-      return () => clearTimeout(timer);
-    }
-  }, [username, loading]);
+    if (!bgLoaded) return;
+    const timer = setTimeout(() => setInitialLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, [bgLoaded]);
 
   // ===========================
-  // 3️⃣ EXPANSIÓN FORM RESPONSIVE
+  // 2️⃣ REDIRECCIÓN POST LOGIN
+  // ===========================
+  useEffect(() => {
+    if (!loading && user) {
+      const timer = setTimeout(() => {
+        navigate("/admin/home", { replace: true });
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [user, loading, navigate]);
+
+  // ===========================
+  // 3️⃣ EXPANSIÓN FORM
   // ===========================
   const handleFormExpand = useCallback((expanded) => {
-    if (window.matchMedia("(max-width: 1024px)").matches) {
+    if (window.innerWidth <= 1024) {
       setIsFormExpanded(expanded);
       if (expanded) window.history.pushState({ formExpanded: true }, "");
     }
@@ -71,48 +69,42 @@ export const LoginPage = () => {
   }, []);
 
   useEffect(() => {
-    const handler = () => isFormExpanded && setIsFormExpanded(false);
+    const handler = () => setIsFormExpanded(false);
     window.addEventListener("popstate", handler);
     return () => window.removeEventListener("popstate", handler);
-  }, [isFormExpanded]);
+  }, []);
 
   // ===========================
-  // 4️⃣ TOASTS & MENSAJES
+  // 4️⃣ TOASTS ESTABLES
   // ===========================
+  // Loading toast
   useEffect(() => {
-    let timer;
-
     if (loading) {
       if (!toastId.current) {
         toastId.current = toast.loading("Cargando...");
       }
-      return;
-    }
-
-    // limpiar toast cuando termina de cargar
-    if (toastId.current) {
-      toast.dismiss(toastId.current);
-      toastId.current = null;
-    }
-
-    timer = setTimeout(() => {
-      const storedMessage = sessionStorage.getItem("logoutMessage");
-
-      if (storedMessage) {
-        toast.success(storedMessage);
-        sessionStorage.removeItem("logoutMessage");
-      } else if (message) {
-        toast.success(message);
-        dispatch(removeMessage());
+    } else {
+      if (toastId.current) {
+        toast.dismiss(toastId.current);
+        toastId.current = null;
       }
+    }
+  }, [loading]);
 
-      if (error) {
-        toast.error(error?.message || "Error desconocido");
-      }
-    }, 500);
+  // Mensaje de éxito
+  useEffect(() => {
+    if (message) {
+      toast.success(message);
+      setTimeout(() => dispatch(removeMessage()), 200);
+    }
+  }, [message, dispatch]);
 
-    return () => clearTimeout(timer);
-  }, [loading, message, error]);
+  // Error
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   // ===========================
   // 5️⃣ RENDER
