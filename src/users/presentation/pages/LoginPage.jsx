@@ -1,14 +1,14 @@
 "use client";
-
-import Logo from "../../../shared/presentation/components/Logo";
-import { FormLogin } from "../components/FormLogin";
-import LoadingScreen from "../../../shared/presentation/components/LoadingScreen";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
 import { removeMessage } from "../../application/userSlice.js";
 import { Toaster, toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import LoadingScreen from "../../../shared/presentation/components/LoadingScreen";
+import { FormLogin } from "../components/FormLogin";
+import Logo from "@/shared/presentation/components/Logo.jsx";
 
 const BG_IMAGE =
   "https://res.cloudinary.com/dp7cugael/image/upload/v1763185852/imagen-paredon_uayvic.jpg";
@@ -26,6 +26,45 @@ export const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // ======================
+// Text Motion Variants
+// ======================
+const textParent = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.18, delayChildren: 0.6 },
+  },
+};
+
+const textChild = {
+  hidden: {
+    opacity: 0,
+    y: 40,
+    scale: 0.8,
+    filter: "blur(6px)",
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.7, ease: "easeOut" },
+  },
+};
+
+  // ANIMACIONES
+  const depthFade = {
+    hidden: { opacity: 0, scale: 0.7, y: 20, filter: "blur(8px)" },
+    show: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.7, ease: "easeOut" }
+    }
+  };
+
   // ===========================
   // 1️⃣ LOADING + CARGA DE IMAGEN
   // ===========================
@@ -37,7 +76,7 @@ export const LoginPage = () => {
 
   useEffect(() => {
     if (!bgLoaded) return;
-    const timer = setTimeout(() => setInitialLoading(false), 1000);
+    const timer = setTimeout(() => setInitialLoading(false), 800);
     return () => clearTimeout(timer);
   }, [bgLoaded]);
 
@@ -77,7 +116,6 @@ export const LoginPage = () => {
   // ===========================
   // 4️⃣ TOASTS ESTABLES
   // ===========================
-  // Loading toast
   useEffect(() => {
     if (loading) {
       if (!toastId.current) {
@@ -91,7 +129,6 @@ export const LoginPage = () => {
     }
   }, [loading]);
 
-  // Mensaje de éxito
   useEffect(() => {
     if (message) {
       toast.success(message);
@@ -99,11 +136,8 @@ export const LoginPage = () => {
     }
   }, [message, dispatch]);
 
-  // Error
   useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
+    if (error) toast.error(error);
   }, [error]);
 
   // ===========================
@@ -116,7 +150,7 @@ export const LoginPage = () => {
       <Toaster richColors position="top-right" />
 
       <div
-        className="min-h-screen flex flex-col lg:flex-row bg-no-repeat relative transition-opacity"
+        className="min-h-screen flex flex-col lg:flex-row bg-no-repeat relative"
         style={{
           backgroundImage: `url(${BG_IMAGE})`,
           backgroundSize: "100% 100%",
@@ -125,30 +159,50 @@ export const LoginPage = () => {
         <div className="absolute inset-0 bg-white/30"></div>
 
         {/* LEFT SIDE */}
-        <div
-          className={`lg:flex-1 lg:scale-95 flex flex-col justify-center items-center p-8 lg:p-12 relative z-10
-            ${isFormExpanded ? "hidden lg:flex" : ""}`}
+        <motion.div
+          variants={textParent}
+          initial="hidden"
+          animate="visible"
+          className={`lg:flex-1 lg:scale-95 flex flex-col justify-center items-center p-8 lg:p-12 relative z-10 ${
+            isFormExpanded ? "hidden lg:flex" : ""
+          }`}
         >
           <Logo />
-          <h1 className="text-6xl font-semibold text-gray-800 mb-3 text-center">
+
+          <motion.h1
+            variants={textChild}
+            className="text-6xl font-semibold text-gray-800 mb-3 text-center"
+          >
             Cangre Burger
-          </h1>
-          <h1 className="text-2xl font-medium text-gray-800 mb-4 text-center">
+          </motion.h1>
+
+          <motion.h2
+            variants={textChild}
+            className="text-2xl font-medium text-gray-800 mb-4 text-center"
+          >
             Web Dashboard
-          </h1>
-          <p className="p-4 text-xl text-center text-gray-800 mb-8 max-w-md">
+          </motion.h2>
+
+          <motion.p
+            variants={textChild}
+            className="p-4 text-xl text-center text-gray-800 mb-8 max-w-md"
+          >
             Descubre la mejor experiencia en control y gestión de ventas
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* FORM */}
         <div
           className={`lg:flex-1 lg:scale-90 flex justify-center items-center p-8 lg:p-12 transition-all duration-300 ease-in-out relative z-10
-           ${isFormExpanded ? "fixed inset-0 z-50 bg-white" : ""}`}
+          ${isFormExpanded ? "fixed inset-0 z-50 bg-white" : ""}`}
         >
-          <div
+          <motion.div
+            variants={depthFade}
+            initial="hidden"
+            animate="show"
+            transition={{ delay: 0.75 }}
             className={`bg-white shadow-xl rounded-2xl overflow-hidden transition-all duration-300 ease-in-out
-          ${isFormExpanded ? "w-[85vw] h-[85vh]" : "w-full max-w-md"}`}
+              ${isFormExpanded ? "w-[85vw] h-[85vh]" : "w-full max-w-md"}`}
           >
             <div className="p-8 h-full overflow-y-auto">
               <FormLogin
@@ -156,17 +210,20 @@ export const LoginPage = () => {
                 isExpanded={isFormExpanded}
               />
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* CLOSE BUTTON */}
         {isFormExpanded && (
-          <button
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
             className="fixed top-4 right-4 z-50 p-2 bg-gray-800 text-white rounded-full lg:hidden cursor-pointer hover:bg-gray-700 transition"
             onClick={closeExpandedForm}
           >
             <X className="h-6 w-6" />
-          </button>
+          </motion.button>
         )}
       </div>
     </>
