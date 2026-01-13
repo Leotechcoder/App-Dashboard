@@ -1,31 +1,31 @@
-import { useEffect, useState } from "react";
-import { useSalesData } from "../hooks/useSalesData";
-import { useCashRegister } from "../hooks/useCashRegister";
-import { useSalesHistory } from "../hooks/useSalesHistory";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SalesFilters } from "../components/SalesFilters";
-import { SalesChart } from "../components/SalesChart";
-import { SalesTable } from "../components/SalesTable";
-import { OpenCashRegisterDialog } from "../components/OpenCashRegisterDialog";
-import { CloseCashRegisterDialog } from "../components/CloseCashRegisterDialog";
-import { CashRegisterSummary } from "../components/CashRegisterSummary";
-import {
-  DollarSign,
-  Calendar,
-  Package,
-  Plus,
-  ClipboardList,
-} from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useSelector } from "react-redux";
-import OrderCard from "../components/OrderSalesSheet";
-import OrdersPage from "@/orders/presentation/pages/OrdersPage";
-import { useScrollLock } from "@/shared/hook/useScrollLock";
-import { useScrollTo } from "@/shared/hook/useScrollTo";
-import { cn } from "@/lib/utils";
-import { SalesMetrics } from "../components/SalesMetrics";
+import { useEffect, useState } from "react"
+import { useSalesData } from "../hooks/useSalesData"
+import { useCashRegister } from "../hooks/useCashRegister"
+import { useSalesHistory } from "../hooks/useSalesHistory"
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+import { SalesFilters } from "../components/SalesFilters"
+import { SalesChart } from "../components/SalesChart"
+import { SalesTable } from "../components/SalesTable"
+import { OpenCashRegisterDialog } from "../components/OpenCashRegisterDialog"
+import { CloseCashRegisterDialog } from "../components/CloseCashRegisterDialog"
+import { CashRegisterSummary } from "../components/CashRegisterSummary"
+import { SalesMetrics } from "../components/SalesMetrics"
+
+import { Package, Plus, ClipboardList } from "lucide-react"
+
+import { AnimatePresence, motion } from "framer-motion"
+import { useSelector } from "react-redux"
+
+import OrderCard from "../components/OrderSalesSheet"
+import OrdersPage from "@/orders/presentation/pages/OrdersPage"
+
+import { useScrollLock } from "@/shared/hook/useScrollLock"
+import { useScrollTo } from "@/shared/hook/useScrollTo"
+import { cn } from "@/lib/utils"
 
 export function SalesDashboardView() {
   const {
@@ -36,69 +36,64 @@ export function SalesDashboardView() {
     sessionOrders,
     loading,
     filters,
-  } = useSalesData();
-  const { pendingOrders } = useSelector((state) => state.sales);
-  const { handleOpenCashRegister, handleCloseCashRegister } = useCashRegister();
-  const { updateFilters } = useSalesHistory();
+  } = useSalesData()
+
+  const { pendingOrders } = useSelector((state) => state.sales)
+  const { handleOpenCashRegister, handleCloseCashRegister } = useCashRegister()
+  const { updateFilters } = useSalesHistory()
 
   useEffect(() => {
-    window.scrollTo({ behavior: "smooth" });    
+    window.scrollTo({ behavior: "smooth" })
   }, [])
-  
 
+  const [openDialog, setOpenDialog] = useState(false)
+  const [closeDialog, setCloseDialog] = useState(false)
+  const [selectedOrderCard, setSelectedOrderCard] = useState(null)
 
-  const [openDialog, setOpenDialog] = useState(false);
-  const [closeDialog, setCloseDialog] = useState(false);
-  const [selectedOrderCard, setSelectedOrderCard] = useState(null);
-  const { setScrollTo, tableRef } = useScrollTo({offset: 20});
-  
-  // Evita scroll en la página padre mientras el modal está abierto
-  useScrollLock(!!selectedOrderCard || openDialog || closeDialog);
+  const { setScrollTo, tableRef } = useScrollTo({ offset: 20 })
 
-  //HANDLERS
-  const handleFilterChange = (newFilters) => updateFilters(newFilters);
+  useScrollLock(!!selectedOrderCard || openDialog || closeDialog)
+
   const handleOpen = async (initialAmount) => {
-    await handleOpenCashRegister(initialAmount);
-    setOpenDialog(false);
-  };
+    await handleOpenCashRegister(initialAmount)
+    setOpenDialog(false)
+  }
+
   const handleClose = async (finalAmount) => {
-    await handleCloseCashRegister(finalAmount);
-    setCloseDialog(false);
+    await handleCloseCashRegister(finalAmount)
+    setCloseDialog(false)
     await updateFilters({
       startDate: new Date().setHours(0, 0, 0, 0),
       endDate: new Date().setHours(23, 59, 59, 999),
-    });
-  };
+    })
+  }
 
-  const isCashRegisterOpen = cashRegister && cashRegister.status === "open";
+  const isCashRegisterOpen = cashRegister?.status === "open"
 
   const fadeUp = {
-    initial: { opacity: 0, y: -20 },
+    initial: { opacity: 0, y: -16 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6, ease: "easeOut" }
-  };
+    transition: { duration: 0.4, ease: "easeOut" },
+  }
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="space-y-6 px-4 md:px-6"
+      className="space-y-6 px-4 md:px-6 bg-[hsl(var(--background))] py-2 rounded-lg "
     >
       {/* Header */}
-      <motion.div {...fadeUp} className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="py-4">
-          <h2 className="text-2xl font-semibold text-gray-800 tracking-tight">
-            Gestión de Ventas
-          </h2>
-        </div>
+      <motion.div
+        {...fadeUp}
+        className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+      >
+        <h2 className="text-2xl font-semibold tracking-tight text-[hsl(var(--foreground))]">
+          Gestión de Ventas
+        </h2>
 
         {isCashRegisterOpen && (
-          <Button
-            onClick={() => setCloseDialog(true)}
-            variant="destructive"
-            className="self-start md:self-auto"
-          >
+          <Button variant="destructive" onClick={() => setCloseDialog(true)}>
             Cerrar Caja
           </Button>
         )}
@@ -116,18 +111,33 @@ export function SalesDashboardView() {
 
       {/* Tabs */}
       <motion.div {...fadeUp}>
-        <Tabs defaultValue="pending" className="space-y-2">
-          <TabsList className="flex flex-wrap gap-2 justify-start">
-
+        <Tabs defaultValue="pending" className="space-y-3">
+          <TabsList
+            className="
+              flex flex-wrap gap-2
+            "
+          >
             <TabsTrigger
               value="pending"
               className={cn(
-                "gap-2 flex-1 md:flex-none transition-all data-[state=inactive]:hover:bg-blue-100 data-[state=inactive]:bg-blue-50 data-[state=active]:bg-blue-200"
+                "flex items-center gap-2 flex-1 md:flex-none",
+                "data-[state=inactive]:border-[hsl(var(--accent))]",
+                "data-[state=inactive]:hover:bg-[hsl(var(--accent))]/90",
+                "data-[state=active]:bg-[hsl(var(--primary))]",
+                "data-[state=active]:text-[hsl(var(--primary-foreground))]"
               )}
             >
-              <ClipboardList className="h-4 w-4" /> Órdenes Pendientes
+              <ClipboardList className="h-4 w-4" />
+              Órdenes Pendientes
               {pendingOrders.length > 0 && (
-                <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                <span
+                  className="
+                    ml-1 rounded-full px-2 py-0.5 text-xs
+                    bg-[hsl(var(--green))]
+                    border border-[hsl(var(--green))]
+                    text-[hsl(var(--primary-foreground))]
+                  "
+                >
                   {pendingOrders.length}
                 </span>
               )}
@@ -136,14 +146,19 @@ export function SalesDashboardView() {
             <TabsTrigger
               value="sales"
               className={cn(
-                "gap-2 flex-1 data-[state=inactive]:hover:bg-blue-100 data-[state=inactive]:bg-blue-50 md:flex-none transition-all data-[state=active]:bg-blue-200"
+                "flex items-center gap-2 flex-1 md:flex-none",
+                "data-[state=inactive]:border-[hsl(var(--accent))]",
+                "data-[state=inactive]:hover:bg-[hsl(var(--accent))]/90",
+                "data-[state=active]:bg-[hsl(var(--primary))]",
+                "data-[state=active]:text-[hsl(var(--primary-foreground))]"
               )}
             >
-              <Package className="h-4 w-4 text-muted-foreground" /> Ventas Cerradas
+              <Package className="h-4 w-4" />
+              Ventas Cerradas
             </TabsTrigger>
           </TabsList>
 
-          {/* Pending Orders */}
+          {/* Pending */}
           <TabsContent value="pending">
             <motion.div {...fadeUp}>
               <Card ref={tableRef}>
@@ -156,13 +171,15 @@ export function SalesDashboardView() {
 
           {/* Sales */}
           <TabsContent value="sales" className="space-y-4">
-
             <motion.div {...fadeUp}>
               <SalesFilters filters={filters} onFiltersChange={updateFilters} />
             </motion.div>
 
             <motion.div {...fadeUp}>
-              <SalesMetrics orders={orders} totalEarnings={totalEarnings} />
+              <SalesMetrics
+                orders={orders}
+                totalEarnings={totalEarnings}
+              />
             </motion.div>
 
             <motion.div {...fadeUp}>
@@ -170,27 +187,29 @@ export function SalesDashboardView() {
             </motion.div>
 
             <motion.div {...fadeUp}>
-              <Card className="bg-gray-50">
-                <CardHeader>
+              <Card>
+                <CardHeader className="text-[hsl(var(--foreground))]">
                   <CardTitle>Historial de Ventas Cerradas</CardTitle>
                 </CardHeader>
 
                 <CardContent className="overflow-x-auto">
                   {loading ? (
-                    <div className="text-center py-8 text-muted-foreground">
+                    <div className="py-8 text-center text-[hsl(var(--muted-foreground))]">
                       Cargando órdenes...
                     </div>
                   ) : orders.length > 0 ? (
-                    <SalesTable orders={orders} onSelectOrder={setSelectedOrderCard} />
+                    <SalesTable
+                      orders={orders}
+                      onSelectOrder={setSelectedOrderCard}
+                    />
                   ) : (
-                    <div className="text-center py-8 text-muted-foreground">
+                    <div className="py-8 text-center text-[hsl(var(--muted-foreground))]">
                       No hay órdenes cerradas en este período
                     </div>
                   )}
                 </CardContent>
               </Card>
             </motion.div>
-
           </TabsContent>
         </Tabs>
       </motion.div>
@@ -206,7 +225,11 @@ export function SalesDashboardView() {
           >
             <Button
               size="lg"
-              className="h-14 w-14 rounded-full shadow-md border-b-2"
+              className="
+                h-14 w-14 rounded-full shadow-lg
+                bg-[hsl(var(--primary))]
+                text-[hsl(var(--primary-foreground))]
+              "
               onClick={() => setOpenDialog(true)}
             >
               <Plus className="h-6 w-6" />
@@ -216,20 +239,38 @@ export function SalesDashboardView() {
       </AnimatePresence>
 
       {/* Dialogs */}
-      <OpenCashRegisterDialog open={openDialog} onOpenChange={setOpenDialog} onConfirm={handleOpen} />
-      <CloseCashRegisterDialog open={closeDialog} onOpenChange={setCloseDialog} onConfirm={handleClose} cashRegister={cashRegister} orders={sessionOrders} />
+      <OpenCashRegisterDialog
+        open={openDialog}
+        onOpenChange={setOpenDialog}
+        onConfirm={handleOpen}
+      />
+
+      <CloseCashRegisterDialog
+        open={closeDialog}
+        onOpenChange={setCloseDialog}
+        onConfirm={handleClose}
+        cashRegister={cashRegister}
+        orders={sessionOrders}
+      />
 
       {/* Order Modal */}
       <AnimatePresence>
         {selectedOrderCard && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-end backdrop-blur-sm px-4"
+            className="
+              fixed inset-0 z-50 flex items-center justify-end
+              backdrop-blur-sm px-4
+            "
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="w-full my-auto max-w-5xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-lg"
+              className="
+                w-full max-w-5xl max-h-[95vh] overflow-hidden rounded-lg
+                bg-[hsl(var(--card))]
+                shadow-xl
+              "
               initial={{ scale: 0.9, x: 100 }}
               animate={{ scale: 1, x: 0 }}
               exit={{ scale: 0.9, x: 100 }}
@@ -245,5 +286,5 @@ export function SalesDashboardView() {
         )}
       </AnimatePresence>
     </motion.div>
-  );
+  )
 }

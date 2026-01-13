@@ -1,0 +1,43 @@
+:root {
+  /* =========================
+     USER CARD
+  ========================= */
+  --user-header-from: 210 90% 55%;
+  --user-header-to: 270 85% 60%;
+  --user-header-foreground: 0 0% 100%;
+
+  /* =========================
+     USER METRICS
+  ========================= */
+  --metric-primary-bg: 210 100% 97%;
+  --metric-primary-fg: 210 90% 45%;
+
+  --metric-success-bg: 142 70% 96%;
+  --metric-success-fg: 142 70% 40%;
+
+  --metric-info-bg: 270 100% 97%;
+  --metric-info-fg: 270 80% 45%;
+
+  /* =========================
+     USER LIST / ITEMS
+  ========================= */
+  --user-item-bg: 210 40% 96%;
+  --user-purple-bg: 300 100% 25%;
+}
+.dark {
+  --user-header-from: 210 90% 45%;
+  --user-header-to: 270 85% 50%;
+  --user-header-foreground: 0 0% 100%;
+
+  --metric-primary-bg: 217 32% 22%;
+  --metric-primary-fg: 210 40% 98%;
+
+  --metric-success-bg: 142 70% 20%;
+  --metric-success-fg: 144.9 80.4% 10%;
+
+  --metric-info-bg: 270 40% 22%;
+  --metric-info-fg: 222.2 47.4% 11.2%;
+
+  --user-item-bg: 217 32% 17%;
+  --user-purple-bg: 300 100% 25%;
+}

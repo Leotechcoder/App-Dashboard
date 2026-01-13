@@ -1,14 +1,45 @@
-import React from "react";
+"use client";
 
-const KpiCard = ({ title, value, icon: Icon, color }) => {
+import { cn } from "@/lib/utils";
+
+const TONE_STYLES = {
+  primary: {
+    bg: "hsl(var(--primary)/0.7)",
+    fg: "hsl(var(--primary-foreground))",
+  },
+  success: {
+    bg: "hsl(var(--green)/0.8)",
+    fg: "hsl(var(--primary-foreground))",
+  },
+  warning: {
+    bg: "hsl(var(--yellow)/0.7)",
+    fg: "hsl(var(--primary-foreground))",
+  },
+  danger: {
+    bg: "hsl(var(--destructive)/0.7)",
+    fg: "hsl(var(--primary-foreground))",
+  },
+};
+
+const KpiCard = ({ title, value, icon: Icon, tone = "primary" }) => {
+  const styles = TONE_STYLES[tone];
+
   return (
-    <div className="flex items-center justify-between bg-white shadow rounded-xl p-4 w-full">
-      <div>
-        <h3 className="text-sm font-medium text-gray-500">{title}</h3>
-        <p className="text-2xl font-bold text-gray-800">{value}</p>
+    <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))] shadow-sm p-5 flex items-center gap-4">
+      <div
+        className="flex h-12 w-12 items-center justify-center rounded-lg"
+        style={{ backgroundColor: styles.bg, color: styles.fg }}
+      >
+        <Icon className="h-6 w-6" />
       </div>
-      <div className={`p-3 rounded-full ${color}`}>
-        <Icon className="text-white" size={24} />
+
+      <div>
+        <p className="text-sm text-[hsl(var(--muted-foreground))]">
+          {title}
+        </p>
+        <p className="text-2xl font-semibold text-[hsl(var(--foreground))]">
+          {value}
+        </p>
       </div>
     </div>
   );

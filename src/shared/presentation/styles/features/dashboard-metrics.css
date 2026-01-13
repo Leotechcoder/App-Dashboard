@@ -1,0 +1,20 @@
+:root {
+  /* Metrics backgrounds */
+  --metric-success-bg: hsl(var(--success) / 0.08);
+  --metric-success-border: hsl(var(--success) / 0.35);
+  --metric-success-text: hsl(var(--success));
+
+  --metric-warning-bg: hsl(var(--warning) / 0.1);
+  --metric-warning-border: hsl(var(--warning) / 0.35);
+  --metric-warning-text: hsl(var(--warning));
+
+  --metric-info-bg: hsl(var(--info) / 0.08);
+  --metric-info-border: hsl(var(--info) / 0.35);
+  --metric-info-text: hsl(var(--info));
+}
+
+.dark {
+  --metric-success-bg: hsl(var(--success) / 0.15);
+  --metric-warning-bg: hsl(var(--warning) / 0.18);
+  --metric-info-bg: hsl(var(--info) / 0.15);
+}

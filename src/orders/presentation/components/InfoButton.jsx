@@ -21,7 +21,7 @@ export default function InfoButton({ showHelp }) {
       {showTooltip && (
         <div className="absolute -top-5 -translate-x-1/2 bg-gray-800 text-white text-sm rounded-md px-2 py-1 shadow-lg whitespace-nowrap">
            Info
-          <div className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45" />
+          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45" />
         </div>
       )}
     </div>

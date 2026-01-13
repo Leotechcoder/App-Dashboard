@@ -1,0 +1,45 @@
+:root {
+  /* =========================
+     BUTTON - PRIMARY
+  ========================= */
+  --btn-primary-bg: 222 47% 11%;
+  --btn-primary-bg-hover: 222 47% 18%;
+  --btn-primary-fg: 0 0% 100%;
+
+  /* =========================
+     BUTTON - OUTLINE
+  ========================= */
+  --btn-outline-bg: 0 0% 100%;
+  --btn-outline-bg-hover: 220 14% 96%;
+  --btn-outline-border: 220 13% 85%;
+  --btn-outline-fg: 222 47% 11%;
+
+  /* =========================
+     BUTTON - GHOST
+  ========================= */
+  --btn-ghost-fg: 222 47% 11%;
+  --btn-ghost-bg-hover: 220 14% 96%;
+}
+
+.dark {
+  /* =========================
+     BUTTON - PRIMARY
+  ========================= */
+  --btn-primary-bg: 210 40% 98%;
+  --btn-primary-bg-hover: 210 40% 90%;
+  --btn-primary-fg: 222 47% 11%;
+
+  /* =========================
+     BUTTON - OUTLINE
+  ========================= */
+  --btn-outline-bg: 217 32% 17%;
+  --btn-outline-bg-hover: 217 32% 22%;
+  --btn-outline-border: 217 19% 27%;
+  --btn-outline-fg: 210 40% 98%;
+
+  /* =========================
+     BUTTON - GHOST
+  ========================= */
+  --btn-ghost-fg: 210 40% 98%;
+  --btn-ghost-bg-hover: 217 32% 22%;
+}

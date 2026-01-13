@@ -8,6 +8,7 @@ import Contact from "../../../users/presentation/pages/Contact.jsx"
 import Products from "../../../products/presentation/pages/ProductsPage.jsx"
 import { SalesDashboardView } from "@/sales/presentation/pages/SalesDashboardView.jsx"
 import ProtectedRoute from "@/shared/middleware/ProtectedRoutes.jsx"
+import Pruebas from "@/../pruebas/PreviewPage.jsx"
 
 
 
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
           { path: "contact", element: <Contact /> },
           { path: "products", element: <Products /> },
           { path: "ventas", element: <SalesDashboardView /> },
+          { path: "pruebas", element: <Pruebas /> },
           { path: "*", element: <ErrorUrl /> },
         ],
       },
@@ -40,7 +42,7 @@ const router = createBrowserRouter([
 
 const App = () => {
   return (    
-    <RouterProvider router={router} />
+      <RouterProvider router={router} />
   )
 }
 

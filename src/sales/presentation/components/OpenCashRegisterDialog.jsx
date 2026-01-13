@@ -55,7 +55,7 @@ export function OpenCashRegisterDialog({ open, onOpenChange }) {
             <div className="space-y-2">
               <Label htmlFor="initialAmount">Monto Inicial</Label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[hsl(var(--muted-foreground))]">$</span>
                 <Input
                   id="initialAmount"
                   type="number"
@@ -72,12 +72,12 @@ export function OpenCashRegisterDialog({ open, onOpenChange }) {
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" 
+            <Button type="button" variant="ghost" 
             onClick={() => onOpenChange(false)} disabled={loading}
-            className={'hover:cursor-pointer'}>
+            className={'hover:cursor-pointer border border-[hsl(var(--primary))]'}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading} className={' hover:cursor-pointer'} variant="outline">
+            <Button type="submit" disabled={loading} className={' hover:cursor-pointer hover:bg-[hsl(var(--primary))]/90 bg-[hsl(var(--primary))]'} variant="outline">
               {loading ? "Abriendo..." : "Abrir Caja"}
             </Button>
           </DialogFooter>

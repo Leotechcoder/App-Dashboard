@@ -1,0 +1,52 @@
+:root {
+  --orders-bg: 0 0% 98%;
+  --orders-border: 214 32% 91%;
+  --orders-muted: 215 16% 47%;
+  --orders-accent: 38 92% 50%;
+}
+
+.dark {
+  --orders-bg: 217 32% 17%;
+  --orders-border: 217 19% 27%;
+  --orders-muted: 215 20% 65%;
+  --orders-accent: 38 92% 55%;
+}
+
+:root {
+  /* =========================
+     ORDERS TABLE
+  ========================= */
+  --orders-table-bg: 0 0% 100%;
+  --orders-table-hover: 210 100% 97%;
+  --orders-table-selected: 210 90% 92%;
+  --orders-table-new: 142 70% 96%;
+
+  /* =========================
+     ORDERS ACTIONS
+  ========================= */
+  --orders-action-edit: 210 90% 45%;
+  --orders-action-delete: 0 84% 60%;
+  --orders-action-close: 142 70% 40%;
+
+  /* =========================
+     ORDERS FEEDBACK
+  ========================= */
+  --orders-success: 142 70% 40%;
+  --orders-danger: 0 84% 60%;
+  --orders-muted: 215 16% 47%;
+}
+
+.dark {
+  --orders-table-bg: 217 32% 17%;
+  --orders-table-hover: 217 32% 22%;
+  --orders-table-selected: 217 32% 27%;
+  --orders-table-new: 142 50% 22%;
+
+  --orders-action-edit: 210 90% 60%;
+  --orders-action-delete: 0 84% 65%;
+  --orders-action-close: 142 70% 55%;
+
+  --orders-success: 142 70% 55%;
+  --orders-danger: 0 84% 65%;
+  --orders-muted: 215 20% 65%;
+}

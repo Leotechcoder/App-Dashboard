@@ -3,6 +3,8 @@ import React from "react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import Home from "./productFormEdit/page-media"
+import { ModeToggle } from "@/shared/presentation/components/ModeToggle";
+import { PreviewDarkTest } from "./PreviewDarkTest.jsx";
 
 // Mock: Reducer simple para items
 const mockItemsReducer = () => ({
@@ -222,6 +224,10 @@ export default function Pruebas() {
     //     </div>
     //   </div>
     // </Provider>
-    <Home />
+    // <Home />
+    <div className="p-10">
+      <ModeToggle />
+      <PreviewDarkTest />
+    </div>
   );
 }

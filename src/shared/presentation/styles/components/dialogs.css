@@ -1,0 +1,9 @@
+:root {
+  --dialog-bg: 0 0% 100%;
+  --dialog-border: 214 32% 91%;
+}
+
+.dark {
+  --dialog-bg: 217 32% 17%;
+  --dialog-border: 217 19% 27%;
+}

@@ -11,7 +11,7 @@ import { ButtonAddOrder } from "../components/Buttons";
 import { SearchOrder } from "../components/SearchOrder";
 import OrdersTableEnhanced from "../components/OrdersTableEnhanced";
 
-// Redux slices
+// Redux
 import {
   setClearMessage,
   setSelectedOrder,
@@ -20,12 +20,9 @@ import {
   deleteDataOrder,
 } from "../../application/orderSlice";
 
-// Hook de tabla
+// Hooks
 import { useTableData } from "@/shared/hook/useTableDataO";
-import {
-  closeOrder,
-  fetchPendingOrders,
-} from "@/sales/application/salesThunks";
+import { closeOrder, fetchPendingOrders } from "@/sales/application/salesThunks";
 import { voidItemSelected } from "@/orders/application/itemSlice";
 import { voidSelectedProduct } from "@/products/application/productSlice";
 import { useScrollLock } from "@/shared/hook/useScrollLock";
@@ -34,14 +31,17 @@ const OrdersPage = ({ setScrollTo }) => {
   const dispatch = useDispatch();
   const shownMessageRef = useRef("");
 
-  const { selectedOrder, isLoading, error, message } = useSelector((state) => state.orders);
+  const { selectedOrder, isLoading, error, message } = useSelector(
+    (state) => state.orders
+  );
   const dataOrders = useSelector((state) => state.orders.data);
+
   const [activeTab, setActiveTab] = useState("delivery");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [openOrderDetails, setOpenOrderDetails] = useState(false);
   const [createOrder, setCreateOrder] = useState(false);
 
-  // Hook centralizado de tabla
+  // Tabla
   const table = useTableData({
     stateKey: "orders",
     itemsPerPage: 10,
@@ -52,10 +52,10 @@ const OrdersPage = ({ setScrollTo }) => {
       order.deliveryType === activeTab && order.status === "pending",
   });
 
-  //Hook para bloquear scroll cuando se abre el modal de detalles
+  // Lock scroll al abrir modales
   useScrollLock(openOrderDetails || createOrder);
-  
-  // Toast por mensajes
+
+  // Toast
   useEffect(() => {
     if (message && shownMessageRef.current !== message) {
       toast.success(message);
@@ -78,7 +78,7 @@ const OrdersPage = ({ setScrollTo }) => {
     setOpenOrderDetails(true);
   };
 
-  const handleBack = async () => {
+  const handleBack = () => {
     setOpenOrderDetails(false);
     setCreateOrder(false);
     setTimeout(() => {
@@ -93,8 +93,8 @@ const OrdersPage = ({ setScrollTo }) => {
       "¿Estás seguro que querés eliminar esta orden? Esta acción no se puede deshacer."
     );
     if (!confirmDelete) return;
-    await dispatch(deleteDataOrder(orderId)); //Ya actualiza el state orders mas adelante revisar
-    dispatch(fetchPendingOrders()); //Actualiza los datos en sales.orders
+    await dispatch(deleteDataOrder(orderId));
+    dispatch(fetchPendingOrders());
   };
 
   const handleCloseOrder = async (orderId, paymentInfo) => {
@@ -104,50 +104,45 @@ const OrdersPage = ({ setScrollTo }) => {
   const handleActiveTab = (value) => {
     setActiveTab(value);
     setScrollTo(true);
-  }
-  
-  // Estados intermedios
+  };
+
   if (isLoading && !isRefreshing)
-    return <Message text="Cargando órdenes..." type="loading" />;
+    return <Message text="Cargando órdenes..." />;
+
   if (error) return <Message text={`Error: ${error}`} type="error" />;
 
   return (
-    <main className="w-full pb-4 pt-6 bg-gray-50 rounded-2xl">
-      {/* HEADER DE ACCIONES */}
-      <HeaderActions
+    <main className="w-full pb-4 pt-6 rounded-xl bg-[hsl(var(--muted))] border-[hsl(var(--border))]">
+      {/* HEADER */}
+        <HeaderActions
         activeTab={activeTab}
         handleActiveTab={handleActiveTab}
         onCreateOrder={handleCreateOrder}
         searchTerm={table.searchTerm}
         setSearchTerm={table.setSearchTerm}
       />
-
-      {/* TABLA DE ÓRDENES */}
+      
+    <div className=" bg-[hsl(var(--background))]">
+      {/* TABLA */}
       <AnimatePresence mode="wait">
         {isRefreshing ? (
           <motion.div
-            key="refreshing"
-            className="flex justify-center items-center h-40 text-gray-500 font-medium text-sm"
+            key="refresh"
+            className="flex justify-center items-center h-40 text-sm font-medium text-[hsl(var(--muted))]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
           >
-            <motion.div
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ repeat: Infinity, duration: 1.2 }}
-            >
-              🔄 Actualizando órdenes...
-            </motion.div>
+            🔄 Actualizando órdenes...
           </motion.div>
         ) : (
           <motion.div
-            key="ordersTable"
-            className="overflow-y-auto h-[calc(90vh-100px)] border-t border-b border-gray-200 border-opacity-30"
+            key="table"
+            className="overflow-y-auto h-[calc(90vh-100px)] border-y border-[hsl(var(--border))]"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 15 }}
-            transition={{ duration: 0.7, ease: "easeInOut" }}
+            transition={{ duration: 0.6 }}
           >
             <OrdersTableEnhanced
               data={table.paginatedData}
@@ -161,18 +156,20 @@ const OrdersPage = ({ setScrollTo }) => {
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+      
 
-      {/* MODAL DE ORDER DETAILS */}
+      {/* MODAL */}
       <AnimatePresence>
         {((openOrderDetails && selectedOrder) || createOrder) && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-start justify-end backdrop-blur-sm px-4 pt-6"
+            className="fixed inset-0 z-50 flex justify-end bg-[hsl(var(--dialog-overlay))] backdrop-blur-sm px-4 pt-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="w-full flex items-center max-w-4xl max-h-[95vh] overflow-hidden rounded-lg bg-white shadow-xl"
+              className="w-full max-w-4xl max-h-[95vh] overflow-hidden rounded-xl shadow-xl"
               initial={{ scale: 0.9, x: 100 }}
               animate={{ scale: 1, x: 0 }}
               exit={{ scale: 0.9, x: 100 }}
@@ -190,15 +187,21 @@ const OrdersPage = ({ setScrollTo }) => {
   );
 };
 
-/* ───────────────────────────────
-   SUBCOMPONENTES
-──────────────────────────────── */
+/* ─────────────────────────────── */
+/* SUBCOMPONENTES                  */
+/* ─────────────────────────────── */
 
-const Message = ({ text, type }) => {
-  const baseStyles = "text-center py-10 text-base font-medium";
-  const color = type === "error" ? "text-red-500" : "text-gray-600";
-  return <div className={`${baseStyles} ${color}`}>{text}</div>;
-};
+const Message = ({ text, type }) => (
+  <div
+    className={`py-10 text-center text-base font-medium ${
+      type === "error"
+        ? "text-[hsl(var(--destructive))]"
+        : "text-[hsl(var(--muted))]"
+    }`}
+  >
+    {text}
+  </div>
+);
 
 const HeaderActions = ({
   activeTab,
@@ -208,7 +211,7 @@ const HeaderActions = ({
   setSearchTerm,
 }) => (
   <div className="flex justify-between items-center mb-6 scale-90">
-    <div className="flex space-x-2">
+    <div className="flex gap-2">
       <TabButton
         label="Entrega por delivery"
         isActive={activeTab === "delivery"}
@@ -220,15 +223,17 @@ const HeaderActions = ({
         onClick={() => handleActiveTab("local")}
       />
     </div>
-    <div className="flex items-center space-x-3">
+
+    <div className="flex items-center gap-3">
       <ButtonAddOrder
         handleClick={onCreateOrder}
-        className="bg-amber-600 hover:bg-amber-700 text-gray-300 text-md h-10 px-5 rounded-lg shadow-md"
+        className="h-10 px-5 rounded-lg shadow-sm bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))]"
       />
+
       <SearchOrder
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        className="flex-1 h-10 rounded-lg border border-gray-300 pl-10 pr-4 focus:ring-2 focus:ring-amber-500 transition"
+        className="h-10 rounded-lg pl-10 pr-4"
       />
     </div>
   </div>
@@ -236,12 +241,12 @@ const HeaderActions = ({
 
 const TabButton = ({ label, isActive, onClick }) => (
   <button
-    className={`px-4 py-2 rounded-full transition-colors font-medium hover:cursor-pointer ${
-      isActive
-        ? "bg-amber-600 hover:bg-amber-700 text-gray-300 shadow-sm"
-        : "bg-gray-100 text-gray-600 hover:bg-gray-200 "
-    }`}
     onClick={onClick}
+    className={`px-4 py-2 rounded-full font-medium transition cursor-pointer ${
+      isActive
+        ? "bg-[hsl(var(--dashboard))] text-[hsl(var(--accent-foreground))]"
+        : "bg-[hsl(var(--muted))]/70  hover:text-[hsl(var(--primary))] text-[hsl(var(--muted-foreground))]"
+    }`}
   >
     {label}
   </button>

@@ -114,9 +114,10 @@ return (
     >
       <button
         onClick={handleAddProduct}
-        className="bg-blue-500 text-white h-3/4 px-4 py-2 rounded-lg hover:cursor-pointer hover:bg-blue-700 scale-85 shadow-sm hover:shadow-md transition-all"
+        className="bg-[hsl(var(--primary))]
+      text-[hsl(var(--primary-foreground))] font-medium px-4 py-2 rounded-lg hover:cursor-pointer hover:bg-[hsl(var(--primary))]/90 scale-85 shadow-sm hover:shadow-md transition-all"
       >
-        <span className="font-normal text-lg">+</span> Nuevo Producto
+        <span className="font-medium">+</span> Nuevo Producto
       </button>
 
         <SearchBar
@@ -128,7 +129,7 @@ return (
 
     {/* 🔹 Filtros */}
     <motion.div
-      className="mt-2"
+      className="mt-2 rounded-lg"
       variants={fadeUp}
       initial="hidden"
       animate="visible"
@@ -142,14 +143,15 @@ return (
 
     {/* 🔹 Tabla completa animada */}
     <motion.div
-      className="bg-white rounded-lg shadow overflow-x-auto mt-3"
+      className="bg-[hsl(var(--background-unit))]
+    border border-[hsl(var(--border))] rounded-lg shadow overflow-x-auto mt-3"
       variants={fadeUp}
       initial="hidden"
       animate="visible"
       transition={{ delay: 0.25 }}
     >
       <table className="w-full">
-        <thead className="bg-gray-50 border-b">
+        <thead className="bg-[hsl(var(--dashboard))] border-b border-[hsl(var(--border))]">
           <tr>
             {[
               "ID",
@@ -163,7 +165,7 @@ return (
             ].map((header) => (
               <th
                 key={header}
-                className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                className="px-2 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase"
               >
                 {header}
               </th>
@@ -171,12 +173,12 @@ return (
           </tr>
         </thead>
 
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-[hsl(var(--border))]">
           {paginatedData.length === 0 ? (
             <tr>
               <td colSpan={8} className="px-4 py-4 text-center">
-                <div className="flex items-center justify-center gap-2 text-blue-600 bg-blue-50 border border-blue-200 rounded-lg p-3 max-w-md mx-auto">
-                  <AlertCircle className="h-5 w-5" />
+                <div className="flex items-center justify-center gap-2 text-[hsl(var(--muted-foreground))] bg-[hsl(var(--background-unit-2))] border border-[hsl(var(--border))] rounded-lg p-3 max-w-md mx-auto">
+                  <AlertCircle className="h-5 w-5 text-[hsl(var(--primary))]" />
                   <span className="font-medium">
                     Agrega un producto a esta categoría
                   </span>
@@ -185,47 +187,47 @@ return (
             </tr>
           ) : (
             paginatedData.map((product) => (
-              <tr key={product.id} className="hover:bg-gray-50 transition-all">
-                <td className="w-32 px-2 text-xs text-gray-500 uppercase">
+              <tr key={product.id} className="hover:bg-[hsl(var(--accent))] transition-all">
+                <td className="w-32 px-2 text-xs text-[hsl(var(--muted-foreground))] uppercase">
                   {product.id}
                 </td>
-                <td className="w-44 px-1 text-sm font-semibold text-gray-500">
+                <td className="w-44 px-1 text-sm font-semibold text-[hsl(var(--muted-foreground))] hover:cursor-pointer hover:text-[hsl(var(--primary))]" onClick={() => handleEditar(product)}>
                   {product.name}
                 </td>
-                <td className="w-72 px-1 text-sm text-gray-500">
+                <td className="w-72 px-1 text-sm text-[hsl(var(--muted-foreground))]">
                   {product.description}
                 </td>
-                <td className="w-24 px-2 text-sm text-gray-500">
+                <td className="w-24 px-2 text-sm text-[hsl(var(--muted-foreground))]">
                   {product.category}
                 </td>
-                <td className="w-16 px-1 text-sm text-center text-gray-500">
+                <td className="w-16 px-1 text-sm text-center text-[hsl(var(--muted-foreground))]">
                   {product.stock}
                 </td>
                 <td
                   className={`w-16 px-2 text-sm font-medium text-center ${
-                    product.available ? "text-green-600" : "text-red-700"
+                    product.available ? "text-[hsl(var(--green))]" : "text-[hsl(var(--destructive))]"
                   }`}
                 >
                   {product.available ? "Sí" : "No"}
                 </td>
-                <td className="px-2 py-3 text-sm font-semibold text-gray-500">
+                <td className="px-2 py-3 text-sm font-semibold text-[hsl(var(--green))]">
                   {formatCurrency(product.price)}
                 </td>
                 <td className="px-2 py-3">
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEditar(product)}
-                      className="p-1 hover:bg-gray-100 rounded hover:cursor-pointer"
+                      className="p-1 text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/0.2)] rounded hover:cursor-pointer"
                       title="Editar Producto"
                     >
-                      <Pencil className="h-4 w-4 text-gray-500" />
+                      <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => handleEliminar(product.id)}
-                      className="p-1 hover:bg-gray-100 rounded hover:cursor-pointer"
+                      className="p-1 text-[hsl(var(--destructive))] rounded hover:cursor-pointer hover:bg-[hsl(var(--destructive)/0.2)]"
                       title="Eliminar Producto"
                     >
-                      <Trash className="h-4 w-4 text-gray-500" />
+                      <Trash className="h-4 w-4" />
                     </button>
                   </div>
                 </td>

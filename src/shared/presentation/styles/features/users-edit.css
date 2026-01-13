@@ -1,0 +1,52 @@
+/* ============================= */
+/* USER EDIT MODAL TOKENS */
+/* ============================= */
+
+:root {
+  --user-edit-overlay: 220 14% 96% / 0.7;
+
+  --user-edit-bg: 0 0% 100%;
+  --user-edit-foreground: 222 47% 11%;
+  --user-edit-title: 222 47% 11%;
+
+  --user-edit-label: 215 20% 35%;
+  --user-edit-muted: 215 20% 55%;
+
+  --user-edit-input-bg: 0 0% 100%;
+  --user-edit-input-text: 222 47% 11%;
+  --user-edit-border: 214 32% 91%;
+  --user-edit-divider: 214 32% 85%;
+
+  --user-edit-focus: 221 83% 53%;
+
+  --user-edit-primary: 221 83% 53%;
+  --user-edit-primary-soft: 221 83% 95%;
+
+  --user-edit-secondary: 210 40% 96%;
+  --user-edit-secondary-hover: 210 40% 92%;
+  --user-edit-secondary-foreground: 222 47% 11%;
+}
+
+/* ============================= */
+/* DARK MODE */
+/* ============================= */
+
+.dark {
+  --user-edit-overlay: 222 47% 11% / 0.7;
+
+  --user-edit-bg: 222 47% 11%;
+  --user-edit-foreground: 0 0% 98%;
+  --user-edit-title: 0 0% 98%;
+
+  --user-edit-label: 215 20% 75%;
+  --user-edit-muted: 215 20% 65%;
+
+  --user-edit-input-bg: 222 47% 11%;
+  --user-edit-input-text: 0 0% 98%;
+  --user-edit-border: 217 32% 17%;
+  --user-edit-divider: 217 32% 17%;
+
+  --user-edit-secondary: 217 32% 17%;
+  --user-edit-secondary-hover: 217 32% 22%;
+  --user-edit-secondary-foreground: 0 0% 98%;
+}

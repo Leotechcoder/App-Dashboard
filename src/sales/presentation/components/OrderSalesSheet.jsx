@@ -120,10 +120,10 @@ const OrderCard = ({ order, onBack, className = "" }) => {
     <TooltipProvider>
       <motion.div
         layout
-        className={`w-full h-full bg-linear-to-br from-white to-gray-50 rounded-lg shadow-xl border-0 overflow-hidden ${className}`}
+        className={`w-full h-full bg-linear-to-br from-[hsl(var(--background))] to-[hsl(var(--background-unit-2))] rounded-lg shadow-xl border-0 overflow-hidden ${className}`}
       >
         {/* HEADER */}
-        <CardHeader className="sticky top-0 z-20 bg-linear-to-r from-cyan-400 to-cyan-600 text-white rounded-t-lg shadow-md">
+        <CardHeader className="sticky top-0 z-20 bg-linear-to-r from-[hsl(var(--blue)/0.2)] to-[hsl(var(--blue)/0.9)] text-[hsl(var(--foreground))] rounded-t-lg shadow-md">
           <CardTitle className="flex items-center justify-between">
             <div className="flex flex-col space-y-1">
               <h3 className="text-2xl font-bold">
@@ -131,7 +131,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
               </h3>
               <div className="flex items-center space-x-2">
                 {getStatusBadge(order.status)}
-                <Badge variant="outline" className="border-white text-white">
+                <Badge variant="outline" className="border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))]">
                   {order.deliveryType || "Sin tipo"}
                 </Badge>
               </div>
@@ -143,7 +143,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
                   onClick={onBack}
                   variant="secondary"
                   size="sm"
-                  className="bg-white text-green-600 hover:bg-gray-100"
+                  className="bg-[hsl(var(--accent)/0.2)] text-[hsl(var(--green))] hover:bg-[hsl(var(--accent)/0.4)]"
                 >
                   ← Volver
                 </Button>
@@ -156,25 +156,25 @@ const OrderCard = ({ order, onBack, className = "" }) => {
         <CardContent className={clsx(" p-6 space-y-6", className)}>
           {/* Información del cliente */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-700">
+            <div className="space-y-1 text-[hsl(var(--muted-foreground))]">
+              <p className="text-sm font-medium ">
                 <strong>Cliente:</strong> {order.customerName}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">
                 <strong>ID Cliente:</strong> {order.customerId}
               </p>
-              <p className="text-sm text-gray-600 ">
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">
                 <strong>Método de entrega:</strong> <span className="capitalize">{order.deliveryType}</span>
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">
                 <strong>Creación:</strong> {createdAt}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">
                 <strong>Actualización:</strong> {updatedAt}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">
                 <strong>Total:</strong> ${formatCurrency(order.total)}
               </p>
             </div>
@@ -187,8 +187,8 @@ const OrderCard = ({ order, onBack, className = "" }) => {
             <h4 className="font-semibold text-lg">Métricas de la Orden</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
-                { label: "Cantidad de Artículos", value: totalItems, color: "blue" },
-                { label: "Estado Actual", value: order.status.toUpperCase(), color: "green" },
+                { label: "Cantidad de Artículos", value: totalItems, color: "--blue" },
+                { label: "Estado Actual", value: order.status.toUpperCase(), color: "--green" },
               ].map((metric, i) => (
                 <Tooltip key={i}>
                   <TooltipTrigger>
@@ -196,12 +196,12 @@ const OrderCard = ({ order, onBack, className = "" }) => {
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.3, delay: i * 0.1 }}
-                      className={`text-center p-4 bg-${metric.color}-50 rounded-lg hover:bg-${metric.color}-100 transition`}
+                      className={`text-center p-4 bg-[hsl(var(${metric.color}))] rounded-lg hover:bg-[hsl(var(${metric.color}))] transition`}
                     >
-                      <p className={`text-2xl font-bold text-${metric.color}-600`}>
+                      <p className={`text-2xl font-bold text-[hsl(var(${metric.color}))]`}>
                         {getStatusStyles(metric.value).label}
                       </p>
-                      <p className="text-sm text-gray-600">{metric.label}</p>
+                      <p className="text-sm text-[hsl(var(--muted-foreground))]">{metric.label}</p>
                     </motion.div>
                   </TooltipTrigger>
                   <TooltipContent>{metric.label}</TooltipContent>
@@ -220,7 +220,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: idx * 0.1 }}
-                      className={`flex flex-col items-center px-4 py-2 rounded-xl bg-${p.color}-50 text-${p.color}-700 font-semibold`}
+                      className={`flex flex-col items-center px-4 py-2 rounded-xl bg-[hsl(var(${p.color})-50)] text-[hsl(var(${p.color}))] font-semibold`}
                     >
                       <span className="capitalize">{p.method}</span>
                       <span className="text-sm font-normal">${formatCurrency(p.amount)}</span>
@@ -237,7 +237,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
             <div>
               <p className="text-sm font-medium mb-2">Progreso de la Orden</p>
               <Progress value={progressValue} className="h-3" />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
                 {progressValue}% completada
               </p>
             </div>
@@ -248,7 +248,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
           {/* Artículos */}
           <div>
             <h4 className="font-medium mb-3">Artículos</h4>
-            <div className="rounded-md border">
+            <div className="rounded-md border border-[hsl(var(--border))]">
               <Table>
                 <TableHeader className="sticky top-0 bg-white z-10">
                   <TableRow>
@@ -263,7 +263,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
                     <TableRow>
                       <TableCell
                         colSpan={4}
-                        className="text-center text-muted-foreground"
+                        className="text-center text-[hsl(var(--muted-foreground))]"
                       >
                         No hay artículos en esta orden
                       </TableCell>

@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import {
@@ -5,25 +7,29 @@ import {
   setFilteredUser,
   setCurrentPageUsers,
   toggleOpenForm,
-  getUserData,
 } from "../../application/userSlice.js";
+
 import { Pencil, Trash, Eye } from "lucide-react";
-import Pagination from "../../../shared/presentation/components/Pagination.jsx";
-import { useTableData } from "../../../shared/hook/useTableData.js";
+
+import Pagination from "@/shared/presentation/components/Pagination.jsx";
+import { useTableData } from "@/shared/hook/useTableData.js";
+import { useScrollLock } from "@/shared/hook/useScrollLock.js";
+
 import EditUserForm from "./EditUserForm.jsx";
 import SearchBar from "./SearchBar.jsx";
 import KpisClientes from "./KpisClientes.jsx";
-import UserCard from "./UserSheet.jsx";
-import UserForm from "./UserForm.jsx"; // 👈 importamos tu componente
-import { useScrollLock } from "@/shared/hook/useScrollLock.js";
+import UserSheet from "./UserSheet.jsx";
+import UserForm from "./UserForm.jsx";
 
 const UserList = ({ setScrollTo }) => {
   const dispatch = useDispatch();
-  const { paginationUsers, isOpen } = useSelector((store) => store.users, shallowEqual);
+  const { paginationUsers, isOpen } = useSelector(
+    (state) => state.users,
+    shallowEqual
+  );
 
-  const [openModal, setOpenModal] = useState(null); // "edit" | "details" | null
+  const [openModal, setOpenModal] = useState(null); // "edit" | "details"
   const [selectedUser, setSelectedUser] = useState(null);
-  const hasFetched = useRef(false);
 
   useScrollLock(isOpen);
 
@@ -42,23 +48,26 @@ const UserList = ({ setScrollTo }) => {
     setCurrentPage: setCurrentPageUsers,
   });
 
-  const handleEditar = (user) => {
+  // =========================
+  // 🧠 Handlers
+  // =========================
+  const handleEdit = (user) => {
     setSelectedUser(user);
     setOpenModal("edit");
   };
 
-  const handleVerDetalle = (user) => {
+  const handleDetails = (user) => {
     setSelectedUser(user);
     setOpenModal("details");
   };
 
-  const handleCerrarDetalle = () => {
+  const handleCloseModal = () => {
     setSelectedUser(null);
     setOpenModal(null);
   };
 
-  const handleEliminar = async (id) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
+  const handleDelete = async (id) => {
+    if (window.confirm("¿Eliminar este cliente?")) {
       await dispatch(deleteUserData(String(id)));
     }
   };
@@ -67,47 +76,54 @@ const UserList = ({ setScrollTo }) => {
     dispatch(toggleOpenForm());
   };
 
-  // 👇 Si está en modo detalle, renderizamos solo el UserCard
+  // =========================
+  // 🧾 Vista detalle full
+  // =========================
   if (openModal === "details" && selectedUser) {
-    return <UserCard user={selectedUser} onBack={handleCerrarDetalle} />;
+    return <UserSheet user={selectedUser} onBack={handleCloseModal} />;
   }
 
   return (
     <>
-      {/* Modal de creación */}
-      <UserForm /> 
+      {/* Crear usuario */}
+      <UserForm />
 
-      {/* Modal de edición */}
+      {/* Editar usuario */}
       {openModal === "edit" && (
         <EditUserForm user={selectedUser} setEditModal={setOpenModal} />
       )}
 
-      {/* --- Vista principal --- */}
-      <div className="flex px-8 pb-4 flex-col md:flex-row justify-end gap-6 mb-6 border-b-2">
+      {/* Header acciones */}
+      <div className="flex flex-col md:flex-row justify-end gap-6 px-8 pb-4 mb-6">
         <button
           onClick={handleOpenForm}
-          className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors duration-200 font-semibold shadow-md"
+          className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold
+                     bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]
+                     hover:opacity-90 hover:cursor-pointer transition shadow-sm"
         >
           + Cliente Online
         </button>
+
         <SearchBar
-          tipo={"cliente"}
+          tipo="cliente"
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
       </div>
 
+      {/* KPIs */}
       <KpisClientes />
 
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
-        <table className="min-w-full">
-          <thead className="bg-gray-50 border-b">
+      {/* Tabla */}
+      <div className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background-unit))] shadow-sm overflow-x-auto">
+        <table className="min-w-full text-sm">
+          <thead className="bg-[hsl(var(--dashboard))] border-b border-[hsl(var(--border))]">
             <tr>
               {["ID", "Usuario", "Email", "Teléfono", "Dirección", "Acciones"].map(
                 (header) => (
                   <th
                     key={header}
-                    className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                    className="px-3 py-3 text-left text-xs font-semibold uppercase text-[hsl(var(--muted-foreground))]"
                   >
                     {header}
                   </th>
@@ -115,37 +131,47 @@ const UserList = ({ setScrollTo }) => {
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+
+          <tbody className="divide-y divide-[hsl(var(--border))]">
             {paginatedData.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
-                <td className="px-2 py-4 text-sm text-gray-500">{user.id}</td>
-                <td className="px-2 py-4 text-sm font-semibold text-gray-500">{user.username}</td>
-                <td className="px-2 py-4 text-sm text-gray-500">{user.email}</td>
-                <td className="px-2 py-4 text-sm text-gray-500">{user.phone}</td>
-                <td className="px-2 py-4 text-sm text-gray-500">{user.address}</td>
-                <td className="px-2 py-4">
+              <tr
+                key={user.id}
+                className="hover:bg-[hsl(var(--background-unit-2))] transition-colors"
+              >
+                <td className="px-3 py-4 text-[hsl(var(--muted-foreground))]">
+                  {user.id}
+                </td>
+                <td className="px-3 py-4 font-medium">
+                  {user.username}
+                </td>
+                <td className="px-3 py-4 text-[hsl(var(--muted-foreground))]">
+                  {user.email}
+                </td>
+                <td className="px-3 py-4 text-[hsl(var(--muted-foreground))]">
+                  {user.phone}
+                </td>
+                <td className="px-3 py-4 text-[hsl(var(--muted-foreground))]">
+                  {user.address}
+                </td>
+                <td className="px-3 py-4">
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEditar(user)}
-                      className="p-1 hover:bg-gray-100 rounded"
-                      title="Editar usuario"
-                    >
-                      <Pencil className="h-4 w-4 text-gray-500" />
-                    </button>
-                    <button
-                      onClick={() => handleVerDetalle(user)}
-                      className="p-1 hover:bg-gray-100 rounded"
+                    <ActionButton
+                      icon={Pencil}
+                      title="Editar"
+                      edit
+                      onClick={() => handleEdit(user)}
+                    />
+                    <ActionButton
+                      icon={Eye}
                       title="Ver detalle"
-                    >
-                      <Eye className="h-4 w-4 text-gray-500" />
-                    </button>
-                    <button
-                      onClick={() => handleEliminar(user.id)}
-                      className="p-1 hover:bg-gray-100 rounded"
-                      title="Eliminar usuario"
-                    >
-                      <Trash className="h-4 w-4 text-gray-500" />
-                    </button>
+                      onClick={() => handleDetails(user)}
+                    />
+                    <ActionButton
+                      icon={Trash}
+                      title="Eliminar"
+                      danger
+                      onClick={() => handleDelete(user.id)}
+                    />
                   </div>
                 </td>
               </tr>
@@ -154,6 +180,7 @@ const UserList = ({ setScrollTo }) => {
         </table>
       </div>
 
+      {/* Paginación */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
@@ -165,3 +192,23 @@ const UserList = ({ setScrollTo }) => {
 };
 
 export default UserList;
+
+// =========================
+// 🔘 Botón de acción reutilizable
+// =========================
+const ActionButton = ({ icon: Icon, onClick, title, danger, edit }) => (
+  <button
+    onClick={onClick}
+    title={title}
+    className={`p-2 rounded-md transition hover:cursor-pointer
+      ${
+        danger
+          ? "text-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive)/0.1)]"
+        : edit 
+        ? "text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/0.1)]"
+          : "text-[hsl(var(--green))] hover:bg-[hsl(var(--muted-foreground)/0.1)]"
+      }`}
+  >
+    <Icon className="h-4 w-4" />
+  </button>
+);

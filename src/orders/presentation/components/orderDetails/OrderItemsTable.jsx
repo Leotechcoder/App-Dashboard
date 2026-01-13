@@ -1,4 +1,3 @@
-
 import { Trash2, ShoppingBag, Pencil } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SearchItemsProduct from "./SearchItemsProduct";
@@ -13,13 +12,38 @@ const OrderItemsTable = ({
   setIsModalOpen,
 }) => {
   return (
-    <div className="lg:col-span-2 bg-white/95 backdrop-blur-md rounded-xl shadow-md flex flex-col border border-gray-200">
+    <div
+      className="
+        lg:col-span-2
+        rounded-xl
+        shadow-md
+        flex flex-col
+        border
+        bg-[hsl(var(--background-unit)/0.8)]
+        border-[hsl(var(--border))]
+        backdrop-blur-md
+      "
+    >
       {/* 🔍 Buscador de productos */}
-      <div className="py-4 px-3 border-b border-gray-100">
-        <h4 className="text-base font-semibold text-gray-800 mb-2 flex items-center gap-2">
-          <ShoppingBag className="w-5 h-5 text-emerald-500" />
+      <div
+        className="
+          py-4 px-3 border-b
+          border-[hsl(var(--border))]
+        "
+      >
+        <h4
+          className="
+            text-base font-semibold mb-2
+            flex items-center gap-2
+            text-[hsl(var(--foreground))]
+          "
+        >
+          <ShoppingBag
+            className="w-5 h-5 text-[hsl(var(--green))]"
+          />
           Agregar Producto
         </h4>
+
         <SearchItemsProduct
           tipo="producto"
           setIsModalOpen={setIsModalOpen}
@@ -29,39 +53,47 @@ const OrderItemsTable = ({
 
       {/* 🧾 Tabla de productos */}
       <ScrollArea className="flex-1 max-h-[45vh]">
-        <table className="min-w-full text-sm border-t border-gray-100">
-          <thead className="bg-linear-to-r from-gray-50 to-gray-100 sticky top-0 text-xs">
+        <table className="min-w-full text-sm border-t border-[hsl(var(--border))]">
+          <thead
+            className="
+              sticky top-0 text-xs
+              bg-[hsl(var(--dashboard)/0.7)]
+            "
+          >
             <tr>
-              <th className="w-16 px-3 py-2 text-left font-medium text-gray-500 uppercase">
-                ID
-              </th>
-              <th className="w-44 px-3 py-2 text-left font-medium text-gray-500 uppercase">
-                Producto
-              </th>
-              <th className="w-44 px-3 py-2 text-left font-medium text-gray-500 uppercase">
-                Descripción
-              </th>
-              <th className="w-16 px-3 py-2 text-center font-medium text-gray-500 uppercase">
-                Precio
-              </th>
-              <th className="w-16 px-3 py-2 text-center font-medium text-gray-500 uppercase">
-                Cantidad
-              </th>
-              <th className="w-16 px-3 py-2 text-center font-medium text-gray-500 uppercase">
-                Total
-              </th>
-              <th className="w-24 px-3 py-2 text-center font-medium text-gray-500 uppercase">
-                Acción
-              </th>
+              {[
+                "ID",
+                "Producto",
+                "Descripción",
+                "Precio",
+                "Cantidad",
+                "Total",
+                "Acción",
+              ].map((h) => (
+                <th
+                  key={h}
+                  className="
+                    px-3 py-2 text-left
+                    font-medium uppercase
+                    text-[hsl(var(--foreground))]
+                  "
+                >
+                  {h}
+                </th>
+              ))}
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-[hsl(var(--border))]">
             {items.length === 0 ? (
               <tr>
                 <td
                   colSpan="7"
-                  className="text-center py-8 bg-emerald-50 text-emerald-700 font-medium rounded-b-lg"
+                  className="
+                    text-center py-8 font-medium
+                    bg-[hsl(var(--green)/0.25)]
+                    text-[hsl(var(--green))]
+                  "
                 >
                   Agrega productos al carrito 🛒
                 </td>
@@ -70,40 +102,60 @@ const OrderItemsTable = ({
               items.map((item) => (
                 <tr
                   key={item.id}
-                  className="hover:bg-emerald-50/50 transition-colors duration-150"
+                  className="
+                    transition-colors
+                    hover:bg-[hsl(var(--muted))]
+                  "
                 >
-                  <td className="pl-3 py-2 text-gray-700 truncate max-w-8">
+                  <td className="pl-3 py-2 truncate text-[hsl(var(--muted-foreground))]">
                     {item.id}
                   </td>
-                  <td className="pl-3 py-2 font-medium text-gray-900 truncate max-w-[70px]">
+
+                  <td className="pl-3 py-2 font-medium truncate text-[hsl(var(--foreground))]">
                     {item.productName}
                   </td>
-                  <td className="pl-3 py-2 text-gray-600 truncate max-w-[60px]">
+
+                  <td className="pl-3 py-2 truncate text-[hsl(var(--muted-foreground))]">
                     {item.description}
                   </td>
-                  <td className="text-center text-gray-800">
+
+                  <td className="text-center text-[hsl(var(--foreground))]">
                     {formatCurrency(item.unitPrice)}
                   </td>
-                  <td className="text-center text-gray-700 font-semibold">
+
+                  <td className="text-center font-semibold text-[hsl(var(--foreground))]">
                     {item.quantity}
                   </td>
-                  <td className="text-center font-semibold text-emerald-600">
+
+                  <td className="text-center font-semibold text-[hsl(var(--order-table-total)/0.9)]">
                     {formatCurrency(item.unitPrice * item.quantity)}
                   </td>
+
                   <td className="flex items-center justify-center gap-2 py-2">
                     <button
                       onClick={() => updateProduct(item.id)}
-                      className="p-1.5 rounded-md hover:bg-blue-50 transition"
+                      className="
+                        p-1.5 rounded-md transition
+                        hover:bg-[hsl(var(--dashboard))]
+                      "
                       title="Editar producto"
                     >
-                      <Pencil className="w-4 h-4 text-gray-600 hover:text-blue-500" />
+                      <Pencil
+                        className="w-4 h-4 text-[hsl(var(--blue))]"
+                      />
                     </button>
+
                     <button
                       onClick={() => removeProduct(item.id)}
-                      className="p-1.5 rounded-md hover:bg-red-50 transition"
+                      className="
+                        p-1.5 rounded-md transition
+                        hover:bg-[hsl(var(--destructive)/0.2)]
+                      "
                       title="Eliminar producto"
                     >
-                      <Trash2 className="w-4 h-4 text-gray-600 hover:text-red-600" />
+                      <Trash2
+                        className="w-4 h-4 text-[hsl(var(--destructive))]"
+                      />
                     </button>
                   </td>
                 </tr>
@@ -114,12 +166,21 @@ const OrderItemsTable = ({
       </ScrollArea>
 
       {/* 💰 Total */}
-      <div className="p-4 border-t border-gray-100 bg-linear-to-r from-white to-gray-50 flex justify-between items-center rounded-b-xl">
-        <span className="text-base font-semibold text-gray-800">
+      <div
+        className="
+          p-4 border-t
+          flex justify-between items-center
+          bg-[hsl(var(--background-unit)/0.8)]
+          border-[hsl(var(--border))]
+          rounded-b-xl
+        "
+      >
+        <span className="text-base font-semibold text-[hsl(var(--foreground))]">
           Total Neto
         </span>
-        <span className="text-2xl font-bold text-emerald-600">
-          ${formatCurrency(calculateSubTotal)}
+
+        <span className="text-2xl font-bold text-[hsl(var(--order-table-total)/0.9)]">
+          {formatCurrency(calculateSubTotal)}
         </span>
       </div>
     </div>

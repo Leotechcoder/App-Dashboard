@@ -6,8 +6,8 @@ const Button = ({ onClick, className, children, disabled = false }) => {
       onClick={onClick}
       className={`px-4 py-2 rounded-md font-medium transition-colors ${
         disabled
-          ? "bg-gray-300 cursor-not-allowed"
-          : "bg-blue-500 hover:bg-blue-700 hover:cursor-pointer"
+          ? "bg-[hsl(var(--secondary))] cursor-not-allowed"
+          : "bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/0.9)] hover:cursor-pointer"
       } ${className}`}
       disabled={disabled}
     >

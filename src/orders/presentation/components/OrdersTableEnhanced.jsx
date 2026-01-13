@@ -1,7 +1,6 @@
-
-import { useState, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { motion } from "framer-motion";
+import { useState, useMemo } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { motion } from "framer-motion"
 import {
   Pencil,
   Trash2,
@@ -9,7 +8,8 @@ import {
   DollarSign,
   CreditCard,
   Smartphone,
-} from "lucide-react";
+} from "lucide-react"
+
 import {
   Table,
   TableBody,
@@ -17,8 +17,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -26,21 +26,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import PaginationOrders from "./PaginationOrders";
-import { getDataOrders } from "@/orders/application/orderSlice";
-import { fetchActiveCashRegister, fetchPendingOrders } from "@/sales/application/salesThunks";
-import { formatCurrency } from "@/shared/utils/formatPriceLocal";
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+
+import PaginationOrders from "./PaginationOrders"
+import { getDataOrders } from "@/orders/application/orderSlice"
+import {
+  fetchActiveCashRegister,
+  fetchPendingOrders,
+} from "@/sales/application/salesThunks"
+import { formatCurrency } from "@/shared/utils/formatPriceLocal"
 
 const paymentOptions = [
   { key: "efectivo", label: "Efectivo", icon: DollarSign },
   { key: "credito", label: "Crédito", icon: CreditCard },
   { key: "debito", label: "Débito", icon: Smartphone },
   { key: "transferencia", label: "Transferencia", icon: Smartphone },
-];
+]
 
 const OrdersTableEnhanced = ({
   data = [],
@@ -51,17 +55,16 @@ const OrdersTableEnhanced = ({
   onCloseOrder,
   setSelectedOrder: parentSetSelectedOrder,
 }) => {
-  const dataItems = useSelector((state) => state.items.data);
+  const dataItems = useSelector((state) => state.items.data)
+  const dispatch = useDispatch()
 
-  const [selectedOrderTable, setSelectedOrderTable] = useState(null);
-  const [selectedOrderModal, setSelectedOrderModal] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedOrderTable, setSelectedOrderTable] = useState(null)
+  const [selectedOrderModal, setSelectedOrderModal] = useState(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const [payments, setPayments] = useState({});
-  const [amounts, setAmounts] = useState({});
-  const [warning, setWarning] = useState(false);
-
-  const dispatch = useDispatch();
+  const [payments, setPayments] = useState({})
+  const [amounts, setAmounts] = useState({})
+  const [warning, setWarning] = useState(false)
 
   const formatDate = (date) =>
     new Date(date).toLocaleString("es-AR", {
@@ -70,115 +73,124 @@ const OrdersTableEnhanced = ({
       year: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
-    });
+    })
 
-  // ===== Selección de fila (solo resaltar)
+  // ===== Selección de fila
   const handleSelectTableOrder = (order) => {
     if (selectedOrderTable?.id === order.id) {
-      setSelectedOrderTable(null);
-      return;
+      setSelectedOrderTable(null)
+      return
     }
+
     const fullOrder = {
       ...order,
       items: dataItems.filter((item) => item.orderId === order.id),
       createdAt: formatDate(order.createdAt),
       updatedAt: formatDate(order.updatedAt || new Date()),
-    };
-    setSelectedOrderTable(fullOrder);
-  };
+    }
 
-  // ===== Abrir OrderDetails (click lápiz)
+    setSelectedOrderTable(fullOrder)
+  }
+
+  // ===== Editar orden
   const handleEditOrder = (order) => {
     const fullOrder = {
       ...order,
       items: dataItems.filter((item) => item.orderId === order.id),
       createdAt: formatDate(order.createdAt),
       updatedAt: formatDate(order.updatedAt || new Date()),
-    };
-    parentSetSelectedOrder?.(fullOrder);
-  };
+    }
 
-  // ===== Abrir modal de cierre de orden
+    parentSetSelectedOrder?.(fullOrder)
+  }
+
+  // ===== Abrir modal cierre
   const handleOpenDialog = (order) => {
     const fullOrder = {
       ...order,
       items: dataItems.filter((item) => item.orderId === order.id),
       createdAt: formatDate(order.createdAt),
       updatedAt: formatDate(order.updatedAt || new Date()),
-    };
-    setSelectedOrderModal(fullOrder);
-    setPayments({});
-    setAmounts({});
-    setIsDialogOpen(true);
-  };
+    }
+
+    setSelectedOrderModal(fullOrder)
+    setPayments({})
+    setAmounts({})
+    setWarning(false)
+    setIsDialogOpen(true)
+  }
 
   const handleCheckboxChange = (method) => {
-    setPayments((prev) => ({ ...prev, [method]: !prev[method] }));
-    if (!payments[method]) setAmounts((prev) => ({ ...prev, [method]: 0 }));
-  };
+    setPayments((prev) => ({ ...prev, [method]: !prev[method] }))
+    if (!payments[method]) {
+      setAmounts((prev) => ({ ...prev, [method]: 0 }))
+    }
+  }
 
   const handleAmountChange = (method, value) => {
-    const numericValue = parseFloat(value);
+    const numericValue = parseFloat(value)
     setAmounts((prev) => ({
       ...prev,
       [method]: isNaN(numericValue) ? 0 : numericValue,
-    }));
-  };
+    }))
+  }
 
   // ===== Total ingresado
   const totalEntered = useMemo(() => {
     return Object.keys(payments)
       .filter((m) => payments[m])
-      .reduce((sum, key) => sum + (parseFloat(amounts[key]) || 0), 0);
-  }, [payments, amounts]);
+      .reduce((sum, key) => sum + (parseFloat(amounts[key]) || 0), 0)
+  }, [payments, amounts])
 
-  // ===== Comparación segura con tolerancia de decimales
+  // ===== Comparación con tolerancia decimal
   const totalsMatch = useMemo(() => {
-    const expected = Number(selectedOrderModal?.totalAmount || 0);
-    const entered = Number(totalEntered || 0);
-    return Math.abs(expected - entered) < 0.01; // margen de error decimal
-  }, [totalEntered, selectedOrderModal]);
+    const expected = Number(selectedOrderModal?.totalAmount || 0)
+    const entered = Number(totalEntered || 0)
+    return Math.abs(expected - entered) < 0.01
+  }, [totalEntered, selectedOrderModal])
 
-  //Confirmar cierre de orden (modal)
   const handleConfirmCloseOrder = async () => {
-    if (!selectedOrderModal) return;
+    if (!selectedOrderModal) return
+
     if (!totalsMatch) {
-      setWarning(true);
-      return;
+      setWarning(true)
+      return
     }
 
     const paymentInfo = {
       methods: Object.keys(payments).filter((m) => payments[m]),
       amounts,
-    };
+    }
 
-    await onCloseOrder?.(selectedOrderModal.id, paymentInfo);
-    dispatch(fetchActiveCashRegister());
-    dispatch(fetchPendingOrders());
-    dispatch(getDataOrders());
-    setIsDialogOpen(false);
-    setSelectedOrderModal(null);
-  };
+    await onCloseOrder?.(selectedOrderModal.id, paymentInfo)
+
+    dispatch(fetchActiveCashRegister())
+    dispatch(fetchPendingOrders())
+    dispatch(getDataOrders())
+
+    setIsDialogOpen(false)
+    setSelectedOrderModal(null)
+  }
 
   if (!data || data.length === 0) {
     return (
-      <div className="text-center font-mono font-bold py-12 text-muted-foreground">
+      <div className="py-12 text-center font-mono font-bold text-[hsl(var(--muted))]">
         No hay órdenes 🤔
       </div>
-    );
+    )
   }
 
-  const newestOrderId = data[0]?.id;
+  const newestOrderId = data[0]?.id
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow overflow-x-auto scale-95">
+      <div className="overflow-x-auto rounded-lg bg-[hsl(var(--background-unit))] shadow scale-95">
         <Table>
-          <TableHeader>
+        <TableHeader className="bg-[hsl(var(--dashboard))]">
             <TableRow>
               {[
                 "ID",
-                "ID de Usuario",
+                "ID Usuario",
                 "Cliente",
                 "Importe",
                 "Estado",
@@ -189,31 +201,36 @@ const OrdersTableEnhanced = ({
               ))}
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {data.map((order) => {
-              const isSelected = selectedOrderTable?.id === order.id;
+              const isSelected = selectedOrderTable?.id === order.id
+
               return (
                 <motion.tr
                   key={order.id}
                   initial={
                     order.id === newestOrderId
-                      ? { backgroundColor: "#bbf7d0" }
-                      : { backgroundColor: "#ffffff" }
+                      ? { backgroundColor: "hsl(var(--green))" }
+                      : { backgroundColor: "hsl(var(--background-unit))" }
                   }
                   animate={{
-                    backgroundColor: isSelected ? "#FDC988" : "#ffffff",
+                    backgroundColor: isSelected
+                      ? "hsl(var(--yellow)/0.45)"
+                      : "hsl(var(--background-unit))",
                   }}
-                  transition={{ duration: 0.5 }}
-                  className="cursor-pointer hover:bg-gray-50"
+                  transition={{ duration: 0.4 }}
+                  className={`cursor-pointer hover:bg-[hsl(var(--stroke))]
+                   ${isSelected ? "text-[hsl(var(--foreground))]" : "text-[hsl(var(--muted-foreground))]"}`}
                   onClick={() => handleSelectTableOrder(order)}
                 >
                   <TableCell className="w-16 px-3 py-4 text-sm font-medium">
                     {order.id}
                   </TableCell>
-                  <TableCell className="w-32 px-2 py-4 text-sm overflow-hidden">
+                  <TableCell className="w-32 px-2 py-4 text-sm">
                     {order.userId}
                   </TableCell>
-                  <TableCell className="w-32 px-2 py-4 text-sm overflow-hidden">
+                  <TableCell className="w-32 px-2 py-4 text-sm">
                     {order.userName}
                   </TableCell>
                   <TableCell className="px-3 py-4 text-sm">
@@ -225,34 +242,36 @@ const OrdersTableEnhanced = ({
                   <TableCell className="px-3 py-4 text-sm">
                     {formatDate(order.updatedAt || order.createdAt)}
                   </TableCell>
-                  <TableCell className="px-3 py-4 text-sm">
-                    <div className="flex items-center space-x-2">
+                  <TableCell className="px-1 py-2 text-sm">
+                    <div className="flex items-center gap-3">
                       <button
                         onClick={() => handleEditOrder(order)}
-                        className="text-gray-600 hover:text-blue-600 hover:cursor-pointer"
-                        title="Editar Orden"
+                        className="text-[hsl(var(--primary))] hover:cursor-pointer hover:bg-[hsl(var(--dashboard))] p-1 rounded"
+                        title="Editar"
                       >
-                        <Pencil className="w-4 h-4" />
+                        <Pencil className="h-4 w-4" />
                       </button>
+
                       <button
                         onClick={() => onDelete?.(order.id)}
-                        className="text-gray-600 hover:text-red-600 hover:cursor-pointer"
-                        title="Eliminar Orden"
+                        className="text-[hsl(var(--destructive))] hover:cursor-pointer hover:bg-[hsl(var(--stroke))] p-1 rounded"
+                        title="Eliminar"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="h-4 w-4" />
                       </button>
+
                       <button
                         onClick={() => handleOpenDialog(order)}
-                        className="text-gray-600 hover:text-green-600 flex items-center gap-1 hover:cursor-pointer"
-                        title="Cerrar Orden"
+                        className="flex items-center gap-1 text-[hsl(var(--green))] hover:cursor-pointer hover:bg-[hsl(var(--dashboard))] p-1 rounded"
+                        title="Cerrar"
                       >
-                        <CheckCircle2 className="w-4 h-4" />
+                        <CheckCircle2 className="h-4 w-4" />
                         Cerrar
                       </button>
                     </div>
                   </TableCell>
                 </motion.tr>
-              );
+              )
             })}
           </TableBody>
         </Table>
@@ -264,13 +283,13 @@ const OrdersTableEnhanced = ({
         onPageChange={onPageChange}
       />
 
-      {/* 🧾 Dialog para cierre de orden */}
+      {/* Dialog cierre de orden */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Cerrar Orden</DialogTitle>
             <DialogDescription>
-              Selecciona los métodos de pago y sus montos para cerrar la orden{" "}
+              Selecciona los métodos de pago para cerrar la orden{" "}
               {selectedOrderModal?.id}
             </DialogDescription>
           </DialogHeader>
@@ -279,31 +298,38 @@ const OrdersTableEnhanced = ({
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Cliente:</span>
+                  <span className="text-[hsl(var(--orders-muted))]">
+                    Cliente:
+                  </span>
                   <span className="font-medium">
                     {selectedOrderModal.userName}
                   </span>
                 </div>
+
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Total:</span>
-                  <span className="font-bold text-lg">
+                  <span className="text-[hsl(var(--orders-muted))]">
+                    Total:
+                  </span>
+                  <span className="text-lg font-bold">
                     ${formatCurrency(selectedOrderModal.totalAmount)}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm text-gray-700">
+
+                <div className="flex justify-between text-sm">
                   <span>Total ingresado:</span>
                   <span
                     className={
                       totalsMatch
-                        ? "text-green-600 font-bold"
-                        : "text-red-500 font-bold"
+                        ? "font-bold text-[hsl(var(--orders-success))]"
+                        : "font-bold text-[hsl(var(--orders-danger))]"
                     }
                   >
                     ${formatCurrency(totalEntered)}
                   </span>
                 </div>
+
                 {!totalsMatch && warning && (
-                  <p className="text-red-500 text-xs">
+                  <p className="text-xs text-[hsl(var(--orders-danger))]">
                     El total ingresado no coincide con el total de la orden
                   </p>
                 )}
@@ -311,6 +337,7 @@ const OrdersTableEnhanced = ({
 
               <div className="space-y-3">
                 <Label>Métodos de Pago</Label>
+
                 <div className="space-y-2">
                   {paymentOptions.map(({ key, label, icon: Icon }) => (
                     <div
@@ -321,16 +348,19 @@ const OrdersTableEnhanced = ({
                         <Checkbox
                           id={key}
                           checked={payments[key] || false}
-                          onCheckedChange={() => handleCheckboxChange(key)}
+                          onCheckedChange={() =>
+                            handleCheckboxChange(key)
+                          }
                         />
                         <Label
                           htmlFor={key}
-                          className="flex items-center gap-2 cursor-pointer"
+                          className="flex cursor-pointer items-center gap-2"
                         >
                           <Icon className="h-4 w-4" />
                           {label}
                         </Label>
                       </div>
+
                       {payments[key] && (
                         <Input
                           type="number"
@@ -350,17 +380,23 @@ const OrdersTableEnhanced = ({
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsDialogOpen(false)}
+            >
               Cancelar
             </Button>
-            <Button onClick={handleConfirmCloseOrder} disabled={!totalsMatch}>
+            <Button
+              onClick={handleConfirmCloseOrder}
+              disabled={!totalsMatch}
+            >
               Confirmar Cierre
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
-  );
-};
+  )
+}
 
-export default OrdersTableEnhanced;
+export default OrdersTableEnhanced

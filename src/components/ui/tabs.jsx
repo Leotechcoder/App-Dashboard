@@ -44,21 +44,20 @@ export function TabsTrigger({ className, ...props }) {
         `
         inline-flex items-center justify-center gap-1.5 
         rounded-md px-3 py-1.5 text-sm font-medium
-        text-foreground
+        text-[hsl(var(--muted-foreground))]
         transition-colors
 
         border border-transparent
-        hover:bg-accent hover:text-accent-foreground
+        hover:bg-[hsl(var(--background-unit))] hover:text-[hsl(var(--accent-foreground))]
         hover:cursor-pointer
 
         focus-visible:outline-none 
         focus-visible:ring-2 focus-visible:ring-ring
         disabled:pointer-events-none disabled:opacity-50
 
-        data-[state=active]:bg-background
-        data-[state=active]:text-foreground
+        data-[state=active]:bg-[hsl(var(--primary))]
+        data-[state=active]:text-[hsl(var(--primary-foreground))]
         data-[state=active]:shadow-sm
-        dark:data-[state=active]:bg-card
         
         [&_svg]:pointer-events-none
         [&_svg]:shrink-0 

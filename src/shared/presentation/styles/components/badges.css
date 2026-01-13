@@ -1,0 +1,71 @@
+:root {
+  /* =========================
+     BADGE - RING
+  ========================= */
+  --badge-ring: 222 47% 11%;
+
+  /* =========================
+     BADGE - PRIMARY
+  ========================= */
+  --badge-primary-bg: 222 47% 11%;
+  --badge-primary-bg-hover: 222 47% 18%;
+  --badge-primary-fg: 0 0% 100%;
+
+  /* =========================
+     BADGE - SECONDARY
+  ========================= */
+  --badge-secondary-bg: 220 14% 96%;
+  --badge-secondary-bg-hover: 220 14% 90%;
+  --badge-secondary-fg: 222 47% 11%;
+
+  /* =========================
+     BADGE - DESTRUCTIVE
+  ========================= */
+  --badge-destructive-bg: 0 84% 60%;
+  --badge-destructive-bg-hover: 0 84% 52%;
+  --badge-destructive-fg: 0 0% 100%;
+
+  /* =========================
+     BADGE - OUTLINE
+  ========================= */
+  --badge-outline-border: 220 13% 85%;
+  --badge-outline-fg: 222 47% 11%;
+  --badge-outline-fg-hover: 222 47% 11%;
+  --badge-outline-bg-hover: 220 14% 96%;
+}
+
+.dark {
+  /* =========================
+     BADGE - RING
+  ========================= */
+  --badge-ring: 210 40% 98%;
+
+  /* =========================
+     BADGE - PRIMARY
+  ========================= */
+  --badge-primary-bg: 210 40% 98%;
+  --badge-primary-bg-hover: 210 40% 90%;
+  --badge-primary-fg: 222 47% 11%;
+
+  /* =========================
+     BADGE - SECONDARY
+  ========================= */
+  --badge-secondary-bg: 217 32% 22%;
+  --badge-secondary-bg-hover: 217 32% 28%;
+  --badge-secondary-fg: 210 40% 98%;
+
+  /* =========================
+     BADGE - DESTRUCTIVE
+  ========================= */
+  --badge-destructive-bg: 0 72% 50%;
+  --badge-destructive-bg-hover: 0 72% 42%;
+  --badge-destructive-fg: 0 0% 100%;
+
+  /* =========================
+     BADGE - OUTLINE
+  ========================= */
+  --badge-outline-border: 217 19% 27%;
+  --badge-outline-fg: 210 40% 98%;
+  --badge-outline-fg-hover: 210 40% 98%;
+  --badge-outline-bg-hover: 217 32% 22%;
+}

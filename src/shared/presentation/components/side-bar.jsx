@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Sidebar as ShadSidebar,
   SidebarContent,
@@ -23,6 +21,7 @@ import {
   setClosedSession,
 } from "../../../users/application/userSlice";
 import { PATH } from "../../../shared/infrastructure/utils/PATH.js";
+import { ModeToggle } from "./ModeToggle";
 
 const menuItems = [
   { title: "Inicio", to: PATH.home, icon: Home },
@@ -42,18 +41,38 @@ export default function Sidebar() {
   };
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen>
       <ShadSidebar
-        collapsible="icon"
-        className="border-r border-gray-300 bg-white text-gray-800"
+        collapsible="none"
+        className="
+          border-r
+          border-[hsl(var(--border))]
+          bg-[hsl(var(--background-unit))]
+          text-[hsl(var(--foreground))]
+        "
       >
-        <SidebarHeader className="border-b border-gray-300 p-4 bg-gray-50">
-          <h1 className="font-bold text-lg tracking-tight">Dashboard</h1>
+        {/* HEADER */}
+        <SidebarHeader
+          className="
+            border-b
+            border-[hsl(var(--border))]
+            bg-[hsl(var(--background-unit))]
+            p-4
+            flex items-center justify-between
+          "
+        >
+          <h1 className="text-lg font-semibold tracking-tight text-[hsl(var(--foreground))]">
+            Dashboard
+          </h1>
+          <ModeToggle />
         </SidebarHeader>
 
+        {/* CONTENT */}
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel className="text-gray-500">
+            <SidebarGroupLabel
+              className="text-[hsl(var(--muted-foreground))]"
+            >
               Menú
             </SidebarGroupLabel>
 
@@ -61,21 +80,21 @@ export default function Sidebar() {
               <SidebarMenu>
                 {menuItems.map((item) => (
                   <SidebarMenuItem key={item.to}>
-                    <NavLink
-                      to={item.to}
-                      end
-                      className={({ isActive }) => "block"}
-                    >
+                    <NavLink to={item.to} end className="block">
                       {({ isActive }) => (
                         <SidebarMenuButton
-                          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-200 ${
-                            isActive
-                              ? "bg-blue-400 text-white shadow-sm"
-                              : "text-gray-700 hover:bg-gray-200"
-                          }`}
+                          className={`
+                            flex items-center gap-3 px-3 py-2 rounded-md
+                            transition-colors
+                            ${
+                              isActive
+                                ? "bg-[hsl(var(--accent))] text-[hsl(var(--primary))]"
+                                : "hover:bg-[hsl(var(--accent))]/45 text-[hsl(var(--foreground))]"
+                            }
+                          `}
                         >
                           <item.icon className="h-5 w-5" />
-                          <span>{item.title}</span>
+                          <span className="text-[hsl(var(--accent-foreground))]">{item.title}</span>
                         </SidebarMenuButton>
                       )}
                     </NavLink>
@@ -86,12 +105,20 @@ export default function Sidebar() {
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="border-t border-gray-300 bg-gray-50">
+        {/* FOOTER */}
+        <SidebarFooter
+          className="border-t border-[hsl(var(--border))] bg-[hsl(var(--background-unit))]"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={handleLogout}
-                className="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-100 rounded-md"
+                className="
+                  flex items-center gap-3 px-3 py-2 rounded-md
+                  text-[hsl(var(--foreground))]
+                  hover:bg-[hsl(var(--destructive))]
+                  hover:text-[hsl(var(--destructive-foreground))]
+                "
               >
                 <LogOut className="w-5 h-5" />
                 <span>Cerrar sesión</span>

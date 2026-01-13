@@ -35,13 +35,17 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
 
     if (esInicioSesion) {
       if (!formLog.email) nuevosErrores.email = "El correo es requerido";
-      if (!formLog.password) nuevosErrores.password = "La contraseña es requerida";
+      if (!formLog.password)
+        nuevosErrores.password = "La contraseña es requerida";
     } else {
-      if (!formReg.username) nuevosErrores.username = "El nombre de usuario es requerido";
+      if (!formReg.username)
+        nuevosErrores.username = "El nombre de usuario es requerido";
       if (!formReg.email) nuevosErrores.email = "El correo es requerido";
-      if (!formReg.password) nuevosErrores.password = "La contraseña es requerida";
+      if (!formReg.password)
+        nuevosErrores.password = "La contraseña es requerida";
       if (formReg.password.length < 6)
-        nuevosErrores.password = "La contraseña debe tener al menos 6 caracteres";
+        nuevosErrores.password =
+          "La contraseña debe tener al menos 6 caracteres";
     }
 
     setErrores(nuevosErrores);
@@ -53,11 +57,11 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
     if (!validarFormulario()) return;
 
     if (esInicioSesion) {
-      dispatch(setClosedSession(false))
+      dispatch(setClosedSession(false));
       dispatch(loginUser(formLog));
     } else {
       dispatch(registerUser(formReg));
-      cambiarFormulario()
+      cambiarFormulario();
     }
 
     setFormLog(estadoInicialLog);
@@ -93,14 +97,14 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
 
   return (
     <div className="w-full max-w-md">
-      <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+      <h2 className="text-2xl font-bold text-center text-[hsl(var(--foreground))] mb-6">
         {esInicioSesion ? "Iniciar Sesión" : "Registrarse"}
       </h2>
 
       <form onSubmit={manejarEnvio} className="space-y-4">
         {!esInicioSesion && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">
               Nombre de usuario
             </label>
             <div className="relative">
@@ -110,21 +114,29 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
                 value={formReg.username}
                 onChange={manejarInput}
                 onFocus={handleInputFocus}
-                className={`w-full pl-10 pr-3 py-2 border ${
-                  errores.username ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm`}
+                className={`w-full pl-10 pr-3 py-2 border rounded-md shadow-sm
+                  bg-[hsl(var(--background-unit))]
+                  text-[hsl(var(--foreground))]
+                  placeholder:text-[hsl(var(--login-placeholder))]
+                  ${
+                    errores.username
+                      ? "border-[hsl(var(--destructive))]"
+                      : "border-[hsl(var(--border))]"
+                  }`}
                 placeholder="JohnDoe123"
               />
-              <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+              <User className="absolute left-3 top-2.5 h-5 w-5 text-[hsl(var(--primary))]" />
             </div>
             {errores.username && (
-              <p className="mt-1 text-xs text-red-500">{errores.username}</p>
+              <p className="mt-1 text-xs text-[hsl(var(--destructive))]">
+                {errores.username}
+              </p>
             )}
           </div>
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">
             Correo electrónico
           </label>
           <div className="relative">
@@ -134,20 +146,28 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
               value={esInicioSesion ? formLog.email : formReg.email}
               onChange={manejarInput}
               onFocus={handleInputFocus}
-              className={`w-full pl-10 pr-3 py-2 border ${
-                errores.email ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm`}
+              className={`w-full pl-10 pr-3 py-2 border rounded-md shadow-sm
+                bg-[hsl(var(--background-unit))]
+                text-[hsl(var(--foreground))]
+                placeholder:text-[hsl(var(--login-placeholder))]
+                ${
+                  errores.email
+                    ? "border-[hsl(var(--destructive))]"
+                    : "border-[hsl(var(--border))]"
+                }`}
               placeholder="correo@ejemplo.com"
             />
-            <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <Mail className="absolute left-3 top-2.5 h-5 w-5 text-[hsl(var(--primary))]" />
           </div>
           {errores.email && (
-            <p className="mt-1 text-xs text-red-500">{errores.email}</p>
+            <p className="mt-1 text-xs text-[hsl(var(--destructive))]">
+              {errores.email}
+            </p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">
             Contraseña
           </label>
           <div className="relative">
@@ -157,33 +177,45 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
               value={esInicioSesion ? formLog.password : formReg.password}
               onChange={manejarInput}
               onFocus={handleInputFocus}
-              className={`w-full pl-10 pr-10 py-2 border ${
-                errores.password ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm`}
+              className={`w-full pl-10 pr-10 py-2 border rounded-md shadow-sm
+                bg-[hsl(var(--background-unit))]
+                text-[hsl(var(--foreground))]
+                placeholder:text-[hsl(var(--login-placeholder))]
+                ${
+                  errores.password
+                    ? "border-[hsl(var(--destructive))]"
+                    : "border-[hsl(var(--border))]"
+                }`}
               placeholder="••••••••"
             />
-            <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <Lock className="absolute left-3 top-2.5 h-5 w-5 text-[hsl(var(--primary))]" />
 
             <button
               type="button"
               onClick={() => setMostrarPassword((prev) => !prev)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-[hsl(var(--primary))]"
             >
               {mostrarPassword ? (
-                <EyeOff className="h-5 w-5 text-gray-400" />
+                <EyeOff className="h-5 w-5" />
               ) : (
-                <Eye className="h-5 w-5 text-gray-400" />
+                <Eye className="h-5 w-5" />
               )}
             </button>
           </div>
           {errores.password && (
-            <p className="mt-1 text-xs text-red-500">{errores.password}</p>
+            <p className="mt-1 text-xs text-[hsl(var(--login-error))]">
+              {errores.password}
+            </p>
           )}
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 transition"
+          className="w-full font-bold py-2 px-4 rounded-md transition
+            bg-[hsl(var(--primary))]
+            text-[hsl(var(--primary-foreground))]
+            hover:bg-[hsl(var(--primary))]/90
+            hover:cursor-pointer"
         >
           {esInicioSesion ? "Iniciar Sesión" : "Registrarse"}
         </button>
@@ -193,28 +225,40 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
         <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
+              <div className="w-full border-t border-[hsl(var(--primary))]" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">O continúa con</span>
+              <span className="px-2 bg-[hsl(var(--background))] text-[hsl(var(--muted-foreground))] rounded-sm">
+                O continúa con
+              </span>
             </div>
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               onClick={handleLoginGoogle}
-              className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white hover:bg-gray-50"
+              className="w-full inline-flex justify-center items-center gap-2 py-2 px-4 rounded-md shadow-sm border
+                bg-[hsl(var(--background-unit))]
+                border-[hsl(var(--border))]
+                text-[hsl(var(--foreground))]/85
+                hover:bg-[hsl(var(--yellow))]/90
+                hover:cursor-pointer"
             >
               <Github className="h-5 w-5" />
-              <span className="ml-2">Google</span>
+              Google
             </button>
 
             <button
               onClick={handleLoginFacebook}
-              className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white hover:bg-gray-50"
+              className="w-full inline-flex justify-center items-center gap-2 py-2 px-4 rounded-md shadow-sm border
+                bg-[hsl(var(--background-unit))]
+                border-[hsl(var(--border))]
+                text-[hsl(var(--foreground))]/85
+                hover:bg-[hsl(var(--blue))]/90
+                hover:cursor-pointer"
             >
-              <Facebook className="h-5 w-5 text-blue-600" />
-              <span className="ml-2">Facebook</span>
+              <Facebook className="h-5 w-5" />
+              Facebook
             </button>
           </div>
         </div>
@@ -223,7 +267,7 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
       <div className="mt-4 text-center">
         <button
           onClick={cambiarFormulario}
-          className="text-sm text-blue-600 hover:text-blue-500"
+          className="text-sm transition text-[hsl(var(--primary))] hover:text-[hsl(var(--primary))]/80 hover:cursor-pointer"
         >
           {esInicioSesion
             ? "¿No tienes una cuenta? Regístrate"

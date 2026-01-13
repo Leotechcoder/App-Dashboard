@@ -1,0 +1,56 @@
+:root {
+  /* =========================
+     USER FORM - SURFACE
+  ========================= */
+  --user-form-backdrop: 210 40% 96%;
+  --user-form-bg: 0 0% 100%;
+  --user-form-border: 220 13% 80%;
+
+  /* =========================
+     USER FORM - TEXT
+  ========================= */
+  --user-form-title: 222 47% 11%;
+  --user-form-label: 215 16% 47%;
+  --user-form-placeholder: 215 16% 60%;
+
+  /* =========================
+     USER FORM - INPUT
+  ========================= */
+  --user-form-input-bg: 0 0% 100%;
+  --user-form-input-border: 220 13% 80%;
+  --user-form-input-fg: 222 47% 11%;
+  --user-form-input-focus: 210 90% 55%;
+
+  /* =========================
+     USER FORM - ICONS
+  ========================= */
+  --user-form-icon: 215 16% 60%;
+
+  /* =========================
+     USER FORM - STATES
+  ========================= */
+  --user-form-error: 0 84% 60%;
+  --user-form-primary: 210 90% 55%;
+  --user-form-primary-fg: 0 0% 100%;
+}
+
+.dark {
+  --user-form-backdrop: 217 32% 17%;
+  --user-form-bg: 217 32% 22%;
+  --user-form-border: 217 19% 27%;
+
+  --user-form-title: 210 40% 98%;
+  --user-form-label: 215 20% 65%;
+  --user-form-placeholder: 215 15% 55%;
+
+  --user-form-input-bg: 217 32% 17%;
+  --user-form-input-border: 217 19% 27%;
+  --user-form-input-fg: 210 40% 98%;
+  --user-form-input-focus: 210 90% 60%;
+
+  --user-form-icon: 215 20% 65%;
+
+  --user-form-error: 0 72% 60%;
+  --user-form-primary: 210 90% 60%;
+  --user-form-primary-fg: 0 0% 100%;
+}

@@ -1,0 +1,21 @@
+:root {
+  --dashboard-bg: 0 0% 100%;
+  --dashboard-card: 0 0% 100%;
+  --dashboard-card-border: var(--border);
+  --dashboard-border: 214.3 31.8% 91.4%;
+  --dashboard-muted: 215.4 16.3% 46.9%;
+
+  --dashboard-primary: 231 85% 65%;
+  --dashboard-secondary: 262 83% 65%;
+}
+
+.dark {
+  --dashboard-bg: 222.2 47.4% 11.2%;
+  --dashboard-card: 217.2 32.6% 17.5%;
+  --dashboard-card-border: var(--border);
+  --dashboard-border: 217.2 32.6% 17.5%;
+  --dashboard-muted: 215 20.2% 65.1%;
+
+  --dashboard-primary: 231 85% 70%;
+  --dashboard-secondary: 262 83% 72%;
+}

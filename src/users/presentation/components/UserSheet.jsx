@@ -3,7 +3,12 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setEditingUser, setFormView } from "../../application/userSlice";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -37,29 +42,31 @@ import { formatCurrency } from "@/shared/utils/formatPriceLocal";
 import { cn } from "@/lib/utils";
 
 /* ───────────────────────────────
-   MAPEO SEGURO DE COLORES PARA TAILWIND
+   🎨 Metric styles (USING PROVIDED TOKENS)
 ──────────────────────────────── */
 const metricStyles = {
-  blue: "bg-blue-50 hover:bg-blue-100 text-blue-600",
-  green: "bg-green-50 hover:bg-green-100 text-green-600",
-  purple: "bg-purple-50 hover:bg-purple-100 text-purple-600",
+  primary:
+    "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]",
+  success:
+    "bg-[hsl(var(--green)/0.9)] text-[hsl(var(--primary-foreground))]",
+  info:
+    "bg-[hsl(var(--purpure))] text-[hsl(var(--primary-foreground))]",
 };
 
 const UserCard = ({ user, onBack }) => {
   const dispatch = useDispatch();
   const [editModal, setEditModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const contentRef = useRef(null);
 
   const orders = useSelector((state) => state.sales.closedOrders || []);
   const items = useSelector((state) => state.items.data || []);
   const role = useSelector((state) => state.users.role) || "Cliente";
 
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const contentRef = useRef(null);
-
-  /*───────────────────────────
-    🧭 Guardar posición del scroll
-  ───────────────────────────*/
+  /* ───────────────────────────
+     Scroll handling
+  ─────────────────────────── */
   const handlerShowOrderSheet = (order) => {
     if (contentRef.current) {
       setScrollPosition(contentRef.current.scrollTop);
@@ -67,9 +74,6 @@ const UserCard = ({ user, onBack }) => {
     setSelectedOrder(order);
   };
 
-  /*───────────────────────────
-    🔒 Bloquear scroll del body
-  ───────────────────────────*/
   useEffect(() => {
     if (selectedOrder) {
       const prev = document.body.style.overflow;
@@ -80,18 +84,15 @@ const UserCard = ({ user, onBack }) => {
     }
   }, [selectedOrder]);
 
-  /*───────────────────────────
-    ↩ Restaurar scroll
-  ───────────────────────────*/
   useEffect(() => {
     if (!selectedOrder && contentRef.current) {
       contentRef.current.scrollTop = scrollPosition;
     }
   }, [selectedOrder, scrollPosition]);
 
-  /*───────────────────────────
-    📡 Fetch de órdenes y items
-  ───────────────────────────*/
+  /* ───────────────────────────
+     Fetch data
+  ─────────────────────────── */
   useEffect(() => {
     if (!user?.registrationDate) return;
 
@@ -111,9 +112,9 @@ const UserCard = ({ user, onBack }) => {
     dispatch(getData());
   }, [user, dispatch]);
 
-  /*───────────────────────────
-    📊 Lógica de métricas y filtros
-  ───────────────────────────*/
+  /* ───────────────────────────
+     Metrics logic
+  ─────────────────────────── */
   const userOrders = useMemo(() => {
     return orders
       .filter((o) => o.customerName === user.username)
@@ -121,10 +122,13 @@ const UserCard = ({ user, onBack }) => {
   }, [orders, user.username]);
 
   const totalOrders = userOrders.length;
+
   const totalSpent = useMemo(
-    () => userOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0),
+    () =>
+      userOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0),
     [userOrders]
   );
+
   const averagePerOrder =
     totalOrders > 0 ? (totalSpent / totalOrders).toFixed(2) : 0;
 
@@ -132,61 +136,50 @@ const UserCard = ({ user, onBack }) => {
   const progressValue = Math.min((totalSpent / purchaseGoal) * 100, 100);
 
   const topProducts = useMemo(() => {
-    const userItems = items.filter((item) =>
-      userOrders.some((o) => o.id === item.orderId)
-    );
+    const aggregated = {};
 
-    const aggregated = Object.values(
-      userItems.reduce((acc, item) => {
-        if (!acc[item.productId]) {
-          acc[item.productId] = {
+    items
+      .filter((item) => userOrders.some((o) => o.id === item.orderId))
+      .forEach((item) => {
+        if (!aggregated[item.productId]) {
+          aggregated[item.productId] = {
             name: item.productName,
             purchases: 0,
           };
         }
-        acc[item.productId].purchases += Number(item.quantity) || 0;
-        return acc;
-      }, {})
-    );
+        aggregated[item.productId].purchases += Number(item.quantity) || 0;
+      });
 
-    return aggregated
+    return Object.values(aggregated)
       .sort((a, b) => b.purchases - a.purchases)
       .slice(0, 3);
   }, [items, userOrders]);
 
-  /*───────────────────────────
-    Handlers
-  ───────────────────────────*/
+  /* ───────────────────────────
+     Handlers
+  ─────────────────────────── */
   const handleBack = () => {
-    if (onBack) onBack();
+    onBack?.();
     dispatch(setEditingUser(null));
     dispatch(setFormView(false));
   };
 
-  const handleEditProfile = () => setEditModal(true);
-  const handlerOnBackOrder = () => setSelectedOrder(null);
-
-  /*───────────────────────────
-    RENDER
-  ───────────────────────────*/
   return (
-    <Card className="w-full h-full mx-auto shadow-xl border-0 bg-linear-to-br from-white to-gray-50 animate-in fade-in duration-300">
+    <Card className="w-full h-full border border-[hsl(var(--border))] shadow-xl animate-in fade-in">
       <UserHeader
         user={user}
         role={role}
         onBack={handleBack}
-        onEdit={handleEditProfile}
+        onEdit={() => setEditModal(true)}
       />
 
-      {/* Contenido scrolleable */}
       <CardContent
         ref={contentRef}
-        className="space-y-6 p-6 overflow-y-auto"
+        className="p-6 space-y-6 overflow-y-auto"
       >
         <UserInfo user={user} />
         <Separator />
 
-        {/* Tooltip solo donde se usa */}
         <TooltipProvider>
           <UserMetrics
             totalOrders={totalOrders}
@@ -198,41 +191,35 @@ const UserCard = ({ user, onBack }) => {
         </TooltipProvider>
 
         <Separator />
+
         <UserOrdersTable
           userOrders={userOrders}
           onSelectOrder={handlerShowOrderSheet}
         />
+
         <Separator />
+
         <UserTopProducts topProducts={topProducts} />
       </CardContent>
 
-      {/* Modal lateral */}
+      {/* Order Sheet */}
       <AnimatePresence>
         {selectedOrder && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-end backdrop-blur-sm px-4"
+            className="fixed inset-0 z-50 flex justify-end backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div
-              className="w-full max-w-5xl max-h-[95vh] overflow-hidden rounded-lg bg-transparent shadow-lg"
-              initial={{ x: 400, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: 400, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 160, damping: 20 }}
-            >
-              <OrderCard
-                order={selectedOrder}
-                onBack={handlerOnBackOrder}
-                className={"h-[calc(100dvh-145px)] overflow-y-auto"}
-              />
-            </motion.div>
+            <OrderCard
+              order={selectedOrder}
+              onBack={() => setSelectedOrder(null)}
+            />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Modal editar */}
+      {/* Edit modal */}
       <AnimatePresence>
         {editModal && (
           <EditUserForm user={user} setEditModal={setEditModal} />
@@ -243,43 +230,33 @@ const UserCard = ({ user, onBack }) => {
 };
 
 /* ───────────────────────────────
-   SUBCOMPONENTES
+   SUBCOMPONENTS
 ──────────────────────────────── */
 
 const UserHeader = ({ user, role, onBack, onEdit }) => (
-  <CardHeader className="bg-linear-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
+  <CardHeader className="bg-linear-to-r from-[hsl(var(--accent))] to-[hsl(var(--blue)/0.8)] text-[hsl(var(--user-header-foreground))] rounded-t-lg">
     <CardTitle className="flex items-center justify-between">
-      <div className="flex items-center space-x-4">
-        <Avatar className="border-2 border-white">
+      <div className="flex items-center gap-4">
+        <Avatar className="border-2 border-[hsl(var(--blue)/0.3)]">
           <AvatarImage src={user.avatar} alt={user.username} />
-          <AvatarFallback className="bg-white text-blue-600">
+          <AvatarFallback className="bg-[hsl(var(--stroke))] text-[hsl(var(--foreground))]">
             {user.username.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
 
         <div>
           <h3 className="text-xl font-bold">{user.username}</h3>
-          <Badge variant="outline" className="text-white border-white">
+          <Badge variant="outline" className="border-[hsl(var(--foreground))] text-[hsl(var(--blue))]">
             {role}
           </Badge>
         </div>
       </div>
 
-      <div className="grid gap-2">
-        <Button
-          onClick={onBack}
-          variant="secondary"
-          size="sm"
-          className="bg-white text-blue-600 hover:bg-gray-100"
-        >
-          ← Volver
+      <div className="flex flex-col gap-2">
+        <Button size="sm" variant="ghost" className={"bg-[hsl(var(--accent)/0.2)] border border-[hsl(var(--blue))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--accent)/0.4)]"} onClick={onBack}>
+          Volver
         </Button>
-        <Button
-          onClick={onEdit}
-          variant="secondary"
-          size="sm"
-          className="bg-white text-blue-600 hover:bg-gray-100"
-        >
+        <Button size="sm" variant="default" onClick={onEdit}>
           Editar Perfil
         </Button>
       </div>
@@ -287,40 +264,24 @@ const UserHeader = ({ user, role, onBack, onEdit }) => (
   </CardHeader>
 );
 
-/*───────────────────────────*/
 const UserInfo = ({ user }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div className="space-y-1 text-sm text-gray-600">
-      <p>
-        <strong>ID:</strong> {user.id}
-      </p>
-      <p>
-        <strong>Email:</strong> {user.email}
-      </p>
-      <p>
-        <strong>Teléfono:</strong> {user.phone}
-      </p>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-[hsl(var(--muted-foreground))]">
+    <div className="space-y-1">
+      <p><strong>ID:</strong> {user.id}</p>
+      <p><strong>Email:</strong> {user.email}</p>
+      <p><strong>Teléfono:</strong> {user.phone}</p>
     </div>
 
-    <div className="space-y-1 text-sm text-gray-600">
-      <p>
-        <strong>Dirección:</strong> {user.address}
-      </p>
+    <div className="space-y-1">
+      <p><strong>Dirección:</strong> {user.address}</p>
       <p>
         <strong>Registro:</strong>{" "}
         {new Date(user.registrationDate).toLocaleDateString()}
-      </p>
-      <p>
-        <strong>Actualización:</strong>{" "}
-        {user.updateProfile
-          ? new Date(user.updateProfile).toLocaleDateString()
-          : "Sin registro"}
       </p>
     </div>
   </div>
 );
 
-/*───────────────────────────*/
 const UserMetrics = ({
   totalOrders,
   totalSpent,
@@ -329,39 +290,34 @@ const UserMetrics = ({
   purchaseGoal,
 }) => {
   const metrics = [
-    { label: "Total Órdenes", value: totalOrders, color: "blue" },
+    { label: "Órdenes", value: totalOrders, style: "primary" },
     {
       label: "Total Gastado",
-      value: `$${formatCurrency(totalSpent, 1)}`,
-      color: "green",
+      value: `$${formatCurrency(totalSpent)}`,
+      style: "success",
     },
     {
       label: "Promedio por Orden",
       value: `$${formatCurrency(averagePerOrder)}`,
-      color: "purple",
+      style: "info",
     },
   ];
 
   return (
     <div className="space-y-4">
-      <h4 className="font-semibold text-lg">Métricas de Usuario</h4>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {metrics.map((m, i) => (
-          <Tooltip key={i}>
-            <TooltipTrigger>
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.3, delay: i * 0.1 }}
+        {metrics.map((m) => (
+          <Tooltip key={m.label}>
+            <TooltipTrigger asChild>
+              <div
                 className={cn(
-                  "text-center p-4 rounded-lg transition select-none cursor-default",
-                  metricStyles[m.color]
+                  "rounded-xl p-4 text-center transition select-none",
+                  metricStyles[m.style]
                 )}
               >
                 <p className="text-2xl font-bold">{m.value}</p>
-                <p className="text-sm text-gray-600">{m.label}</p>
-              </motion.div>
+                <p className="text-sm">{m.label}</p>
+              </div>
             </TooltipTrigger>
             <TooltipContent>{m.label}</TooltipContent>
           </Tooltip>
@@ -369,102 +325,61 @@ const UserMetrics = ({
       </div>
 
       <div>
-        <p className="text-sm font-medium mb-2">Progreso de Compras</p>
         <Progress value={progressValue} className="h-3" />
-        <p className="text-xs text-gray-500 mt-1">
-          {progressValue.toFixed(0)}% hacia el objetivo de $
-          {formatCurrency(purchaseGoal, 0)}
+        <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
+          {progressValue.toFixed(0)}% hacia ${formatCurrency(purchaseGoal)}
         </p>
       </div>
     </div>
   );
 };
 
-/*───────────────────────────*/
-const UserOrdersTable = ({ userOrders, onSelectOrder }) => {
-  const getStatusBadge = (status) => {
-    const variants = {
-      paid: "default",
-      delivered: "secondary",
-      pending: "outline",
-    };
-    const labels = {
-      paid: "Pagado",
-      delivered: "Entregado",
-      pending: "Pendiente",
-    };
-    return (
-      <Badge variant={variants[status] || "outline"}>
-        {labels[status] || status}
-      </Badge>
-    );
-  };
+const UserOrdersTable = ({ userOrders, onSelectOrder }) => (
+  <div>
+    <h4 className="font-medium mb-3">Órdenes Recientes</h4>
 
-  return (
-    <div>
-      <h4 className="font-medium mb-3">Órdenes Recientes</h4>
+    <div className="rounded-md border border-[hsl(var(--border))]">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>ID</TableHead>
+            <TableHead>Fecha</TableHead>
+            <TableHead className="text-right">Total</TableHead>
+          </TableRow>
+        </TableHeader>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
+        <TableBody>
+          {userOrders.length === 0 ? (
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Cliente</TableHead>
-              <TableHead>Fecha</TableHead>
-              <TableHead>Estado</TableHead>
-              <TableHead className="text-right">Total</TableHead>
+              <TableCell colSpan={3} className="text-center text-[hsl(var(--muted-foreground))]">
+                No hay órdenes para mostrar
+              </TableCell>
             </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {userOrders.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="text-center text-muted-foreground"
-                >
-                  No hay órdenes para mostrar
+          ) : (
+            userOrders.slice(0, 5).map((order) => (
+              <TableRow
+                key={order.id}
+                onClick={() => onSelectOrder(order)}
+                className="cursor-pointer hover:bg-[hsl(var(--background-unit-2))]"
+              >
+                <TableCell>#{order.orderNumber}</TableCell>
+                <TableCell>
+                  {format(new Date(order.createdAt), "dd MMM yyyy, HH:mm", {
+                    locale: es,
+                  })}
+                </TableCell>
+                <TableCell className="text-right">
+                  ${formatCurrency(order.total)}
                 </TableCell>
               </TableRow>
-            ) : (
-              userOrders.slice(0, 5).map((order) => (
-                <TableRow
-                  key={order.id}
-                  className="cursor-pointer hover:bg-gray-50"
-                  onClick={() => onSelectOrder(order)}
-                >
-                  <TableCell className="font-medium">
-                    #{order.orderNumber}
-                  </TableCell>
-                  <TableCell>{order.customerName}</TableCell>
-                  <TableCell>
-                    {format(
-                      new Date(order.createdAt),
-                      "dd MMM yyyy, HH:mm",
-                      { locale: es }
-                    )}
-                  </TableCell>
-                  <TableCell>{getStatusBadge(order.status)}</TableCell>
-                  <TableCell className="text-right font-medium">
-                    ${formatCurrency(order.total)}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      {userOrders.length > 5 && (
-        <Button variant="link" className="mt-2">
-          Ver Todas
-        </Button>
-      )}
+            ))
+          )}
+        </TableBody>
+      </Table>
     </div>
-  );
-};
+  </div>
+);
 
-/*───────────────────────────*/
 const UserTopProducts = ({ topProducts }) => (
   <div>
     <h4 className="font-medium mb-3">Productos Más Comprados</h4>
@@ -474,14 +389,16 @@ const UserTopProducts = ({ topProducts }) => (
         topProducts.map((product, idx) => (
           <motion.li
             key={product.name}
-            initial={{ opacity: 0, y: -5 }}
+            initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex justify-between items-center p-2 bg-gray-100 rounded-xl"
+            className="flex justify-between items-center p-2 rounded-xl bg-[hsl(var(--background-unit-2))]"
           >
             <span className="text-sm">
               {idx + 1}. {product.name}
             </span>
-            <Badge variant="outline">{product.purchases} compras</Badge>
+            <Badge variant="outline">
+              {product.purchases} compras
+            </Badge>
           </motion.li>
         ))
       ) : (

@@ -5,10 +5,10 @@ export const FiltrosCategorias = ({ onCategoryChange, selectedCategory }) => {
   const categorias = useSelector((store) => store.products.categorias)
 
   return (
-    <div className="flex gap-4 border-b my-3 overflow-x-auto">
+    <div className="flex gap-4 my-3 overflow-x-auto">
       <button
-        className={`px-4 py-2 whitespace-nowrap cursor-pointer hover:font-medium ${
-          !selectedCategory ? "border-b-2 border-orange-600 text-orange-600" : "text-gray-500"
+        className={`px-4 py-2 whitespace-nowrap cursor-pointer text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))] ${
+          !selectedCategory ? "bg-[hsl(var(--dashboard))] border-b-2 border-[hsl(var(--primary))] text-[hsl(var(--primary))] rounded-md" : "text-[hsl(var(--muted-foreground))]"
         }`}
         onClick={() => onCategoryChange(null)}
       >
@@ -18,10 +18,9 @@ export const FiltrosCategorias = ({ onCategoryChange, selectedCategory }) => {
         ? categorias.data.map((categoria) => (
             <button
               key={categoria}
-              className={`px-4 py-2 whitespace-nowrap cursor-pointer hover:font-medium  ${
+              className={`px-4 py-2 whitespace-nowrap cursor-pointer text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]  ${
                 selectedCategory === categoria
-                  ? "border-b-2 border-orange-600 text-orange-600"
-                  : "text-gray-500"
+                  ? "bg-[hsl(var(--dashboard))] border-b-2 border-[hsl(var(--primary))] text-[hsl(var(--primary))] rounded-md" : "text-[hsl(var(--muted-foreground))]"
               }`}
               onClick={() => onCategoryChange(categoria)}
             >

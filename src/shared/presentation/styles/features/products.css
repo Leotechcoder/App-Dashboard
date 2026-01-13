@@ -1,0 +1,21 @@
+:root {
+  --products-bg: 210 40% 98%;
+  --products-card: 0 0% 100%;
+  --products-border: 214.3 31.8% 91.4%;
+  --products-muted: 215.4 16.3% 46.9%;
+
+  --products-primary: 221 83% 53%;
+  --products-success: 142 71% 45%;
+  --products-danger: 0 72% 51%;
+}
+
+.dark {
+  --products-bg: 222.2 47.4% 11.2%;
+  --products-card: 217.2 32.6% 17.5%;
+  --products-border: 217.2 32.6% 17.5%;
+  --products-muted: 215 20.2% 65.1%;
+
+  --products-primary: 217 91% 60%;
+  --products-success: 142 70% 55%;
+  --products-danger: 0 62.8% 55%;
+}

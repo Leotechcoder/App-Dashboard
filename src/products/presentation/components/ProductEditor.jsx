@@ -64,7 +64,7 @@ export function ProductEditor({
   // INVENTORY
   // ---------------------------------------------------------------------
   const [inventory, setInventory] = useState(
-    initialProduct.inventory || {
+    initialProduct?.inventory ?? {
       manageStock: 1,
       stockAvailability: 1,
       qty: "",
@@ -75,7 +75,7 @@ export function ProductEditor({
   // IMAGES — FIXED + NORMALIZED
   // ---------------------------------------------------------------------
   const initialImages = useMemo(() => {
-    const imgs = initialProduct.images || [];
+    const imgs = initialProduct?.images ?? [];
     return imgs.map((img) => ({
       id: img.id,
       uuid: `db_${img.id}`,
@@ -249,12 +249,12 @@ export function ProductEditor({
           >
             <div className="flex items-center gap-3">
               {showBackButton && (
-                <Button className={'hover:cursor-pointer'} variant="ghost" size="sm" onClick={handleCancel}>
+                <Button className={'text-[hsl(var(--muted-foreground))] hover:cursor-pointer hover:text-[hsl(var(--foreground))]'} variant="ghost" size="sm" onClick={handleCancel}>
                   <ArrowLeft className="w-4 h-4" />
                   Volver
                 </Button>
               )}
-              <h2 className="text-2xl font-bold">{initialProduct.name ? 'Editar ' + title : 'Crear ' + title}</h2>
+              <h2 className="text-2xl font-bold">{initialProduct?.name ? 'Editar ' + title : 'Crear ' + title}</h2>
             </div>
           </motion.div>
 
@@ -266,7 +266,8 @@ export function ProductEditor({
               variants={fadeInUp}
               transition={{ duration: 0.35 }}
             >
-              <Card className="bg-white">
+              <Card className="bg-[hsl(var(--background-unit))]
+                border border-[hsl(var(--border))]">
                 <CardHeader>
                   <CardTitle>General</CardTitle>
                 </CardHeader>
@@ -286,7 +287,8 @@ export function ProductEditor({
               variants={fadeInUp}
               transition={{ duration: 0.35, delay: 0.05 }}
             >
-              <Card className="bg-white">
+              <Card className="bg-[hsl(var(--background-unit))]
+                border border-[hsl(var(--border))]">
                 <CardHeader>
                   <CardTitle>Imágenes</CardTitle>
                   <CardDescription>
@@ -333,7 +335,7 @@ export function ProductEditor({
             variants={fadeInUp}
             transition={{ duration: 0.3, delay: 0.05 }}
           >
-            <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
+            <Button variant="outline" className={"text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))"} onClick={handleCancel} disabled={isLoading}>
               Cancelar
             </Button>
 

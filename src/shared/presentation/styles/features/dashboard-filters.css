@@ -1,0 +1,38 @@
+/* ========================================= */
+/* DASHBOARD – SALES FILTERS TOKENS           */
+/* ========================================= */
+
+:root {
+  /* Card */
+  --filters-card-bg: 210 40% 98%;
+  --filters-card-radius: 0.75rem;
+
+  /* Layout */
+  --filters-gap: 1rem;
+
+  /* Labels */
+  --filters-label-text: 222 47% 11%;
+
+  /* Inputs */
+  --filters-input-icon: 215 16% 47%;
+
+  /* Select width (opcional, consistente) */
+  --filters-select-width: 9rem;
+
+  /* Borders */
+  --filters-border: 214.3 31.8% 91.4%;
+}
+
+.dark {
+  /* Card */
+  --filters-card-bg: 217 32% 17%;
+
+  /* Labels */
+  --filters-label-text: 210 40% 98%;
+
+  /* Inputs */
+  --filters-input-icon: 215 20% 65%;
+
+  /* Borders */
+  --filters-border: 217.2 32.6% 27.5%;
+}

@@ -54,13 +54,13 @@ export function CashRegisterSummary({ cashRegister, analysis }) {
   ].filter((m) => m.value && m.value > 0)
 
   return (
-    <Card className={isOpen ? "border-green-500 bg-green-50 dark:bg-green-950" : ""}>
+    <Card className={isOpen ? "border-[hsl(var(--green))] bg-[hsl(var(--green)/0.15)] text-[hsl(var(--foreground))]" : ""}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <Banknote className="h-4 w-4" />
           Estado de Caja
         </CardTitle>
-        <Badge variant={isOpen ? "default" : "secondary"} className={isOpen ? "bg-green-600" : ""}>
+        <Badge variant={isOpen ? "default" : "secondary"} className={isOpen ? "bg-[hsl(var(--green))] text-[hsl(var(--primary-foreground))]" : ""}>
           {isOpen ? "Abierta" : "Cerrada"}
         </Badge>
       </CardHeader>
@@ -70,28 +70,28 @@ export function CashRegisterSummary({ cashRegister, analysis }) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-              <p className="text-xs text-muted-foreground">Monto Inicial</p>
+              <DollarSign className="h-4 w-4 text-[hsl(var(--muted-foreground))]" />
+              <p className="text-xs text-[hsl(var(--muted-foreground))]">Monto Inicial</p>
             </div>
-            <p className="text-xl font-bold">${formatCurrency(cashRegister.initialAmount.toFixed(1))}</p>
+            <p className="text-xl font-bold text-[hsl(var(--green))]">${formatCurrency(cashRegister.initialAmount.toFixed(1))}</p>
           </div>
 
           {isOpen && analysis && (
             <>
               <div>
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-blue-600" />
-                  <p className="text-xs text-muted-foreground">Total Esperado</p>
+                  <TrendingUp className="h-4 w-4 text-[hsl(var(--primary))]" />
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">Total Esperado</p>
                 </div>
-                <p className="text-xl font-bold text-blue-600">${formatCurrency(analysis.expectedTotal.toFixed(1))}</p>
+                <p className="text-xl font-bold text-[hsl(var(--primary))]">${formatCurrency(analysis.expectedTotal.toFixed(1))}</p>
               </div>
 
               <div>
                 <div className="flex items-center gap-2">
-                  <Package className="h-4 w-4 text-muted-foreground" />
-                  <p className="text-xs text-muted-foreground">Órdenes Totales</p>
+                  <Package className="h-4 w-4 text-[hsl(var(--muted-foreground))]" />
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">Órdenes Totales</p>
                 </div>
-                <p className="text-xl font-bold">{analysis.ordersCount}</p>
+                <p className="text-xl font-bold text-[hsl(var(--foreground))]">{analysis.ordersCount}</p>
               </div>
             </>
           )}
@@ -99,10 +99,10 @@ export function CashRegisterSummary({ cashRegister, analysis }) {
           {!isOpen && cashRegister.finalAmount !== null && (
             <div>
               <div className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-                <p className="text-xs text-muted-foreground">Monto Final</p>
+                <DollarSign className="h-4 w-4 text-[hsl(var(--muted-foreground))]" />
+                <p className="text-xs text-[hsl(var(--muted-foreground))]">Monto Final</p>
               </div>
-              <p className="text-xl font-bold">${formatCurrency(cashRegister.finalAmount.toFixed(1))}</p>
+              <p className="text-xl font-bold text-[hsl(var(--green))]">${formatCurrency(cashRegister.finalAmount.toFixed(1))}</p>
             </div>
           )}
         </div>
@@ -114,7 +114,7 @@ export function CashRegisterSummary({ cashRegister, analysis }) {
               <div key={m.label} className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
                   {m.icon}
-                  <p className="text-xs text-muted-foreground">{m.label}</p>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">{m.label}</p>
                 </div>
                 <p className={`text-lg font-semibold ${m.color}`}>${formatCurrency(m.value.toFixed(1))}</p>
               </div>

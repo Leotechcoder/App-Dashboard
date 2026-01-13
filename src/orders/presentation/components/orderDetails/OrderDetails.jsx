@@ -232,9 +232,7 @@ export default function OrderDetails({ onBack, className }) {
   return (
     <main
       className={clsx(
-        `p-8 min-h-screen transition-colors duration-500 ${
-          isEditing ? "bg-blue-50/40" : "bg-emerald-50/30"
-        }`,
+        "p-8 min-h-screen transition-colors duration-500 bg-[hsl(var(--background-unit-2))] border border-[hsl(var(--border))] ",
         className
       )}
     >
@@ -253,23 +251,28 @@ export default function OrderDetails({ onBack, className }) {
         <Button
           variant="ghost"
           onClick={onBack}
-          className={`flex items-center ${
-            isEditing
-              ? "text-blue-800 hover:text-blue-600"
-              : "text-gray-700 hover:text-emerald-600"
-          }`}
+          className={clsx(
+            "flex items-center",
+            "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--green)/0.1)]",
+            "hover:cursor-pointer hover:text-[hsl(var(--primary))]"
+          )}
         >
           <ArrowLeft className="w-4 h-4 mr-2" /> Volver a las órdenes
         </Button>
+
         <h2
-          className={`ml-4 text-xl font-semibold flex items-center gap-2 ${
-            isEditing ? "text-blue-900" : "text-gray-800"
-          }`}
+          className={clsx(
+            "ml-4 text-xl font-semibold flex items-center gap-2",
+            "text-[hsl(var(--foreground))]"
+          )}
         >
           <ShoppingCart
-            className={`w-5 h-5 ${
-              isEditing ? "text-blue-700" : "text-emerald-600"
-            }`}
+            className={clsx(
+              "w-5 h-5",
+              isEditing
+                ? "text-[hsl(var(--blue))]"
+                : "text-[hsl(var(--green))]"
+            )}
           />
           {isEditing ? "Editar Orden" : "Nueva Orden"}
         </h2>
@@ -277,19 +280,23 @@ export default function OrderDetails({ onBack, className }) {
 
       {/* Card principal */}
       <Card
-        className={`border shadow-md rounded-xl overflow-hidden transition-all ${
+        className={clsx(
+          "border shadow-md rounded-xl overflow-hidden transition-all",
+          "bg-[hsl(var(--background-unit))]",
           isEditing
-            ? "border-blue-200 bg-white/90"
-            : "border-emerald-100 bg-white"
-        }`}
+            ? "border-[hsl(var(--blue)/0.7)]"
+            : "border-[hsl(var(--green)/0.7)]"
+        )}
       >
         {/* Info superior */}
         <div
-          className={`grid grid-cols-4 gap-4 p-4 border-b text-sm ${
+          className={clsx(
+            "grid grid-cols-4 gap-4 p-4 border-b border-[hsl(var(--border))] text-sm",
+            "text-[hsl(var(--muted-foreground))]",
             isEditing
-              ? "bg-blue-50 border-blue-100 text-blue-900"
-              : "bg-emerald-50 border-emerald-100 text-gray-700"
-          }`}
+              ? "bg-[hsl(var(--blue)/0.2)]"
+              : "bg-[hsl(var(--green)/0.2)]"
+          )}
         >
           <div className="flex items-center gap-2">
             <Package className="w-4 h-4" />
@@ -320,11 +327,12 @@ export default function OrderDetails({ onBack, className }) {
           <div className="flex items-center justify-end">
             <Button
               onClick={handleOrderSave}
-              className={`shadow-sm ${
+              className={clsx(
+                "shadow-sm text-[hsl(var(--foreground))]",
                 isEditing
-                  ? "bg-blue-700 hover:bg-blue-800 text-white"
-                  : "bg-emerald-600 hover:bg-emerald-700 text-white"
-              }`}
+                  ? "bg-[hsl(var(--blue))] hover:bg-[hsl(var(--blue)/0.9)]"
+                  : "bg-[hsl(var(--green))] hover:bg-[hsl(var(--green)/0.9)]"
+              )}
             >
               {isEditing ? "Actualizar Orden" : "Guardar Orden"}
             </Button>
@@ -335,60 +343,82 @@ export default function OrderDetails({ onBack, className }) {
         <CardContent
           className={
             !isEditing
-              ? "p-6 grid grid-cols-2 gap-6 border-b border-gray-100"
-              : "px-6 pt-5 flex justify-end border-b border-gray-100"
+              ? "p-6 grid grid-cols-2 gap-6 border-b border-[hsl(var(--border))]"
+              : "px-6 pt-5 flex justify-end border-b border-[hsl(var(--border))]"
           }
         >
           {!isEditing && (
-            <>
-              <div>
-                <Label className="text-sm text-gray-700 mb-2 block">
-                  Buscar o ingresar cliente
-                </Label>
-                <Input
-                  value={orderDetails.userName}
-                  onChange={handleUserInput}
-                  placeholder="Ej: Juan Pérez"
-                  onKeyDown={(e) => handleKeyDown(e)}
-                  className="border-emerald-200 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
-                />
-                {showSuggestions && filteredUsers.length > 0 && (
-                  <ul
-                    className="mt-2 bg-white border border-gray-200 rounded-lg shadow-md max-h-48 overflow-auto"
-                    role="listbox"
-                  >
-                    {filteredUsers.map((user, index) => (
-                      <li
-                        key={user.id}
-                        role="option"
-                        aria-selected={index === selectedIndex}
-                        tabIndex={0}
-                        onClick={() => handleSelectUser(user)}
-                        className={`px-3 py-2 cursor-pointer transition-colors ${
-                          index === selectedIndex
-                            ? "bg-emerald-100"
-                            : "hover:bg-emerald-50"
-                        }`}
-                      >
-                        {user.username}
-                      </li>
-                    ))}
-                  </ul>
+            <div>
+              <Label
+                className="text-sm mb-2 block"
+                style={{ color: "hsl(var(--muted-foreground))" }}
+              >
+                Buscar o ingresar cliente
+              </Label>
+
+              <Input
+                value={orderDetails.userName}
+                onChange={handleUserInput}
+                placeholder="Ej: Juan Pérez"
+                onKeyDown={handleKeyDown}
+                className={clsx(
+                  "h-10",
+                  "text-[hsl(var(--foreground))]",
+                  "bg-[hsl(var(--input))]",
+                  "border-[hsl(var(--green)/0.5)]",
+                  "focus:border-[hsl(var(--green))]",
+                  "focus:ring-[hsl(var(--green))]"
                 )}
-              </div>
-            </>
+              />
+
+              {showSuggestions && filteredUsers.length > 0 && (
+                <ul
+                  className={clsx(
+                    "mt-2 rounded-lg shadow-md max-h-48 overflow-auto",
+                    "bg-[hsl(var(--input))]",
+                    "border border-[hsl(var(--green)/0.5)]"
+                  )}
+                  role="listbox"
+                >
+                  {filteredUsers.map((user, index) => (
+                    <li
+                      key={user.id}
+                      role="option"
+                      aria-selected={index === selectedIndex}
+                      tabIndex={0}
+                      onClick={() => handleSelectUser(user)}
+                      className={clsx(
+                        "px-3 py-2 cursor-pointer transition-colors",
+                        index === selectedIndex
+                          ? "bg-[hsl(var(--order-suggestion-active))]"
+                          : "hover:bg-[hsl(var(--order-suggestion-hover))]"
+                      )}
+                    >
+                      {user.username}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           )}
+
           <div className={isEditing ? "ml-auto" : ""}>
-            <Label className="text-sm text-gray-700 mb-2 block">
+            <Label
+              className="text-sm mb-2 block"
+              style={{ color: "hsl(var(--muted-foreground))" }}
+            >
               Tipo de entrega
             </Label>
+
             <Select value={deliveryType} onValueChange={setDeliveryType}>
               <SelectTrigger
-                className={
-                  !isEditing
-                    ? "border-emerald-200 focus:ring-emerald-500 focus:border-emerald-500"
-                    : "border-blue-300 focus:ring-blue-500 focus:boder-blue-500 w-48"
-                }
+                className={clsx(
+                  "bg-[hsl(var(--input))] h-10",
+                  isEditing
+                    ? "border-[hsl(var(--blue)/0.5)] focus:ring-[hsl(var(--blue))]"
+                    : "border-[hsl(var(--green)/0.5)] focus:ring-[hsl(var(--green))]",
+                  isEditing && "w-48"
+                )}
               >
                 <SelectValue placeholder="Seleccionar tipo" />
               </SelectTrigger>

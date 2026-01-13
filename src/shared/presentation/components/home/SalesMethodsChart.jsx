@@ -1,6 +1,5 @@
-
 import React, { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   ResponsiveContainer,
   BarChart,
@@ -13,25 +12,21 @@ import {
 } from "recharts";
 import { formatDateToArg } from "@/shared/utils/formatDateToArg";
 import { BarChart3 } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export const PaymentMethodsChart = () => {
-  const dispatch = useDispatch();
   const { closedOrders } = useSelector((store) => store.sales);
 
-  // 🔹 Preparamos la data para el gráfico
   const data = useMemo(() => {
-    if (!closedOrders || closedOrders.length === 0) return [];
+    if (!closedOrders?.length) return [];
 
     const map = {};
 
-    // Primero filtrar y ordenar las órdenes
     const sortedOrders = [...closedOrders]
-      .filter((order) => order.paidAt && order.paymentInfo?.amounts)
+      .filter((o) => o.paidAt && o.paymentInfo?.amounts)
       .sort((a, b) => new Date(a.paidAt) - new Date(b.paidAt));
 
     sortedOrders.forEach((order) => {
-      if (!order.paidAt || !order.paymentInfo?.amounts) return;
-
       const date = formatDateToArg(order.paidAt);
       const { amounts } = order.paymentInfo;
 
@@ -45,13 +40,12 @@ export const PaymentMethodsChart = () => {
         };
       }
 
-      map[date].efectivo += parseFloat(amounts.efectivo || 0);
-      map[date].debito += parseFloat(amounts.debito || 0);
-      map[date].credito += parseFloat(amounts.credito || 0);
-      map[date].transferencia += parseFloat(amounts.transferencia || 0);
+      map[date].efectivo += Number(amounts.efectivo || 0);
+      map[date].debito += Number(amounts.debito || 0);
+      map[date].credito += Number(amounts.credito || 0);
+      map[date].transferencia += Number(amounts.transferencia || 0);
     });
 
-    // Convertimos el map a array ordenado
     return Object.values(map).sort(
       (a, b) => new Date(a.date) - new Date(b.date)
     );
@@ -59,46 +53,65 @@ export const PaymentMethodsChart = () => {
 
   if (!data.length) {
     return (
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-md">
-      <p className="text-muted-foreground text-sm">
-        No hay datos suficientes para mostrar el gráfico.
-      </p>
-      </div>
+      <Card>
+        <CardContent className="flex items-center justify-center pt-6 ">
+          <p className="text-sm text-[hsl(var(--muted-foreground))]">
+            No hay datos suficientes para mostrar el gráfico.
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-md ">
-      <h3 className="text-lg font-semibold text-indigo-400 mb-4 flex items-center gap-2">
-       <BarChart3 className="h-5 w-5 text-indigo-500" /> Tendencia de Ventas con Métodos de Pago
-      </h3>
+    <Card>
+      <CardHeader className="flex flex-row items-center gap-2">
+        <BarChart3 className="h-5 w-5 text-[hsl(var(--primary))]" />
+        <CardTitle className="text-base">
+          Tendencia de ventas por método de pago
+        </CardTitle>
+      </CardHeader>
 
-      <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-          <XAxis
-            dataKey="date"
-            tick={{ fontSize: 12, fill: "#475569" }}
-            tickMargin={10}
-          />
-          <YAxis tick={{ fontSize: 12, fill: "#475569" }} />
-          <Tooltip
-            labelFormatter={(label) => `Fecha: ${label}`}
-            contentStyle={{
-              backgroundColor: "#fff",
-              border: "1px solid #e2e8f0",
-              borderRadius: "8px",
-            }}
-          />
-          <Legend verticalAlign="top" height={36} />
+      <CardContent>
+        <ResponsiveContainer width="100%" height={350}>
+          <BarChart data={data}>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="hsl(var(--chart-grid))"
+            />
 
-          {/* Barras apiladas por método */}
-          <Bar dataKey="efectivo" stackId="a" fill="#22c55e" />
-          <Bar dataKey="debito" stackId="a" fill="#3b82f6" />
-          <Bar dataKey="credito" stackId="a" fill="#a855f7" />
-          <Bar dataKey="transferencia" stackId="a" fill="#f43f5e" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+            <XAxis
+              dataKey="date"
+              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+              tickMargin={10}
+            />
+            <YAxis
+              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+            />
+
+            <Tooltip
+              labelFormatter={(label) => `Fecha: ${label}`}
+              contentStyle={{
+                backgroundColor: "hsl(var(--popover))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "var(--radius)",
+                color: "hsl(var(--popover-foreground))",
+              }}
+            />
+
+            <Legend verticalAlign="top" height={36} />
+
+            <Bar dataKey="efectivo" stackId="a" fill="hsl(var(--green)/0.9)" />
+            <Bar dataKey="debito" stackId="a" fill="hsl(var(--yellow)/0.9)" />
+            <Bar dataKey="credito" stackId="a" fill="hsl(var(--primary))" />
+            <Bar
+              dataKey="transferencia"
+              stackId="a"
+              fill="hsl(var(--purpure)/0.9)"
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
   );
 };

@@ -54,9 +54,8 @@ const RootLayout = () => {
 
       <div className="flex h-screen bg-background">
         {/* Sidebar fijo */}
-        <aside className="w-36 shrink-0 border-r border-border bg-sidebar">
           <Sidebar />
-        </aside>
+        
 
         {/* Área principal con scroll interno */}
         <div className="flex flex-col flex-1 overflow-hidden">

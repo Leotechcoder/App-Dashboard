@@ -1,0 +1,69 @@
+/* ============================= */
+/* LOGIN TOKENS */
+/* ============================= */
+
+:root {
+  --login-bg: 0 0% 100%;
+
+  --login-title: 222 47% 11%;
+  --login-text: 222 47% 11%;
+  --login-label: 215 20% 35%;
+  --login-muted: 215 20% 55%;
+
+  --login-input-bg: 0 0% 100%;
+  --login-input-text: 222 47% 11%;
+  --login-placeholder: 215 20% 60%;
+  --login-border: 214 32% 91%;
+
+  --login-icon: 215 20% 55%;
+
+  --login-primary: 221 83% 53%;
+  --login-primary-hover: 221 83% 48%;
+  --login-primary-foreground: 0 0% 100%;
+
+  --login-error: 0 72% 51%;
+
+  --login-divider: 214 32% 85%;
+
+  --login-social-bg: 0 0% 100%;
+  --login-social-hover: 210 40% 96%;
+
+  --login-link: 221 83% 53%;
+  --login-link-hover: 221 83% 48%;
+}
+
+/* ============================= */
+/* DARK MODE */
+/* ============================= */
+
+.dark {
+  --login-bg: 222 47% 11%;
+
+  --login-title: 0 0% 98%;
+  --login-text: 0 0% 98%;
+  --login-label: 215 20% 75%;
+  --login-muted: 215 20% 65%;
+
+  --login-input-bg: 222 47% 11%;
+  --login-input-text: 0 0% 98%;
+  --login-placeholder: 215 20% 55%;
+  --login-border: 217 32% 17%;
+
+    --login-icon: 215 20% 75%;
+
+    --login-primary: 221 83% 63%;
+    --login-primary-hover: 221 83% 68%;
+    --login-primary-foreground: 222 47% 11%;
+
+    --login-error: 0 72% 61%;
+
+    --login-divider: 217 32% 25%;
+
+    --login-social-bg: 222 47% 11%;
+    --login-social-hover: 210 40% 96%;
+
+    --login-link: 221 83% 63%;
+    --login-link-hover: 221 83% 68%;
+
+
+}

@@ -1,0 +1,36 @@
+/* ============================================================
+   TABS COMPONENT TOKENS
+   ============================================================ */
+
+:root {
+  /* Container */
+  --tabs-list-bg: 210 40% 96.1%;
+  --tabs-list-text: 215.4 16.3% 46.9%;
+  --tabs-list-radius: 0.5rem;
+
+  /* Trigger */
+  --tabs-trigger-text: 222.2 47.4% 11.2%;
+  --tabs-trigger-hover-bg: 210 40% 94%;
+  --tabs-trigger-hover-text: 222.2 47.4% 11.2%;
+
+  --tabs-trigger-active-bg: 0 0% 100%;
+  --tabs-trigger-active-text: 222.2 47.4% 11.2%;
+  --tabs-trigger-active-shadow: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+
+  --tabs-focus-ring: 221.2 83.2% 53.3%;
+}
+
+.dark {
+  --tabs-list-bg: 217.2 32.6% 17.5%;
+  --tabs-list-text: 215 20.2% 65.1%;
+
+  --tabs-trigger-text: 210 40% 98%;
+  --tabs-trigger-hover-bg: 217.2 32.6% 22%;
+  --tabs-trigger-hover-text: 210 40% 98%;
+
+  --tabs-trigger-active-bg: 222.2 84% 6%;
+  --tabs-trigger-active-text: 210 40% 98%;
+  --tabs-trigger-active-shadow: 0 1px 2px 0 hsl(0 0% 0% / 0.3);
+
+  --tabs-focus-ring: 224.3 76.3% 48%;
+}

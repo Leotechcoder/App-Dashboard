@@ -1,7 +1,6 @@
-// src/modules/products/components/ProductForm.jsx
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/text-area";
@@ -13,7 +12,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function ProductForm({ initialData = {}, categories = [], onChange }) {
+export function ProductForm({
+  initialData = {},
+  categories = [],
+  onChange,
+}) {
   const [formData, setFormData] = useState({
     name: initialData.name || "",
     description: initialData.description || "",
@@ -26,31 +29,30 @@ export function ProductForm({ initialData = {}, categories = [], onChange }) {
         : "true",
   });
 
-  const [errors, setErrors] = useState({});
-
   useEffect(() => {
     onChange?.(formData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData]);
 
-  const updateField = (name, value) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+  const updateField = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
-    <div className="space-y-6">
-      {/* Nombre */}
+    <div className="space-y-6 text-[hsl(var(--muted-foreground))]">
+      {/* NOMBRE */}
       <div className="space-y-2">
         <Label htmlFor="name">Nombre</Label>
         <Input
           id="name"
           value={formData.name}
           onChange={(e) => updateField("name", e.target.value)}
+          className="bg-[hsl(var(--background-unit-2))] 
+                     border-[hsl(var(--border))] text-[hsl(var(--foreground))] "
         />
       </div>
 
-      {/* Descripción */}
+      {/* DESCRIPCIÓN */}
       <div className="space-y-2">
         <Label htmlFor="description">Descripción</Label>
         <Textarea
@@ -58,22 +60,27 @@ export function ProductForm({ initialData = {}, categories = [], onChange }) {
           rows={4}
           value={formData.description}
           onChange={(e) => updateField("description", e.target.value)}
+          className="bg-[hsl(var(--background-unit-2))] 
+                     border-[hsl(var(--border))] text-[hsl(var(--foreground))] "
         />
       </div>
 
-      {/* Precio / Stock */}
+      {/* PRECIO / STOCK */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="price">Precio</Label>
           <Input
             id="price"
             type="number"
-            step="0.01"
             min="0"
+            step="0.01"
             value={formData.price}
             onChange={(e) => updateField("price", e.target.value)}
+            className="bg-[hsl(var(--background-unit-2))] 
+                       border-[hsl(var(--border))] text-[hsl(var(--foreground))] "
           />
         </div>
+
         <div className="space-y-2">
           <Label htmlFor="stock">Stock</Label>
           <Input
@@ -82,21 +89,30 @@ export function ProductForm({ initialData = {}, categories = [], onChange }) {
             min="0"
             value={formData.stock}
             onChange={(e) => updateField("stock", e.target.value)}
+            className="bg-[hsl(var(--background-unit-2))] 
+                       border-[hsl(var(--border))] text-[hsl(var(--foreground))] "
           />
         </div>
       </div>
 
-      {/* Categoría */}
+      {/* CATEGORÍA */}
       <div className="space-y-2">
-        <Label htmlFor="category">Categoría</Label>
+        <Label>Categoría</Label>
         <Select
           value={formData.category}
           onValueChange={(value) => updateField("category", value)}
         >
-          <SelectTrigger>
+          <SelectTrigger
+            className="bg-[hsl(var(--background-unit-2))] 
+                       border-[hsl(var(--border))]"
+          >
             <SelectValue placeholder="Seleccionar categoría" />
           </SelectTrigger>
-          <SelectContent className="bg-gray-50">
+
+          <SelectContent
+            className="bg-[hsl(var(--background-unit-2))] 
+                       border border-[hsl(var(--border))] "
+          >
             {categories.map((cat) => (
               <SelectItem key={cat} value={cat}>
                 {cat}
@@ -106,17 +122,24 @@ export function ProductForm({ initialData = {}, categories = [], onChange }) {
         </Select>
       </div>
 
-      {/* Estado */}
+      {/* ESTADO */}
       <div className="space-y-2">
-        <Label htmlFor="available">Estado</Label>
+        <Label>Estado</Label>
         <Select
           value={String(formData.available)}
-          onValueChange={(val) => updateField("available", val)}
+          onValueChange={(value) => updateField("available", value)}
         >
-          <SelectTrigger>
+          <SelectTrigger
+            className="bg-[hsl(var(--background-unit-2))] 
+                       border-[hsl(var(--border))]"
+          >
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-gray-50">
+
+          <SelectContent
+            className="bg-[hsl(var(--background-unit-2))] 
+                       border border-[hsl(var(--border))]"
+          >
             <SelectItem value="true">Disponible</SelectItem>
             <SelectItem value="false">No disponible</SelectItem>
           </SelectContent>

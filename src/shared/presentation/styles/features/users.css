@@ -1,0 +1,38 @@
+/* ========================================= */
+/* Users / Contact Feature Tokens            */
+/* ========================================= */
+
+:root {
+  /* Page */
+  --users-page-bg: var(--secondary);
+  --users-page-radius: var(--radius);
+
+  /* Header */
+  --users-title-color: var(--foreground);
+
+  /* Panels */
+  --users-panel-bg: var(--card);
+  --users-panel-border: var(--border);
+  --users-panel-shadow: 0 10px 20px hsl(var(--foreground) / 0.08);
+
+  /* Help box (info state) */
+  --users-help-bg: hsl(var(--info) / 0.08);
+  --users-help-border: var(--info);
+  --users-help-icon: var(--info);
+  --users-help-title: var(--foreground);
+  --users-help-text: var(--muted-foreground);
+
+  /* Close button */
+  --users-close-color: var(--muted-foreground);
+  --users-close-hover: var(--foreground);
+}
+
+.dark {
+  --users-page-bg: var(--secondary);
+
+  --users-panel-bg: var(--card);
+  --users-panel-border: var(--border);
+  --users-panel-shadow: 0 10px 20px hsl(var(--foreground) / 0.25);
+
+  --users-help-bg: hsl(var(--info) / 0.15);
+}

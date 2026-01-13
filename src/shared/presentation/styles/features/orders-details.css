@@ -1,0 +1,156 @@
+:root {
+  /* =========================
+     ORDER PAGE - BACKGROUND
+  ========================= */
+  --order-bg-create: 142 60% 95%;
+  --order-bg-edit: 210 80% 96%;
+
+  /* =========================
+     ORDER HEADER
+  ========================= */
+  --order-header-fg: 222 47% 11%;
+  --order-header-icon-create: 142 70% 45%;
+  --order-header-icon-edit: 210 90% 45%;
+
+  /* =========================
+     CARD
+  ========================= */
+  --order-card-bg: 0 0% 100%;
+  --order-card-border-create: 142 60% 85%;
+  --order-card-border-edit: 210 80% 85%;
+
+  /* =========================
+     CARD HEADER
+  ========================= */
+  --order-card-header-bg-create: 142 60% 95%;
+  --order-card-header-bg-edit: 210 80% 95%;
+  --order-card-header-fg: 222 47% 11%;
+
+  /* =========================
+     BUTTON PRIMARY
+  ========================= */
+  --order-btn-create-bg: 142 70% 45%;
+  --order-btn-create-bg-hover: 142 70% 38%;
+  --order-btn-edit-bg: 210 90% 45%;
+  --order-btn-edit-bg-hover: 210 90% 38%;
+  --order-btn-fg: 0 0% 100%;
+
+  /* =========================
+     FORM
+  ========================= */
+  --order-label: 215 16% 47%;
+  --order-input-bg: 0 0% 100%;
+  --order-input-border-create: 142 60% 80%;
+  --order-input-border-edit: 210 60% 80%;
+  --order-input-focus-create: 142 70% 45%;
+  --order-input-focus-edit: 210 90% 45%;
+
+  /* =========================
+     SUGGESTIONS
+  ========================= */
+  --order-suggestion-bg: 0 0% 100%;
+  --order-suggestion-border: 220 13% 85%;
+  --order-suggestion-hover: 142 60% 90%;
+  --order-suggestion-active: 142 60% 85%;
+}
+
+.dark {
+  --order-bg-create: 142 25% 12%;
+  --order-bg-edit: 210 30% 14%;
+
+  --order-header-fg: 210 40% 98%;
+  --order-header-icon-create: 142 70% 55%;
+  --order-header-icon-edit: 210 90% 55%;
+
+  --order-card-bg: 217 32% 17%;
+  --order-card-border-create: 142 30% 30%;
+  --order-card-border-edit: 210 30% 30%;
+
+  --order-card-header-bg-create: 142 25% 18%;
+  --order-card-header-bg-edit: 210 30% 18%;
+  --order-card-header-fg: 210 40% 98%;
+
+  --order-btn-create-bg: 142 70% 55%;
+  --order-btn-create-bg-hover: 142 70% 45%;
+  --order-btn-edit-bg: 210 90% 55%;
+  --order-btn-edit-bg-hover: 210 90% 45%;
+  --order-btn-fg: 0 0% 100%;
+
+  --order-label: 215 20% 65%;
+  --order-input-bg: 217 32% 17%;
+  --order-input-border-create: 142 30% 35%;
+  --order-input-border-edit: 210 30% 35%;
+  --order-input-focus-create: 142 70% 55%;
+  --order-input-focus-edit: 210 90% 55%;
+
+  --order-suggestion-bg: 217 32% 17%;
+  --order-suggestion-border: 217 19% 27%;
+  --order-suggestion-hover: 142 30% 25%;
+  --order-suggestion-active: 142 30% 30%;
+}
+
+:root {
+  /* =========================
+     ORDER ITEMS TABLE
+  ========================= */
+
+  --order-table-bg: 0 0% 100%;
+  --order-table-border: 220 13% 91%;
+  --order-table-divider: 220 13% 90%;
+
+  --order-table-title: 222 47% 11%;
+  --order-table-icon: 142 70% 45%;
+
+  --order-table-head-bg: 220 14% 96%;
+  --order-table-head-fg: 215 16% 47%;
+
+  --order-table-fg: 222 47% 11%;
+  --order-table-muted: 215 16% 47%;
+  --order-table-strong: 222 47% 11%;
+
+  --order-table-row-hover: 142 60% 96%;
+
+  --order-table-total: 142 70% 45%;
+
+  --order-table-edit-bg: 210 100% 96%;
+  --order-table-edit-fg: 210 90% 45%;
+
+  --order-table-delete-bg: 0 100% 96%;
+  --order-table-delete-fg: 0 84% 60%;
+
+  --order-table-empty-bg: 142 60% 95%;
+  --order-table-empty-fg: 142 70% 35%;
+
+  --order-table-footer-bg: 220 14% 97%;
+}
+
+.dark {
+  --order-table-bg: 217 32% 17%;
+  --order-table-border: 217 19% 27%;
+  --order-table-divider: 217 19% 27%;
+
+  --order-table-title: 210 40% 98%;
+  --order-table-icon: 142 70% 55%;
+
+  --order-table-head-bg: 217 32% 19%;
+  --order-table-head-fg: 215 20% 65%;
+
+  --order-table-fg: 210 40% 98%;
+  --order-table-muted: 215 20% 65%;
+  --order-table-strong: 210 40% 98%;
+
+  --order-table-row-hover: 142 30% 25%;
+
+  --order-table-total: 142 70% 55%;
+
+  --order-table-edit-bg: 210 30% 25%;
+  --order-table-edit-fg: 210 90% 55%;
+
+  --order-table-delete-bg: 0 30% 25%;
+  --order-table-delete-fg: 0 84% 60%;
+
+  --order-table-empty-bg: 142 25% 18%;
+  --order-table-empty-fg: 142 70% 55%;
+
+  --order-table-footer-bg: 217 32% 18%;
+}

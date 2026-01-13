@@ -21,7 +21,7 @@ import Input from "../../../shared/presentation/components/Input";
 import Label from "../../../shared/presentation/components/Label";
 
 /* ------------------------------------------
- * Estado inicial del formulario
+ * Estado inicial
  * ------------------------------------------ */
 const initialState = {
   username: "",
@@ -32,7 +32,7 @@ const initialState = {
 };
 
 /* ------------------------------------------
- * Variantes de animación
+ * Animaciones
  * ------------------------------------------ */
 const backdropVariants = {
   hidden: { opacity: 0 },
@@ -54,7 +54,7 @@ const formVariants = {
 };
 
 /* ------------------------------------------
- * Componente principal
+ * Componente
  * ------------------------------------------ */
 const UserForm = () => {
   const dispatch = useDispatch();
@@ -63,7 +63,6 @@ const UserForm = () => {
   const [form, setForm] = useState(initialState);
   const [errors, setErrors] = useState({});
 
-  /* --- Efecto apertura --- */
   useEffect(() => {
     if (isOpen) {
       setForm(initialState);
@@ -71,7 +70,6 @@ const UserForm = () => {
     }
   }, [isOpen]);
 
-  /* --- Cerrar modal --- */
   const handleClose = () => dispatch(toggleOpenForm());
 
   /* --- Validación --- */
@@ -81,15 +79,22 @@ const UserForm = () => {
 
     if (!form.username.trim())
       newErrors.username = "El nombre de usuario es requerido";
-    if (!form.email.trim()) newErrors.email = "El correo electrónico es requerido";
+
+    if (!form.email.trim())
+      newErrors.email = "El correo electrónico es requerido";
     else if (!emailRegex.test(form.email))
       newErrors.email = "Correo electrónico inválido";
+
     if (!form.password_.trim())
       newErrors.password_ = "La contraseña es requerida";
     else if (form.password_.length < 6)
       newErrors.password_ = "Debe tener al menos 6 caracteres";
-    if (!form.phone.trim()) newErrors.phone = "El teléfono es requerido";
-    if (!form.address.trim()) newErrors.address = "La dirección es requerida";
+
+    if (!form.phone.trim())
+      newErrors.phone = "El teléfono es requerido";
+
+    if (!form.address.trim())
+      newErrors.address = "La dirección es requerida";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -109,93 +114,83 @@ const UserForm = () => {
     }
   };
 
-  /* --- Input change --- */
+  /* --- Input --- */
   const handleInput = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  /* --- Si no está abierto, no renderizar --- */
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 backdrop-blur-sm rounded-lg rounded-s-3xl flex items-center justify-end p-4 z-50"
+          className="fixed inset-0 z-50 flex justify-end p-4
+                     backdrop-blur-sm
+                     bg-[hsl(var(--background)/0.6)]"
           variants={backdropVariants}
           initial="hidden"
           animate="visible"
           exit="hidden"
         >
           <motion.div
-            className="bg-gray-100 border border-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 relative overflow-y-auto max-h-screen no-scrollbar"
+            className="relative w-full max-w-md p-6 sm:p-8
+                       rounded-2xl shadow-2xl
+                       bg-[hsl(var(--background-unit))]
+                       border border-[hsl(var(--border))]
+                       overflow-y-auto max-h-screen no-scrollbar"
             variants={formVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
-            {/* Botón cerrar */}
+            {/* Close */}
             <button
               onClick={handleClose}
               aria-label="Cerrar formulario"
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors hover:cursor-pointer"
+              className="absolute top-4 right-4
+                         text-[hsl(var(--primary))]
+                         hover:text-[hsl(var(--primary)/0.6)] transition
+                         hover:cursor-pointer"
             >
               <X size={22} />
             </button>
 
-            {/* Título */}
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">
+            {/* Title */}
+            <h2 className="mb-4 text-xl sm:text-2xl font-bold
+                           text-[hsl(var(--foreground))]">
               Crear cliente online
             </h2>
 
-            {/* Formulario */}
+            {/* Form */}
             <form
               onSubmit={handleSubmit}
               className="flex flex-col gap-3 sm:gap-4 scale-95"
             >
               {[
-                {
-                  id: "username",
-                  label: "Nombre de usuario",
-                  icon: <User />,
-                  type: "text",
-                },
-                {
-                  id: "email",
-                  label: "Correo electrónico",
-                  icon: <Mail />,
-                  type: "email",
-                },
-                {
-                  id: "password_",
-                  label: "Contraseña",
-                  icon: <Lock />,
-                  type: "password",
-                },
-                {
-                  id: "phone",
-                  label: "Teléfono",
-                  icon: <Phone />,
-                  type: "text",
-                },
-                {
-                  id: "address",
-                  label: "Dirección",
-                  icon: <MapPin />,
-                  type: "text",
-                },
+                { id: "username", label: "Nombre de usuario", icon: <User />, type: "text" },
+                { id: "email", label: "Correo electrónico", icon: <Mail />, type: "email" },
+                { id: "password_", label: "Contraseña", icon: <Lock />, type: "password" },
+                { id: "phone", label: "Teléfono", icon: <Phone />, type: "text" },
+                { id: "address", label: "Dirección", icon: <MapPin />, type: "text" },
               ].map(({ id, label, icon, type }) => (
                 <div key={id} className="space-y-1">
                   <Label
                     htmlFor={id}
-                    className="text-gray-700  text-sm sm:text-base"
+                    className="text-sm sm:text-base
+                               text-[hsl(var(--muted-foreground))]"
                   >
                     {label}
                   </Label>
+
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <span
+                      className="absolute left-3 top-1/2 -translate-y-1/2
+                                 text-[hsl(var(--primary))]"
+                    >
                       {icon}
                     </span>
+
                     <Input
                       id={id}
                       name={id}
@@ -204,14 +199,20 @@ const UserForm = () => {
                       onChange={handleInput}
                       placeholder={label}
                       aria-invalid={!!errors[id]}
-                      className="pl-10 w-full rounded-md border-gray-300 text-gray-900 bg-white 
-                                  
-                                 focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400 
-                                 transition-all duration-200"
+                      className="pl-10 w-full rounded-md
+                                 bg-[hsl(var(--input))]
+                                 text-[hsl(var(--foreground))]
+                                 border border-[hsl(var(--border))]
+                                 placeholder:text-[hsl(var(--muted-foreground))]
+                                 focus:border-[hsl(var(--primary))]
+                                 focus:ring-[hsl(var(--primary))]
+                                 transition-all"
                     />
                   </div>
+
                   {errors[id] && (
-                    <p className="text-xs sm:text-sm text-red-500 ">
+                    <p className="text-xs sm:text-sm
+                                  text-[hsl(var(--destructive))] mt-1">
                       {errors[id]}
                     </p>
                   )}
@@ -221,7 +222,12 @@ const UserForm = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full text-white font-bold py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-2 px-4 rounded-md font-bold
+                           bg-[hsl(var(--primary))]
+                           text-[hsl(var(--primary-foreground))]
+                           hover:opacity-90
+                           disabled:opacity-50 disabled:cursor-not-allowed
+                           transition"
               >
                 {loading ? "Guardando..." : "Guardar"}
               </Button>

@@ -59,7 +59,7 @@ export function TableRow({ className, ...props }) {
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+        "border border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))] transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
         className
       )}
       {...props}
@@ -89,7 +89,7 @@ export function TableCell({ className, ...props }) {
     <td
       data-slot="table-cell"
       className={cn(
-        "p-2 align-middle whitespace-nowrap",
+        "p-2 align-middle whitespace-nowrap text-[hsl(var(--muted-foreground))]",
         "[&:has([role=checkbox])]:pr-0",
         "*:[[role=checkbox]]:translate-y-0.5",
         className

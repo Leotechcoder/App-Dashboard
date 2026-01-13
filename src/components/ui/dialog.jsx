@@ -30,10 +30,13 @@ export const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => 
     data-slot="dialog-overlay"
     className={cn(
       `
-      fixed inset-0 z-50 bg-black/40 
-      backdrop-blur-sm supports-backdrop-filter:backdrop-blur-sm
-      
-      data-[state=open]:fade-in-0 
+      fixed inset-0 z-50
+      bg-[hsl(var(--dialog-overlay))]
+      backdrop-blur-sm supports-backdrop-filter:backdrop-blur-sm 
+
+      data-[state=open]:animate-in
+      data-[state=closed]:animate-out
+      data-[state=open]:fade-in-0
       data-[state=closed]:fade-out-0
       `,
       className
@@ -59,16 +62,20 @@ export function DialogContent({
           fixed top-1/2 left-1/2 z-50
           w-full max-w-lg
           -translate-x-1/2 -translate-y-1/2
-          rounded-lg border bg-background bg-white/95 p-6 shadow-lg
+          rounded-lg border
+          bg-[hsl(var(--background-unit-2))]
+          text-[hsl(var(--foreground))]
+          border-[hsl(var(--border))]
+          p-6 shadow-lg
           duration-200
 
-          data-[state=open]:animate-in 
+          data-[state=open]:animate-in
           data-[state=closed]:animate-out
-          data-[state=open]:fade-in-0 
+          data-[state=open]:fade-in-0
           data-[state=closed]:fade-out-0
-          data-[state=open]:zoom-in-95 
+          data-[state=open]:zoom-in-95
           data-[state=closed]:zoom-out-95
-        `,
+          `,
           className
         )}
         {...props}
@@ -79,13 +86,15 @@ export function DialogContent({
           <DialogClosePrimitive
             data-slot="dialog-close"
             className="
-              absolute top-4 right-4 
+              absolute top-4 right-4
               rounded-sm
               opacity-70 hover:opacity-100
               transition-opacity
               focus:outline-none
-              focus:ring-2 focus:ring-ring
+              focus:ring-2
+              focus:ring-[hsl(var(--ring))]
               focus:ring-offset-2
+              focus:ring-offset-[hsl(var(--background))]
             "
           >
             <XIcon className="size-4" />
@@ -101,7 +110,10 @@ export function DialogHeader({ className, ...props }) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+      className={cn(
+        "flex flex-col gap-2 text-center sm:text-left",
+        className
+      )}
       {...props}
     />
   )
@@ -124,7 +136,10 @@ export function DialogTitle({ className, ...props }) {
   return (
     <DialogTitlePrimitive
       data-slot="dialog-title"
-      className={cn("text-lg font-semibold leading-none", className)}
+      className={cn(
+        "text-lg font-semibold leading-none",
+        className
+      )}
       {...props}
     />
   )
@@ -134,7 +149,10 @@ export function DialogDescription({ className, ...props }) {
   return (
     <DialogDescriptionPrimitive
       data-slot="dialog-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn(
+        "text-sm text-[hsl(var(--muted-foreground))]",
+        className
+      )}
       {...props}
     />
   )

@@ -2,7 +2,12 @@
 import { motion } from "framer-motion";
 import { LayoutDashboard } from "lucide-react";
 import { useSelector } from "react-redux";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 
 const fadeDown = {
   hidden: { opacity: 0, y: -15 },
@@ -15,16 +20,48 @@ const WelcomeHeader = () => {
 
   return (
     <motion.div variants={fadeDown}>
-      <Card className="bg-transparent shadow-none border-none">
-        <CardHeader className="flex flex-row items-center space-x-4 p-6">
-          <div className="bg-indigo-100 p-3 rounded-xl shadow-sm">
-            <LayoutDashboard className="w-7 h-7 text-indigo-600" />
+      <Card
+        className="
+          bg-[hsl(var(--background))]
+          text-[hsl(var(--foreground))]
+          border-none
+          shadow-none
+        "
+      >
+        <CardHeader
+          className="
+            flex flex-row items-center gap-4 p-6
+          "
+        >
+          {/* ICON */}
+          <div
+            className="
+              rounded-xl p-3
+              bg-[hsl(var(--accent))]
+              text-[hsl(var(--blue))]
+              shadow-sm
+            "
+          >
+            <LayoutDashboard className="w-7 h-7" />
           </div>
+
+          {/* TEXT */}
           <div>
-            <CardTitle className="text-2xl font-semibold text-indigo-600">
+            <CardTitle
+              className="
+                text-2xl font-semibold
+                text-[hsl(var(--foreground))]
+              "
+            >
               ¡Bienvenido, {username || "usuario"}!
             </CardTitle>
-            <CardDescription className="text-slate-600 mt-1">
+
+            <CardDescription
+              className="
+                mt-1
+                text-[hsl(var(--muted-foreground))]
+              "
+            >
               Aquí tienes un resumen del rendimiento de las ventas.
             </CardDescription>
           </div>

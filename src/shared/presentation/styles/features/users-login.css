@@ -1,0 +1,17 @@
+/* ===============================
+   LOGIN PAGE TOKENS (HSL)
+=============================== */
+
+:root {
+  /* Overlay */
+  --login-overlay: 0 0% 100% / 0.3;
+
+  /* Text */
+  --login-subtitle: 222 39% 18%;
+}
+
+.dark {
+  --login-overlay: 222 47% 5% / 0.55;
+
+  --login-subtitle: 215 20% 85%;
+}

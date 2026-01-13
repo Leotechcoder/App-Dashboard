@@ -1,0 +1,53 @@
+:root {
+  --chart-grid: 214 32% 91%;
+  --chart-cash: 142 71% 45%;
+  --chart-debit: 221 83% 53%;
+  --chart-credit: 262 83% 58%;
+  --chart-transfer: 346 77% 50%;
+
+  /* Card */
+  --chart-card-bg: var(--card);
+  --chart-card-border: var(--border);
+
+  /* Text */
+  --chart-title: var(--foreground);
+  --chart-muted: var(--muted-foreground);
+
+  /* Grid */
+  --chart-grid: var(--border);
+
+  /* Bars */
+  --chart-bar-primary: var(--primary);
+
+  /* Tooltip */
+  --chart-tooltip-bg: var(--card);
+  --chart-tooltip-border: var(--border);
+  --chart-tooltip-text: var(--foreground);
+
+  /* Empty state */
+  --chart-empty-text: var(--muted-foreground);
+}
+
+.dark {
+  --chart-grid: 217 19% 27%;
+  --chart-cash: 142 70% 55%;
+  --chart-debit: 217 91% 60%;
+  --chart-credit: 263 85% 65%;
+  --chart-transfer: 346 85% 60%;
+
+  --chart-card-bg: var(--card);
+  --chart-card-border: var(--border);
+
+  --chart-title: var(--foreground);
+  --chart-muted: var(--muted-foreground);
+
+  --chart-grid: var(--border);
+
+  --chart-bar-primary: var(--primary);
+
+  --chart-tooltip-bg: var(--popover);
+  --chart-tooltip-border: var(--border);
+  --chart-tooltip-text: var(--popover-foreground);
+
+  --chart-empty-text: var(--muted-foreground);
+}

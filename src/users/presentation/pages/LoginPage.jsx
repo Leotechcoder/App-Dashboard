@@ -26,34 +26,33 @@ export const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // ======================
-// Text Motion Variants
-// ======================
-const textParent = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.18, delayChildren: 0.6 },
-  },
-};
+  /* ======================
+     TEXT MOTION VARIANTS
+  ====================== */
+  const textParent = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.18, delayChildren: 0.6 },
+    },
+  };
 
-const textChild = {
-  hidden: {
-    opacity: 0,
-    y: 40,
-    scale: 0.8,
-    filter: "blur(6px)",
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    filter: "blur(0px)",
-    transition: { duration: 0.7, ease: "easeOut" },
-  },
-};
+  const textChild = {
+    hidden: {
+      opacity: 0,
+      y: 40,
+      scale: 0.8,
+      filter: "blur(6px)",
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      filter: "blur(0px)",
+      transition: { duration: 0.7, ease: "easeOut" },
+    },
+  };
 
-  // ANIMACIONES
   const depthFade = {
     hidden: { opacity: 0, scale: 0.7, y: 20, filter: "blur(8px)" },
     show: {
@@ -61,13 +60,13 @@ const textChild = {
       scale: 1,
       y: 0,
       filter: "blur(0px)",
-      transition: { duration: 0.7, ease: "easeOut" }
-    }
+      transition: { duration: 0.7, ease: "easeOut" },
+    },
   };
 
-  // ===========================
-  // 1️⃣ LOADING + CARGA DE IMAGEN
-  // ===========================
+  /* ===========================
+     1️⃣ LOADING + BG IMAGE
+  =========================== */
   useEffect(() => {
     const img = new Image();
     img.src = BG_IMAGE;
@@ -80,9 +79,9 @@ const textChild = {
     return () => clearTimeout(timer);
   }, [bgLoaded]);
 
-  // ===========================
-  // 2️⃣ REDIRECCIÓN POST LOGIN
-  // ===========================
+  /* ===========================
+     2️⃣ REDIRECT POST LOGIN
+  =========================== */
   useEffect(() => {
     if (!loading && username) {
       const timer = setTimeout(() => {
@@ -92,9 +91,9 @@ const textChild = {
     }
   }, [username, loading, navigate]);
 
-  // ===========================
-  // 3️⃣ EXPANSIÓN FORM
-  // ===========================
+  /* ===========================
+     3️⃣ FORM EXPANSION
+  =========================== */
   const handleFormExpand = useCallback((expanded) => {
     if (window.innerWidth <= 1024) {
       setIsFormExpanded(expanded);
@@ -113,9 +112,9 @@ const textChild = {
     return () => window.removeEventListener("popstate", handler);
   }, []);
 
-  // ===========================
-  // 4️⃣ TOASTS ESTABLES
-  // ===========================
+  /* ===========================
+     4️⃣ TOASTS
+  =========================== */
   useEffect(() => {
     if (loading) {
       if (!toastId.current) {
@@ -140,9 +139,9 @@ const textChild = {
     if (error) toast.error(error);
   }, [error]);
 
-  // ===========================
-  // 5️⃣ RENDER
-  // ===========================
+  /* ===========================
+     5️⃣ RENDER
+  =========================== */
   if (initialLoading) return <LoadingScreen />;
 
   return (
@@ -150,42 +149,42 @@ const textChild = {
       <Toaster richColors position="top-right" />
 
       <div
-        className="min-h-screen flex flex-col lg:flex-row bg-no-repeat relative"
+        className="min-h-screen flex flex-col lg:flex-row relative bg-no-repeat"
         style={{
           backgroundImage: `url(${BG_IMAGE})`,
           backgroundSize: "100% 100%",
         }}
       >
-        <div className="absolute inset-0 bg-white/30"></div>
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-[hsl(var(--login-overlay))]"></div>
 
         {/* LEFT SIDE */}
         <motion.div
           variants={textParent}
           initial="hidden"
           animate="visible"
-          className={`lg:flex-1 lg:scale-95 flex flex-col justify-center items-center p-8 lg:p-12 relative z-10 ${
-            isFormExpanded ? "hidden lg:flex" : ""
-          }`}
+          className={`lg:flex-1 flex flex-col justify-center items-center p-8 lg:p-12 relative z-10
+            ${isFormExpanded ? "hidden lg:flex" : ""}`}
         >
           <Logo />
 
           <motion.h1
             variants={textChild}
-            className="text-6xl font-semibold text-gray-800 mb-3 text-center"
+            className="text-6xl font-semibold text-[hsl(var(--foreground))] mb-3 text-center"
           >
             Cangre Burger
           </motion.h1>
 
           <motion.h2
             variants={textChild}
-            className="text-2xl font-medium text-gray-800 mb-4 text-center"
+            className="text-2xl font-medium text-[hsl(var(--login-subtitle))] mb-4 text-center"
           >
             Web Dashboard
           </motion.h2>
 
           <motion.p
             variants={textChild}
-            className="p-4 text-xl text-center text-gray-800 mb-8 max-w-md"
+            className="p-4 text-xl text-center text-[hsl(var(--foreground))] mb-8 max-w-md"
           >
             Descubre la mejor experiencia en control y gestión de ventas
           </motion.p>
@@ -193,18 +192,19 @@ const textChild = {
 
         {/* FORM */}
         <div
-          className={`lg:flex-1 lg:scale-90 flex justify-center items-center p-8 lg:p-12 transition-all duration-300 ease-in-out relative z-10
-          ${isFormExpanded ? "fixed inset-0 z-50 bg-white" : ""}`}
+          className={`lg:flex-1 flex justify-center items-center p-8 lg:p-12 transition-all duration-300 relative z-10
+            ${isFormExpanded ? "fixed inset-0 z-50 bg-[hsl(var(--background))]" : ""}`}
         >
           <motion.div
             variants={depthFade}
             initial="hidden"
             animate="show"
             transition={{ delay: 0.75 }}
-            className={`bg-white shadow-xl rounded-2xl overflow-hidden transition-all duration-300 ease-in-out
+            className={`rounded-2xl shadow-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))]
+              transition-all duration-300
               ${isFormExpanded ? "w-[85vw] h-[85vh]" : "w-full max-w-md"}`}
           >
-            <div className="p-8 h-full overflow-y-auto">
+            <div className="p-8 h-full overflow-y-auto ">
               <FormLogin
                 onExpandChange={handleFormExpand}
                 isExpanded={isFormExpanded}
@@ -219,8 +219,10 @@ const textChild = {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4 }}
-            className="fixed top-4 right-4 z-50 p-2 bg-gray-800 text-white rounded-full lg:hidden cursor-pointer hover:bg-gray-700 transition"
             onClick={closeExpandedForm}
+            className="fixed top-4 right-4 z-50 p-2 rounded-full
+              bg-[hsl(var(--foreground))] text-[hsl(var(--background))]
+              hover:bg-[hsl(var(--muted-foreground))] transition lg:hidden"
           >
             <X className="h-6 w-6" />
           </motion.button>
