@@ -12,7 +12,7 @@ node_modules
 dist
 dist-ssr
 pruebas
-
+pruebas\PreviewPage.jsx
 # Environment variables
 .env
 *.local
