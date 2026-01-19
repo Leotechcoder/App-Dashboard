@@ -24,7 +24,7 @@ export function SalesTable({ orders, onSelectOrder }) {
   }
 
   return (
-    <div className="rounded-md border bg-background-normal">
+    <div className="rounded-md border border-[hsl(var(--border))] bg-background-normal">
       <Table>
         <TableHeader>
           <TableRow>
@@ -35,7 +35,7 @@ export function SalesTable({ orders, onSelectOrder }) {
             <TableHead className="text-right">Total</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody className={"divide-y divide-[hsl(var(--border))]"}>
           {orders.length === 0 ? (
             <TableRow>
               <TableCell colSpan={5} className="text-center text-muted-foreground">

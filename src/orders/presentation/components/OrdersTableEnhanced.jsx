@@ -174,7 +174,7 @@ const OrdersTableEnhanced = ({
 
   if (!data || data.length === 0) {
     return (
-      <div className="py-12 text-center font-mono font-bold text-[hsl(var(--muted))]">
+      <div className="py-12 text-center font-mono font-bold text-[hsl(var(--muted-foreground))]">
         No hay órdenes 🤔
       </div>
     )

@@ -86,7 +86,7 @@ const TopProductsTable = ({ orders }) => {
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-border">
+          <tbody className="divide-y divide-[hsl(var(--border))]">
             {sortedProducts.map((product) => (
               <tr
                 key={product.id}
