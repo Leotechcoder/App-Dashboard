@@ -35,6 +35,15 @@ const salesSlice = createSlice({
       state.error = null
     },
     resetSales: () => initialState,
+
+    addPendingOrderFromSocket: (state, action) => {
+      const newOrder = action.payload;
+
+      const exists = state.pendingOrders.some((o) => o.id === newOrder.id);
+      if (!exists) {
+        state.pendingOrders.unshift(newOrder);
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -132,5 +141,5 @@ const salesSlice = createSlice({
   },
 })
 
-export const { setFilters, clearError, resetSales } = salesSlice.actions
+export const { setFilters, clearError, resetSales, addPendingOrderFromSocket } = salesSlice.actions
 export default salesSlice.reducer

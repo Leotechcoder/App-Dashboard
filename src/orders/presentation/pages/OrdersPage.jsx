@@ -169,7 +169,7 @@ const OrdersPage = ({ setScrollTo }) => {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="w-full max-w-4xl max-h-[95vh] overflow-hidden rounded-xl shadow-xl"
+              className="w-full max-w-6xl max-h-[95vh] overflow-hidden rounded-xl shadow-xl"
               initial={{ scale: 0.9, x: 100 }}
               animate={{ scale: 1, x: 0 }}
               exit={{ scale: 0.9, x: 100 }}

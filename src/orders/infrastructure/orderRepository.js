@@ -34,6 +34,7 @@ export class OrderRepository {
       createdAt: raw.created_at || raw.createdAt,
       updatedAt: raw.updated_at || raw.updatedAt,
       deliveryType: raw.deliveryType,
+      deliveryAddress: raw.delivery_address || raw.deliveryAddress,
     });
   }
 

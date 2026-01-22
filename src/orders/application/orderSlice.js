@@ -1,3 +1,4 @@
+// orders/application/orderSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { OrderRepository } from "../infrastructure/orderRepository.js";
 import { OrderService } from "../application/orderService.js";
@@ -10,7 +11,7 @@ export const getDataOrders = createAsyncThunk("orders/getData", async () => {
   return await orderService.getOrders();
 });
 
-// 🔹 Crear una nueva orden
+// 🔹 Crear una nueva orden (solo dashboard)
 export const createDataOrder = createAsyncThunk(
   "orders/createData",
   async (order) => {
@@ -18,7 +19,7 @@ export const createDataOrder = createAsyncThunk(
   }
 );
 
-// 🧩 Actualizar datos generales de una orden (ej. delivery_type, status, etc.)
+// 🧩 Actualizar orden
 export const updateDataOrder = createAsyncThunk(
   "orders/updateDataOrder",
   async ({ id, data }, { rejectWithValue }) => {
@@ -26,13 +27,12 @@ export const updateDataOrder = createAsyncThunk(
       const response = await orderService.updateOrder(id, data);
       return response;
     } catch (error) {
-      console.error("Error updating order:", error);
       return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
-// 🔹 Eliminar una orden por ID
+// 🔹 Eliminar orden
 export const deleteDataOrder = createAsyncThunk(
   "orders/deleteData",
   async (id) => {
@@ -71,7 +71,19 @@ const orderSlice = createSlice({
     setClearMessage: (state) => {
       state.message = null;
     },
+
+    // 🔥 NUEVO: llega una orden por socket
+    addOrderFromSocket: (state, action) => {
+      const newOrder = action.payload;
+
+      const exists = state.data.some((o) => o.id === newOrder.id);
+      if (!exists) {
+        state.data.unshift(newOrder);
+        state.message = "Nueva orden recibida 🛎️";
+      }
+    },
   },
+
   extraReducers: (builder) => {
     builder
       // --- Obtener órdenes ---
@@ -80,15 +92,16 @@ const orderSlice = createSlice({
       })
       .addCase(getDataOrders.fulfilled, (state, action) => {
         state.isLoading = false;
-        if (action.payload.length > 0)
+        if (action.payload.length > 0) {
           state.data = action.payload;
+        }
       })
       .addCase(getDataOrders.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
       })
 
-      // --- Crear orden ---
+      // --- Crear orden (dashboard) ---
       .addCase(createDataOrder.pending, (state) => {
         state.isLoading = true;
       })
@@ -103,33 +116,21 @@ const orderSlice = createSlice({
       })
 
       // --- Actualizar orden ---
-      .addCase(updateDataOrder.pending, (state) => {
-        state.isLoading = true;
-      })
       .addCase(updateDataOrder.fulfilled, (state, action) => {
-        state.isLoading = false;
         const updatedOrder = action.payload;
         const index = state.data.findIndex((o) => o.id === updatedOrder.id);
         if (index !== -1) {
           state.data[index] = { ...state.data[index], ...updatedOrder };
         }
       })
-      .addCase(updateDataOrder.rejected, (state, action) => {
-        console.error("Error al actualizar la orden:", action.payload);
-      })
 
       // --- Eliminar orden ---
-      .addCase(deleteDataOrder.pending, (state) => {
-        state.isLoading = true;
-      })
       .addCase(deleteDataOrder.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.data = state.data.filter((order) => order.id !== action.payload.deletedId);
+        state.data = state.data.filter(
+          (order) => order.id !== action.payload.deletedId
+        );
         state.message = "Orden eliminada (X_X)";
-      })
-      .addCase(deleteDataOrder.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message;
       });
   },
 });
@@ -140,5 +141,7 @@ export const {
   setCurrentPageOrders,
   setShowHelpOrders,
   setClearMessage,
+  addOrderFromSocket, // 👈 exportala
 } = orderSlice.actions;
+
 export default orderSlice.reducer;

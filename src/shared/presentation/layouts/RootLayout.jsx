@@ -6,6 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeMessage } from "../../../users/application/userSlice.js";
 import { Toaster, toast } from "sonner";
 import ScrollToTop from "../components/ScrollToTop.jsx";
+import { useSocket } from "@/context/SocketContext.jsx";
+import { addOrderFromSocket } from "@/orders/application/orderSlice.js";
+import { addPendingOrderFromSocket } from "@/sales/application/salesSlice.js";
+import { getData } from "@/orders/application/itemSlice.js";
 
 const RootLayout = () => {
   const { loading, message, error } = useSelector((store) => store.users);
@@ -46,6 +50,25 @@ const RootLayout = () => {
 
     return () => clearTimeout(timer);
   }, [loading, message, error, dispatch]);
+
+  // Actualizaciones de ordenes desde socket
+    const socket = useSocket();
+  
+    useEffect(() => {
+      if (!socket) return;
+  
+      const handleNewOrder = (order) => {
+        dispatch(addOrderFromSocket(order));
+        dispatch(addPendingOrderFromSocket(order));
+        dispatch(getData())
+      };
+  
+      socket.on("order:new", handleNewOrder);
+  
+      return () => {
+        socket.off("order:new", handleNewOrder);
+      };
+    }, [socket, dispatch]);
 
   return (
     <>

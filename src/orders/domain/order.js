@@ -1,10 +1,11 @@
 export class Order {
-  constructor({ id, userId, userName, totalAmount, status, itemsId, createdAt, updatedAt, deliveryType }) {
+  constructor({ id, userId, userName, totalAmount, status, itemsId, createdAt, updatedAt, deliveryType, deliveryAddress }) {
     this.id = id
     this.userId = userId
     this.userName = userName
     this.totalAmount = totalAmount
     this.status = status
+    this.deliveryAddress = deliveryAddress
     this.deliveryType = deliveryType
     this.itemsId = itemsId
     this.createdAt = createdAt
@@ -36,6 +37,7 @@ export class OrderEntity {
     this.paidAt = data.paidAt || null
     this.deliveredAt = data.deliveredAt || null
     this.deliveryType = data.deliveryType || "Retiro en local"
+    this.deliveryAddress = data.deliveryAddress || null
     this.cashRegisterId = data.cashRegisterId || null
   }
 

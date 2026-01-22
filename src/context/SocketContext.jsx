@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect } from "react";
-import { socket } from "@/sockets/socket";
+import { socket } from "@/socket/socket.js";
 
 const SocketContext = createContext(null);
 

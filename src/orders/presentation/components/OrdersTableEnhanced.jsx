@@ -193,7 +193,9 @@ const OrdersTableEnhanced = ({
                 "ID Usuario",
                 "Cliente",
                 "Importe",
-                "Estado",
+                // "Estado",
+                "Tipo de entrega",
+                "Dirección de entrega",
                 "Última actualización",
                 "Acciones",
               ].map((head) => (
@@ -233,11 +235,17 @@ const OrdersTableEnhanced = ({
                   <TableCell className="w-32 px-2 py-4 text-sm">
                     {order.userName}
                   </TableCell>
-                  <TableCell className="px-3 py-4 text-sm">
+                  <TableCell className="px-3 py-4 text-sm text-[hsl(var(--green))] font-bold">
                     ${formatCurrency(order.totalAmount)}
                   </TableCell>
-                  <TableCell className="px-3 py-4 text-sm">
+                  {/* <TableCell className="px-3 py-4 text-sm">
                     {order.status}
+                  </TableCell> */}
+                  <TableCell className="px-3 py-4 text-sm text-center">
+                    {order.deliveryType}
+                  </TableCell>
+                  <TableCell className="px-3 py-4 text-sm text-center">
+                    {order.deliveryAddress || "-"}
                   </TableCell>
                   <TableCell className="px-3 py-4 text-sm">
                     {formatDate(order.updatedAt || order.createdAt)}
