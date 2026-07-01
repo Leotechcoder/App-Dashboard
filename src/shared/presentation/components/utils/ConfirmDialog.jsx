@@ -7,7 +7,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 
 /**
  * ConfirmDialog — reemplazo de window.confirm()
@@ -44,9 +44,9 @@ export function ConfirmDialog({
   variant = "destructive",
 }) {
   const handleConfirm = () => {
-    onOpenChange(false)
-    onConfirm()
-  }
+    onOpenChange(false);
+    onConfirm();
+  };
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -61,7 +61,7 @@ export function ConfirmDialog({
             onClick={handleConfirm}
             className={
               variant === "destructive"
-                ? "bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))] hover:bg-[hsl(var(--destructive)/0.9)]"
+                ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 : ""
             }
           >
@@ -70,5 +70,5 @@ export function ConfirmDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

@@ -266,7 +266,7 @@ const OrdersPage = ({ setScrollTo }) => {
             </Button>
 
             <SearchBar
-              tipo="por ID o nombre"
+              tipo="orden por ID"
               searchTerm={table.searchTerm}
               setSearchTerm={table.setSearchTerm}
               className={"w-60"}
