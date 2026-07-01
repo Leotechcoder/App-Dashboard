@@ -1,5 +1,4 @@
-// ProductList.jsx
-"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import {
@@ -12,6 +11,7 @@ import {
   clearError, // 👈 importamos para limpiar
 } from "../../application/productSlice.js";
 import { Pencil, Trash, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button"
 import Pagination from "../../../shared/presentation/components/Pagination.jsx";
 import SearchBar from "../../../shared/presentation/components/SearchBar.jsx";
 import { useTableData } from "../../../shared/hook/useTableDataP.js";
@@ -106,19 +106,18 @@ return (
   <>
     {/* 🔹 Encabezado (botón + buscador) */}
     <motion.div
-      className="flex justify-end gap-1"
+      className="flex justify-end gap-2"
       variants={fadeUp}
       initial="hidden"
       animate="visible"
       exit='exit'
     >
-      <button
+      <Button
         onClick={handleAddProduct}
-        className="bg-[hsl(var(--primary))]
-      text-[hsl(var(--primary-foreground))] font-medium px-4 py-2 rounded-lg hover:cursor-pointer hover:bg-[hsl(var(--primary))]/90 scale-85 shadow-sm hover:shadow-md transition-all"
+        className="h-9"
       >
         <span className="font-medium">+</span> Nuevo Producto
-      </button>
+      </Button>
 
         <SearchBar
           tipo="producto"
@@ -143,15 +142,15 @@ return (
 
     {/* 🔹 Tabla completa animada */}
     <motion.div
-      className="bg-[hsl(var(--background-unit))]
-    border border-[hsl(var(--border))] rounded-lg shadow overflow-x-auto mt-3"
+      className="bg-bg-unit
+    border border-border rounded-lg shadow overflow-x-auto mt-3"
       variants={fadeUp}
       initial="hidden"
       animate="visible"
       transition={{ delay: 0.25 }}
     >
       <table className="w-full">
-        <thead className="bg-[hsl(var(--dashboard))] border-b border-[hsl(var(--border))]">
+        <thead className="bg-dashboard border-b border-border">
           <tr>
             {[
               "ID",
@@ -165,7 +164,7 @@ return (
             ].map((header) => (
               <th
                 key={header}
-                className="px-2 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase"
+                className="px-2 py-3 text-left text-xs font-medium text-muted-foreground uppercase"
               >
                 {header}
               </th>
@@ -173,12 +172,12 @@ return (
           </tr>
         </thead>
 
-        <tbody className="divide-y divide-[hsl(var(--border))]">
+        <tbody className="divide-y divide-border">
           {paginatedData.length === 0 ? (
             <tr>
               <td colSpan={8} className="px-4 py-4 text-center">
-                <div className="flex items-center justify-center gap-2 text-[hsl(var(--muted-foreground))] bg-[hsl(var(--background-unit-2))] border border-[hsl(var(--border))] rounded-lg p-3 max-w-md mx-auto">
-                  <AlertCircle className="h-5 w-5 text-[hsl(var(--primary))]" />
+                <div className="flex items-center justify-center gap-2 text-muted-foreground bg-bg-unit-2 border border-border rounded-lg p-3 max-w-md mx-auto">
+                  <AlertCircle className="h-5 w-5 text-primary" />
                   <span className="font-medium">
                     Agrega un producto a esta categoría
                   </span>
@@ -187,44 +186,44 @@ return (
             </tr>
           ) : (
             paginatedData.map((product) => (
-              <tr key={product.id} className="hover:bg-[hsl(var(--accent))] transition-all">
-                <td className="w-32 px-2 text-xs text-[hsl(var(--muted-foreground))] uppercase">
+              <tr key={product.id} className="hover:bg-accent transition-all">
+                <td className="w-32 px-2 text-xs text-muted-foreground uppercase">
                   {product.id}
                 </td>
-                <td className="w-44 px-1 text-sm font-semibold text-[hsl(var(--muted-foreground))] hover:cursor-pointer hover:text-[hsl(var(--primary))]" onClick={() => handleEditar(product)}>
+                <td className="w-44 px-1 text-sm font-semibold text-muted-foreground hover:cursor-pointer hover:text-primary" onClick={() => handleEditar(product)}>
                   {product.name}
                 </td>
-                <td className="w-72 px-1 text-sm text-[hsl(var(--muted-foreground))]">
+                <td className="w-72 px-1 text-sm text-muted-foreground">
                   {product.description}
                 </td>
-                <td className="w-24 px-2 text-sm text-[hsl(var(--muted-foreground))]">
+                <td className="w-24 px-2 text-sm text-muted-foreground">
                   {product.category}
                 </td>
-                <td className="w-16 px-1 text-sm text-center text-[hsl(var(--muted-foreground))]">
+                <td className="w-16 px-1 text-sm text-center text-muted-foreground">
                   {product.stock}
                 </td>
                 <td
                   className={`w-16 px-2 text-sm font-medium text-center ${
-                    product.available ? "text-[hsl(var(--green))]" : "text-[hsl(var(--destructive))]"
+                    product.available ? "text-green" : "text-destructive"
                   }`}
                 >
                   {product.available ? "Sí" : "No"}
                 </td>
-                <td className="px-2 py-3 text-sm font-semibold text-[hsl(var(--green))]">
+                <td className="px-2 py-3 text-sm font-semibold text-green">
                   {formatCurrency(product.price)}
                 </td>
                 <td className="px-2 py-3">
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEditar(product)}
-                      className="p-1 text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/0.2)] rounded hover:cursor-pointer"
+                      className="p-1 text-primary hover:bg-primary)/0.2)] rounded hover:cursor-pointer"
                       title="Editar Producto"
                     >
                       <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => handleEliminar(product.id)}
-                      className="p-1 text-[hsl(var(--destructive))] rounded hover:cursor-pointer hover:bg-[hsl(var(--destructive)/0.2)]"
+                      className="p-1 text-destructive rounded hover:cursor-pointer hover:bg-destructive)/0.2)]"
                       title="Eliminar Producto"
                     >
                       <Trash className="h-4 w-4" />

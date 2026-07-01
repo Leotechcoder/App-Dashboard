@@ -13,21 +13,19 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
-import { LogOut, Home, Package, ShoppingCart, Users } from "lucide-react";
+import { LogOut, Home, Package, ShoppingCart, Users, BarChart3 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import {
-  logOutUser,
-  setClosedSession,
-} from "../../../users/application/userSlice";
+import { logOutUser, setClosedSession } from "../../../users/application/userSlice";
 import { PATH } from "../../../shared/infrastructure/utils/PATH.js";
 import { ModeToggle } from "./ModeToggle";
 
 const menuItems = [
-  { title: "Inicio", to: PATH.home, icon: Home },
-  { title: "Productos", to: PATH.products, icon: Package },
-  { title: "Órdenes", to: PATH.ventas, icon: ShoppingCart },
-  { title: "Usuarios", to: PATH.contact, icon: Users },
+  { title: "Inicio",    to: PATH.home,      icon: Home },
+  { title: "Productos", to: PATH.products,  icon: Package },
+  { title: "Órdenes",   to: PATH.ventas,    icon: ShoppingCart },
+  { title: "Analítica", to: PATH.analytics, icon: BarChart3 },
+  { title: "Usuarios",  to: PATH.contact,   icon: Users },
 ];
 
 export default function Sidebar() {
@@ -54,11 +52,9 @@ export default function Sidebar() {
         {/* HEADER */}
         <SidebarHeader
           className="
-            border-b
-            border-[hsl(var(--border))]
+            border-b border-[hsl(var(--border))]
             bg-[hsl(var(--background-unit))]
-            p-4
-            flex items-center justify-between
+            p-4 flex items-center justify-between
           "
         >
           <h1 className="text-lg font-semibold tracking-tight text-[hsl(var(--foreground))]">
@@ -70,9 +66,7 @@ export default function Sidebar() {
         {/* CONTENT */}
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel
-              className="text-[hsl(var(--muted-foreground))]"
-            >
+            <SidebarGroupLabel className="text-[hsl(var(--muted-foreground))]">
               Menú
             </SidebarGroupLabel>
 
@@ -84,17 +78,17 @@ export default function Sidebar() {
                       {({ isActive }) => (
                         <SidebarMenuButton
                           className={`
-                            flex items-center gap-3 px-3 py-2 rounded-md
-                            transition-colors
-                            ${
-                              isActive
-                                ? "bg-[hsl(var(--accent))] text-[hsl(var(--primary))]"
-                                : "hover:bg-[hsl(var(--accent))]/45 text-[hsl(var(--foreground))]"
+                            flex items-center gap-3 px-3 py-2 rounded-md transition-colors
+                            ${isActive
+                              ? "bg-[hsl(var(--accent))] text-[hsl(var(--primary))]"
+                              : "hover:bg-[hsl(var(--accent))]/45 text-[hsl(var(--foreground))]"
                             }
                           `}
                         >
                           <item.icon className="h-5 w-5" />
-                          <span className="text-[hsl(var(--accent-foreground))]">{item.title}</span>
+                          <span className="text-[hsl(var(--accent-foreground))]">
+                            {item.title}
+                          </span>
                         </SidebarMenuButton>
                       )}
                     </NavLink>

@@ -1,4 +1,4 @@
-
+import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react"
 const SearchBar = ({ tipo, searchTerm, setSearchTerm }) => {
 
@@ -8,15 +8,15 @@ const SearchBar = ({ tipo, searchTerm, setSearchTerm }) => {
   }
 
   return (
-    <div className="relative scale-90">
-      <input
+    <div className="relative max-w-sm">
+      <Input
         type="text"
         placeholder={`Buscar ${tipo}...`}
-        className="w-full pl-10 pr-4 py-2 border border-[hsl(var(--border))] rounded-lg focus:ring-[hsl(var(--ring))] bg-[hsl(var(--background-unit))] focus:border-[hsl(var(--primary))]"
+        className="w-full pl-10 pr-4"
         value={searchTerm}
         onChange={handleSearch}
       />
-      <Search className="absolute left-3 top-2.5 h-5 w-5 text-[hsl(var(--foreground))]" />
+      <Search className="absolute left-3 top-2.5 h-4 w-4 text-foreground" />
     </div>
   )
 }

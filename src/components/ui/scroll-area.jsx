@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
-import { cn } from "@/lib/utils"; // Asegurate de tener esta función (concatena clases Tailwind)
+import * as React from "react"
+import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area"
+import { cn } from "@/lib/utils"
 
 export function ScrollArea({ className, children, ...props }) {
   return (
@@ -16,7 +16,7 @@ export function ScrollArea({ className, children, ...props }) {
       <ScrollBar />
       <ScrollAreaPrimitive.Corner />
     </ScrollAreaPrimitive.Root>
-  );
+  )
 }
 
 export function ScrollBar({ className, orientation = "vertical" }) {
@@ -25,14 +25,14 @@ export function ScrollBar({ className, orientation = "vertical" }) {
       orientation={orientation}
       className={cn(
         "flex touch-none select-none transition-colors",
-        orientation === "vertical" &&
-          "h-full w-2.5 border-l border-transparent p-[1px]",
-        orientation === "horizontal" &&
-          "h-2.5 flex-col border-t border-transparent p-[1px]",
+        orientation === "vertical" && "h-full w-2.5 border-l border-transparent p-[1px]",
+        orientation === "horizontal" && "h-2.5 flex-col border-t border-transparent p-[1px]",
         className
       )}
     >
-      <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-gray-300 hover:bg-gray-400" />
+      <ScrollAreaPrimitive.ScrollAreaThumb
+        className="relative flex-1 rounded-full bg-border hover:bg-muted-foreground/50"
+      />
     </ScrollAreaPrimitive.ScrollAreaScrollbar>
-  );
+  )
 }

@@ -4,37 +4,37 @@ import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
   "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold " +
-    "transition-colors focus:outline-none focus:ring-2 focus:ring-[hsl(var(--badge-ring))] focus:ring-offset-2",
+    "transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
         default: `
           border-transparent
-          bg-[hsl(var(--badge-primary-bg))]
-          text-[hsl(var(--badge-primary-fg))]
+          bg-primary
+          text-primary-foreground
           shadow
-          hover:bg-[hsl(var(--badge-primary-bg-hover))]
+          hover:bg-primary/90
         `,
         secondary: `
           border-transparent
-          bg-[hsl(var(--badge-secondary-bg))]
-          text-[hsl(var(--badge-secondary-fg))]
-          hover:bg-[hsl(var(--badge-secondary-bg-hover))]
+          bg-secondary
+          text-secondary-foreground
+          hover:bg-secondary/90
         `,
         destructive: `
           border-transparent
-          bg-[hsl(var(--badge-destructive-bg))]
-          text-[hsl(var(--badge-destructive-fg))]
+          bg-destructive
+          text-destructive-foreground
           shadow
-          hover:bg-[hsl(var(--badge-destructive-bg-hover))]
+          hover:bg-destructive/90
         `,
         outline: `
-          border-[hsl(var(--border))]
-          text-[hsl(var(--muted-foreground))]
+          border-border
+          text-muted-foreground
           bg-transparent
-          hover:bg-[hsl(var(--accent))]
-          hover:text-[hsl(var(--foreground))]
-        `,
+          hover:bg-accent
+          hover:text-foreground
+        `,  
       },
     },
     defaultVariants: {

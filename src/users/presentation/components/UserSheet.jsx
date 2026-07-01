@@ -46,11 +46,11 @@ import { cn } from "@/lib/utils";
 ──────────────────────────────── */
 const metricStyles = {
   primary:
-    "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]",
+    "bg-primary text-primary-foreground",
   success:
-    "bg-[hsl(var(--green)/0.9)] text-[hsl(var(--primary-foreground))]",
+    "bg-green/90 text-primary-foreground",
   info:
-    "bg-[hsl(var(--purpure))] text-[hsl(var(--primary-foreground))]",
+    "bg-purple text-primary-foreground",
 };
 
 const UserCard = ({ user, onBack }) => {
@@ -165,7 +165,7 @@ const UserCard = ({ user, onBack }) => {
   };
 
   return (
-    <Card className="w-full h-full border border-[hsl(var(--border))] shadow-xl animate-in fade-in">
+    <Card className="w-full h-full border border-border shadow-xl animate-in fade-in">
       <UserHeader
         user={user}
         role={role}
@@ -234,26 +234,26 @@ const UserCard = ({ user, onBack }) => {
 ──────────────────────────────── */
 
 const UserHeader = ({ user, role, onBack, onEdit }) => (
-  <CardHeader className="bg-linear-to-r from-[hsl(var(--accent))] to-[hsl(var(--blue)/0.8)] text-[hsl(var(--user-header-foreground))] rounded-t-lg">
+  <CardHeader className="bg-linear-to-r from-accent to-blue/80 text-foreground rounded-t-lg">
     <CardTitle className="flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <Avatar className="border-2 border-[hsl(var(--blue)/0.3)]">
+        <Avatar className="border-2 border-blue/30">
           <AvatarImage src={user.avatar} alt={user.username} />
-          <AvatarFallback className="bg-[hsl(var(--stroke))] text-[hsl(var(--foreground))]">
+          <AvatarFallback className="bg-[hsl(var(--stroke))] text-foreground">
             {user.username.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
 
         <div>
           <h3 className="text-xl font-bold">{user.username}</h3>
-          <Badge variant="outline" className="border-[hsl(var(--foreground))] text-[hsl(var(--blue))]">
+          <Badge variant="outline" className="border-foreground text-blue">
             {role}
           </Badge>
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <Button size="sm" variant="ghost" className={"bg-[hsl(var(--accent)/0.2)] border border-[hsl(var(--blue))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--accent)/0.4)]"} onClick={onBack}>
+        <Button size="sm" variant="ghost" className={"bg-accent/20 border border-blue text-foreground hover:bg-accent/40"} onClick={onBack}>
           Volver
         </Button>
         <Button size="sm" variant="default" onClick={onEdit}>
@@ -265,7 +265,7 @@ const UserHeader = ({ user, role, onBack, onEdit }) => (
 );
 
 const UserInfo = ({ user }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-[hsl(var(--muted-foreground))]">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-muted-foreground">
     <div className="space-y-1">
       <p><strong>ID:</strong> {user.id}</p>
       <p><strong>Email:</strong> {user.email}</p>
@@ -326,7 +326,7 @@ const UserMetrics = ({
 
       <div>
         <Progress value={progressValue} className="h-3" />
-        <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           {progressValue.toFixed(0)}% hacia ${formatCurrency(purchaseGoal)}
         </p>
       </div>
@@ -338,7 +338,7 @@ const UserOrdersTable = ({ userOrders, onSelectOrder }) => (
   <div>
     <h4 className="font-medium mb-3">Órdenes Recientes</h4>
 
-    <div className="rounded-md border border-[hsl(var(--border))]">
+    <div className="rounded-md border border-border">
       <Table>
         <TableHeader>
           <TableRow>
@@ -351,7 +351,7 @@ const UserOrdersTable = ({ userOrders, onSelectOrder }) => (
         <TableBody>
           {userOrders.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={3} className="text-center text-[hsl(var(--muted-foreground))]">
+              <TableCell colSpan={3} className="text-center text-muted-foreground">
                 No hay órdenes para mostrar
               </TableCell>
             </TableRow>
@@ -360,7 +360,7 @@ const UserOrdersTable = ({ userOrders, onSelectOrder }) => (
               <TableRow
                 key={order.id}
                 onClick={() => onSelectOrder(order)}
-                className="cursor-pointer hover:bg-[hsl(var(--background-unit-2))]"
+                className="cursor-pointer hover:bg-bg-unit-2"
               >
                 <TableCell>#{order.orderNumber}</TableCell>
                 <TableCell>
@@ -391,7 +391,7 @@ const UserTopProducts = ({ topProducts }) => (
             key={product.name}
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex justify-between items-center p-2 rounded-xl bg-[hsl(var(--background-unit-2))]"
+            className="flex justify-between items-center p-2 rounded-xl bg-bg-unit-2"
           >
             <span className="text-sm">
               {idx + 1}. {product.name}

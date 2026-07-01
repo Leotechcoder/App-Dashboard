@@ -2,29 +2,20 @@
 @import "./core/theme.css";
 @import "./core/base.css";
 
-@import "./layout/sidebar.css";
-@import "./components/dialog.css";
+@import "./features/users-sheet.css";
 
+@import "./features/orders.css"; 
 /* @import "./features/dashboard-filters.css";
+@import "./components/dialog.css";
 @import "./features/dashboard-metrics.css";
 @import "./features/dashboard.css";
 @import "./features/products.css";
-@import "./features/orders.css";
 @import "./features/orders-details.css";
 @import "./features/users.css";
-@import "./features/users-sheet.css";
 @import "./features/users-kpis.css";
 @import "./features/users-login.css";
 @import "./features/users-login-form.css";
 @import "./features/users-edit.css";
 @import "./features/users-form.css";
-
-@import "./components/buttons.css";
-@import "./components/badges.css";
-@import "./components/cards.css";
-@import "./components/charts.css";
-@import "./components/tables.css";
-@import "./components/dialogs.css";
-@import "./components/tabs.css";
-@import "./components/select.css"; */
+*/
 

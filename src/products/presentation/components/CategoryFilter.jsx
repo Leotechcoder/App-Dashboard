@@ -7,8 +7,8 @@ export const FiltrosCategorias = ({ onCategoryChange, selectedCategory }) => {
   return (
     <div className="flex gap-4 my-3 overflow-x-auto">
       <button
-        className={`px-4 py-2 whitespace-nowrap cursor-pointer text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))] ${
-          !selectedCategory ? "bg-[hsl(var(--dashboard))] border-b-2 border-[hsl(var(--primary))] text-[hsl(var(--primary))] rounded-md" : "text-[hsl(var(--muted-foreground))]"
+        className={`px-4 py-2 whitespace-nowrap cursor-pointer text-muted-foreground hover:text-primary ${
+          !selectedCategory ? "bg-dashboard border-b-2 border-primary text-primary rounded-md" : "text-muted-foreground"
         }`}
         onClick={() => onCategoryChange(null)}
       >
@@ -18,9 +18,9 @@ export const FiltrosCategorias = ({ onCategoryChange, selectedCategory }) => {
         ? categorias.data.map((categoria) => (
             <button
               key={categoria}
-              className={`px-4 py-2 whitespace-nowrap cursor-pointer text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]  ${
+              className={`px-4 py-2 whitespace-nowrap cursor-pointer text-muted-foreground hover:text-primary  ${
                 selectedCategory === categoria
-                  ? "bg-[hsl(var(--dashboard))] border-b-2 border-[hsl(var(--primary))] text-[hsl(var(--primary))] rounded-md" : "text-[hsl(var(--muted-foreground))]"
+                  ? "bg-dashboard border-b-2 border-primary text-primary rounded-md" : "text-muted-foreground"
               }`}
               onClick={() => onCategoryChange(categoria)}
             >

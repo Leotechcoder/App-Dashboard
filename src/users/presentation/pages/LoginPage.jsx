@@ -170,7 +170,7 @@ export const LoginPage = () => {
 
           <motion.h1
             variants={textChild}
-            className="text-6xl font-semibold text-[hsl(var(--foreground))] mb-3 text-center"
+            className="text-6xl font-semibold text-foreground mb-3 text-center"
           >
             Cangre Burger
           </motion.h1>
@@ -184,7 +184,7 @@ export const LoginPage = () => {
 
           <motion.p
             variants={textChild}
-            className="p-4 text-xl text-center text-[hsl(var(--foreground))] mb-8 max-w-md"
+            className="p-4 text-xl text-center text-foreground mb-8 max-w-md"
           >
             Descubre la mejor experiencia en control y gestión de ventas
           </motion.p>
@@ -193,14 +193,14 @@ export const LoginPage = () => {
         {/* FORM */}
         <div
           className={`lg:flex-1 flex justify-center items-center p-8 lg:p-12 transition-all duration-300 relative z-10
-            ${isFormExpanded ? "fixed inset-0 z-50 bg-[hsl(var(--background))]" : ""}`}
+            ${isFormExpanded ? "fixed inset-0 z-50 bg-background" : ""}`}
         >
           <motion.div
             variants={depthFade}
             initial="hidden"
             animate="show"
             transition={{ delay: 0.75 }}
-            className={`rounded-2xl shadow-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))]
+            className={`rounded-2xl shadow-xl bg-secondary border border-border
               transition-all duration-300
               ${isFormExpanded ? "w-[85vw] h-[85vh]" : "w-full max-w-md"}`}
           >
@@ -221,8 +221,8 @@ export const LoginPage = () => {
             transition={{ duration: 0.4 }}
             onClick={closeExpandedForm}
             className="fixed top-4 right-4 z-50 p-2 rounded-full
-              bg-[hsl(var(--foreground))] text-[hsl(var(--background))]
-              hover:bg-[hsl(var(--muted-foreground))] transition lg:hidden"
+              bg-foreground text-background
+              hover:bg-muted-foreground transition lg:hidden"
           >
             <X className="h-6 w-6" />
           </motion.button>

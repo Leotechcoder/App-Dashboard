@@ -1,4 +1,3 @@
-"use client"
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -66,11 +65,11 @@ const EditUserForm = ({ user, setEditModal }) => {
           <Card
             className="
               rounded-2xl overflow-hidden shadow-lg
-              bg-[hsl(var(--background-unit))]
-              border border-[hsl(var(--border))]
+              bg-bg-unit
+              border border-border
             "
           >
-            <CardHeader className="flex items-center justify-between pb-3 border-b border-[hsl(var(--border))]">
+            <CardHeader className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-4 w-full">
                 <Button
                   type="button"
@@ -78,8 +77,8 @@ const EditUserForm = ({ user, setEditModal }) => {
                   size="icon"
                   onClick={handleOnCancel}
                   className="
-                    text-[hsl(var(--muted-foreground))]
-                    hover:text-[hsl(var(--primary))]
+                    text-muted-foreground
+                    hover:text-primary
                     hover:cursor-pointer
                     transition-colors
                   "
@@ -87,7 +86,7 @@ const EditUserForm = ({ user, setEditModal }) => {
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
 
-                <CardTitle className="text-xl font-semibold tracking-tight text-[hsl(var(--foreground))]">
+                <CardTitle className="text-xl font-semibold tracking-tight text-foreground">
                   Editar Perfil
                 </CardTitle>
               </div>
@@ -98,7 +97,7 @@ const EditUserForm = ({ user, setEditModal }) => {
                 <div className="grid gap-2">
                   <Label
                     htmlFor="username"
-                    className="text-[hsl(var(--muted-foreground))]"
+                    className="text-muted-foreground"
                   >
                     Nombre de Usuario
                   </Label>
@@ -109,10 +108,10 @@ const EditUserForm = ({ user, setEditModal }) => {
                     onChange={handleInputChange}
                     placeholder="Nombre de usuario"
                     className="
-                      bg-[hsl(var(--input))]
-                      text-[hsl(var(--foreground))]
-                      border-[hsl(var(--border))]
-                      focus:ring-2 focus:ring-[hsl(var(--primary))]
+                      bg-input
+                      text-foreground
+                      border-border
+                      focus:ring-2 focus:ring-primary
                     "
                   />
                 </div>
@@ -120,7 +119,7 @@ const EditUserForm = ({ user, setEditModal }) => {
                 <div className="grid gap-2">
                   <Label
                     htmlFor="phone"
-                    className="text-[hsl(var(--muted-foreground))]"
+                    className="text-muted-foreground"
                   >
                     Teléfono
                   </Label>
@@ -131,10 +130,10 @@ const EditUserForm = ({ user, setEditModal }) => {
                     onChange={handleInputChange}
                     placeholder="Teléfono"
                     className="
-                      bg-[hsl(var(--input))]
-                      text-[hsl(var(--foreground))]
-                      border-[hsl(var(--border))]
-                      focus:ring-2 focus:ring-[hsl(var(--primary))]
+                      bg-input
+                      text-foreground
+                      border-border
+                      focus:ring-2 focus:ring-primary
                     "
                   />
                 </div>
@@ -142,7 +141,7 @@ const EditUserForm = ({ user, setEditModal }) => {
                 <div className="grid gap-2">
                   <Label
                     htmlFor="address"
-                    className="text-[hsl(var(--muted-foreground))]"
+                    className="text-muted-foreground"
                   >
                     Dirección
                   </Label>
@@ -153,16 +152,16 @@ const EditUserForm = ({ user, setEditModal }) => {
                     onChange={handleInputChange}
                     placeholder="Dirección"
                     className="
-                      bg-[hsl(var(--input))]
-                      text-[hsl(var(--foreground))]
-                      border-[hsl(var(--border))]
-                      focus:ring-2 focus:ring-[hsl(var(--primary))]
+                      bg-input
+                      text-foreground
+                      border-border
+                      focus:ring-2 focus:ring-primary
                     "
                   />
                 </div>
               </CardContent>
 
-              <Separator className="bg-[hsl(var(--border))]" />
+              <Separator className="bg-border" />
 
               <CardFooter className="flex justify-end gap-3 py-4">
                 <Button
@@ -170,9 +169,9 @@ const EditUserForm = ({ user, setEditModal }) => {
                   variant="outline"
                   onClick={handleOnCancel}
                   className="
-                    bg-[hsl(var(--secondary))]
-                    text-[hsl(var(--secondary-foreground))]
-                    hover:bg-[hsl(var(--secondary)/0.8)]
+                    bg-secondary
+                    text-secondary-foreground
+                    hover:bg-secondary/80
                     hover:cursor-pointer
                   "
                 >

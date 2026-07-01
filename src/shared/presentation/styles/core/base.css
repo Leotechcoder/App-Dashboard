@@ -4,3 +4,98 @@
     color: hsl(var(--foreground));
   }
 }
+
+@layer utilities{
+  .orders-page {
+    @apply w-full rounded-xl pt-5 pb-4;
+    background-color: hsl(var(--background));
+  }
+  .orders-header {
+    @apply flex flex-col gap-3 px-5 pb-4 border-b;
+    border-color: hsl(var(--border));
+    background-color: hsl(var(--background));
+  }
+  .orders-table-container {
+    @apply overflow-x-auto rounded-lg shadow-sm;
+    background-color: hsl(var(--background-unit));
+  }
+
+  .orders-table-header {
+    @apply sticky top-0 z-10;
+    background-color: hsl(var(--dashboard));
+  }
+
+  .orders-table-row {
+    @apply transition-colors;
+  }
+
+  .orders-table-row:hover {
+    background-color: hsl(var(--background-unit-2));
+  }
+
+  .orders-delivery-tabs {
+    @apply flex gap-1 rounded-full p-1 border;
+    background-color: hsl(var(--background-unit));
+    border-color: hsl(var(--border));
+  }
+
+  .orders-delivery-tab {
+    @apply flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .orders-delivery-tab:hover {
+    background-color: hsl(var(--background-unit-2));
+    color: hsl(var(--foreground));
+  }
+
+  .orders-delivery-tab-active {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  .source-badge-pos {
+    background-color: hsl(var(--source-pos-bg));
+    color: hsl(var(--source-pos-text));
+    border: 1px solid hsl(var(--source-pos-border));
+  }
+
+  .source-badge-app {
+    background-color: hsl(var(--source-app-bg));
+    color: hsl(var(--source-app-text));
+    border: 1px solid hsl(var(--source-app-border));
+  }
+
+  .source-badge-wa {
+    background-color: hsl(var(--source-wa-bg));
+    color: hsl(var(--source-wa-text));
+    border: 1px solid hsl(var(--source-wa-border));
+  }
+
+  /* Source badge — base + variantes */
+  /* .source-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+           text-[0.68rem] font-semibold border border-transparent
+           whitespace-nowrap leading-none;
+  }
+  .source-badge--pos      { @apply bg-source-pos-bg text-source-pos-text border-source-pos-border; }
+  .source-badge--app      { @apply bg-source-app-bg text-source-app-text border-source-app-border; }
+  .source-badge--whatsapp { @apply bg-source-wa-bg text-source-wa-text border-source-wa-border; }
+  .source-badge--other    { @apply bg-[hsl(var(--source-other-bg))] text-[hsl(var(--source-other-text))] border-[hsl(var(--source-other-border))]; } */
+
+  /* Action buttons */
+  /* .orders-action-btn        { @apply inline-flex items-center gap-1 px-1.5 py-1.5 rounded-md cursor-pointer text-xs font-medium transition-colors bg-transparent border-none; }
+  .orders-action-btn--edit   { @apply text-blue hover:bg-dashboard; }
+  .orders-action-btn--delete { @apply text-destructive hover:bg-destructive/8; }
+  .orders-action-btn--close  { @apply text-green px-2 hover:bg-green/10; } */
+
+  /* Row selected */
+  /* .orders-table-row--selected { @apply text-foreground; } */
+
+  /* Empty / refreshing states */
+  /* .orders-empty       { @apply flex flex-col items-center gap-2 py-14 text-sm font-medium text-muted-foreground; }
+  .orders-empty__icon { @apply text-4xl opacity-50; }
+  .orders-refreshing  { @apply flex justify-center items-center h-40 text-sm font-medium text-muted-foreground; } */
+
+  
+}

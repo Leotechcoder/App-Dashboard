@@ -32,22 +32,16 @@ export function SalesFilters({ filters, onFiltersChange }) {
   return (
     <Card>
       <CardContent
-        className="
-          pt-6
-        "
-        style={{ borderRadius: "var(--border)" }}
+        className="pt-6"
+        style={{ borderRadius: "var(--radius)" }}
       >
-        <div
-          className="
-            flex flex-col md:flex-row md:items-end
-            gap-(--filters-gap)
-          "
-        >
-          {/* -------- Rango de fecha -------- */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-end">
+
+          {/* Rango de Fecha */}
           <div className="flex-1 space-y-2">
             <Label
               htmlFor="dateRange"
-              className="text-[hsl(var(--muted-foreground))]"
+              className="text-muted-foreground"
             >
               Rango de Fecha
             </Label>
@@ -58,7 +52,7 @@ export function SalesFilters({ filters, onFiltersChange }) {
             >
               <SelectTrigger
                 id="dateRange"
-                className="w-(--filters-select-width) border border-[hsl(var(--border))]"
+                className="w-56 border-border"
               >
                 <SelectValue placeholder="Seleccionar rango" />
               </SelectTrigger>
@@ -72,13 +66,14 @@ export function SalesFilters({ filters, onFiltersChange }) {
             </Select>
           </div>
 
-          {/* -------- Fechas personalizadas -------- */}
+          {/* Fechas personalizadas */}
           {filters.dateRange === "custom" && (
-            <div className="flex flex-1 gap-4 mr-8">
+            <div className="mr-8 flex flex-1 gap-4">
+
               <div className="flex-1 space-y-2">
                 <Label
                   htmlFor="startDate"
-                  className="text-[hsl(var(--muted-foreground))]"
+                  className="text-muted-foreground"
                 >
                   Fecha Inicio
                 </Label>
@@ -86,9 +81,13 @@ export function SalesFilters({ filters, onFiltersChange }) {
                 <div className="relative">
                   <Calendar
                     className="
-                      absolute left-3 top-1/2 -translate-y-1/2
-                      h-4 w-4
-                      text-[hsl(var(--filters-input-icon))]
+                      absolute
+                      left-3
+                      top-1/2
+                      h-4
+                      w-4
+                      -translate-y-1/2
+                      text-muted-foreground
                     "
                   />
 
@@ -105,7 +104,7 @@ export function SalesFilters({ filters, onFiltersChange }) {
               <div className="flex-1 space-y-2">
                 <Label
                   htmlFor="endDate"
-                  className="text-[hsl(var(--filters-label-text))]"
+                  className="text-muted-foreground"
                 >
                   Fecha Fin
                 </Label>
@@ -113,9 +112,13 @@ export function SalesFilters({ filters, onFiltersChange }) {
                 <div className="relative">
                   <Calendar
                     className="
-                      absolute left-3 top-1/2 -translate-y-1/2
-                      h-4 w-4
-                      text-[hsl(var(--filters-input-icon))]
+                      absolute
+                      left-3
+                      top-1/2
+                      h-4
+                      w-4
+                      -translate-y-1/2
+                      text-muted-foreground
                     "
                   />
 
@@ -128,14 +131,15 @@ export function SalesFilters({ filters, onFiltersChange }) {
                   />
                 </div>
               </div>
+
             </div>
           )}
 
-          {/* -------- Método de pago -------- */}
+          {/* Método de Pago */}
           <div className="flex-1 space-y-2">
             <Label
               htmlFor="paymentMethod"
-              className="text-[hsl(var(--muted-foreground))]"
+              className="text-muted-foreground"
             >
               Método de Pago
             </Label>
@@ -146,7 +150,7 @@ export function SalesFilters({ filters, onFiltersChange }) {
             >
               <SelectTrigger
                 id="paymentMethod"
-                className="w-(--filters-select-width)"
+                className="w-56 border-border"
               >
                 <SelectValue placeholder="Seleccionar método" />
               </SelectTrigger>
@@ -160,6 +164,7 @@ export function SalesFilters({ filters, onFiltersChange }) {
               </SelectContent>
             </Select>
           </div>
+
         </div>
       </CardContent>
     </Card>

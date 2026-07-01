@@ -1,4 +1,3 @@
-"use client";
 
 import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
@@ -39,7 +38,7 @@ export function ProductForm({
   };
 
   return (
-    <div className="space-y-6 text-[hsl(var(--muted-foreground))]">
+    <div className="space-y-6 text-muted-foreground">
       {/* NOMBRE */}
       <div className="space-y-2">
         <Label htmlFor="name">Nombre</Label>
@@ -47,8 +46,6 @@ export function ProductForm({
           id="name"
           value={formData.name}
           onChange={(e) => updateField("name", e.target.value)}
-          className="bg-[hsl(var(--background-unit-2))] 
-                     border-[hsl(var(--border))] text-[hsl(var(--foreground))] "
         />
       </div>
 
@@ -60,8 +57,6 @@ export function ProductForm({
           rows={4}
           value={formData.description}
           onChange={(e) => updateField("description", e.target.value)}
-          className="bg-[hsl(var(--background-unit-2))] 
-                     border-[hsl(var(--border))] text-[hsl(var(--foreground))] "
         />
       </div>
 
@@ -76,8 +71,6 @@ export function ProductForm({
             step="0.01"
             value={formData.price}
             onChange={(e) => updateField("price", e.target.value)}
-            className="bg-[hsl(var(--background-unit-2))] 
-                       border-[hsl(var(--border))] text-[hsl(var(--foreground))] "
           />
         </div>
 
@@ -89,8 +82,6 @@ export function ProductForm({
             min="0"
             value={formData.stock}
             onChange={(e) => updateField("stock", e.target.value)}
-            className="bg-[hsl(var(--background-unit-2))] 
-                       border-[hsl(var(--border))] text-[hsl(var(--foreground))] "
           />
         </div>
       </div>
@@ -102,17 +93,11 @@ export function ProductForm({
           value={formData.category}
           onValueChange={(value) => updateField("category", value)}
         >
-          <SelectTrigger
-            className="bg-[hsl(var(--background-unit-2))] 
-                       border-[hsl(var(--border))]"
-          >
+          <SelectTrigger>
             <SelectValue placeholder="Seleccionar categoría" />
           </SelectTrigger>
 
-          <SelectContent
-            className="bg-[hsl(var(--background-unit-2))] 
-                       border border-[hsl(var(--border))] "
-          >
+          <SelectContent>
             {categories.map((cat) => (
               <SelectItem key={cat} value={cat}>
                 {cat}
@@ -129,17 +114,11 @@ export function ProductForm({
           value={String(formData.available)}
           onValueChange={(value) => updateField("available", value)}
         >
-          <SelectTrigger
-            className="bg-[hsl(var(--background-unit-2))] 
-                       border-[hsl(var(--border))]"
-          >
+          <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
 
-          <SelectContent
-            className="bg-[hsl(var(--background-unit-2))] 
-                       border border-[hsl(var(--border))]"
-          >
+          <SelectContent>
             <SelectItem value="true">Disponible</SelectItem>
             <SelectItem value="false">No disponible</SelectItem>
           </SelectContent>

@@ -7,70 +7,44 @@ import {
 } from "@radix-ui/react-tabs"
 import { cn } from "@/lib/utils"
 
-// ---- ROOT --------------------------------------------------
-
 export function Tabs({ className, ...props }) {
   return (
-    <TabsRoot
-      data-slot="tabs"
-      className={cn("flex flex-col gap-2", className)}
-      {...props}
-    />
+    <TabsRoot data-slot="tabs" className={cn("flex flex-col gap-2", className)} {...props} />
   )
 }
-
-// ---- LIST --------------------------------------------------
 
 export function TabsList({ className, ...props }) {
   return (
     <TabsListPrimitive
       data-slot="tabs-list"
       className={cn(
-        "inline-flex h-9 w-fit items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground",
+        "inline-flex h-9 w-fit items-center justify-center rounded-lg p-1 text-muted-foreground",
         className
       )}
       {...props}
     />
   )
 }
-
-// ---- TRIGGER --------------------------------------------------
 
 export function TabsTrigger({ className, ...props }) {
   return (
     <TabsTriggerPrimitive
       data-slot="tabs-trigger"
       className={cn(
-        `
-        inline-flex items-center justify-center gap-1.5 
-        rounded-md px-3 py-1.5 text-sm font-medium
-        text-[hsl(var(--muted-foreground))]
-        transition-colors
-
-        border border-transparent
-        hover:bg-[hsl(var(--background-unit))] hover:text-[hsl(var(--accent-foreground))]
-        hover:cursor-pointer
-
-        focus-visible:outline-none 
-        focus-visible:ring-2 focus-visible:ring-ring
-        disabled:pointer-events-none disabled:opacity-50
-
-        data-[state=active]:bg-[hsl(var(--primary))]
-        data-[state=active]:text-[hsl(var(--primary-foreground))]
-        data-[state=active]:shadow-sm
-        
-        [&_svg]:pointer-events-none
-        [&_svg]:shrink-0 
-        [&_svg:not([class*='size-'])]:size-4
-        `,
+        "inline-flex items-center justify-center gap-1.5",
+        "rounded-md px-3 py-1.5 text-sm font-medium",
+        "text-muted-foreground transition-colors border border-transparent cursor-pointer",
+        "hover:bg-bg-unit hover:text-accent-foreground",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "disabled:pointer-events-none disabled:opacity-50",
+        "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm",
+        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
     />
   )
 }
-
-// ---- CONTENT --------------------------------------------------
 
 export function TabsContent({ className, ...props }) {
   return (

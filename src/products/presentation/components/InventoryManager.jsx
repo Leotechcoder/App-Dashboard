@@ -26,13 +26,12 @@ export function InventoryManager({ inventory = {}, onChange }) {
   return (
     <Card
       className="
-        bg-[hsl(var(--background-unit))]
-        border border-[hsl(var(--border))]
+        border border-border
         shadow-sm rounded-xl
       "
     >
       <CardHeader>
-        <CardTitle className="text-lg text-[hsl(var(--foreground))]">
+        <CardTitle className="text-lg text-foreground">
           Inventario
         </CardTitle>
       </CardHeader>
@@ -40,7 +39,7 @@ export function InventoryManager({ inventory = {}, onChange }) {
       <CardContent className="space-y-6">
         {/* Administrar Stock */}
         <div className="flex flex-col gap-3">
-          <Label className="font-medium text-[hsl(var(--muted-foreground))]">
+          <Label className="font-medium text-muted-foreground">
             Administrar Stock
           </Label>
 
@@ -51,7 +50,7 @@ export function InventoryManager({ inventory = {}, onChange }) {
             }
             className="flex gap-6"
           >
-            <div className="flex items-center gap-2 text-[hsl(var(--muted-foreground))]">
+            <div className="flex items-center gap-2 text-muted-foreground">
               <RadioGroupItem id="manage-stock-yes" value="1" />
               <Label
                 htmlFor="manage-stock-yes"
@@ -65,7 +64,7 @@ export function InventoryManager({ inventory = {}, onChange }) {
               <RadioGroupItem id="manage-stock-no" value="0" />
               <Label
                 htmlFor="manage-stock-no"
-                className="text-[hsl(var(--muted-foreground))]"
+                className="text-muted-foreground"
               >
                 No
               </Label>
@@ -78,7 +77,7 @@ export function InventoryManager({ inventory = {}, onChange }) {
           <>
             {/* Stock Disponible */}
             <div className="flex flex-col gap-3">
-              <Label className="font-medium text-[hsl(var(--muted-foreground))]">
+              <Label className="font-medium text-muted-foreground">
                 Stock Disponible
               </Label>
 
@@ -96,7 +95,7 @@ export function InventoryManager({ inventory = {}, onChange }) {
                   <RadioGroupItem id="stock-in" value="1" />
                   <Label
                     htmlFor="stock-in"
-                    className="text-[hsl(var(--muted-foreground))]"
+                    className="text-muted-foreground"
                   >
                     En Stock
                   </Label>
@@ -106,7 +105,7 @@ export function InventoryManager({ inventory = {}, onChange }) {
                   <RadioGroupItem id="stock-out" value="0" />
                   <Label
                     htmlFor="stock-out"
-                    className="text-[hsl(var(--muted-foreground))]"
+                    className="text-muted-foreground"
                   >
                     Fuera de Stock
                   </Label>
@@ -116,7 +115,7 @@ export function InventoryManager({ inventory = {}, onChange }) {
 
             {/* Cantidad mínima */}
             <div className="flex flex-col gap-2">
-              <Label className="font-medium text-[hsl(var(--muted-foreground))]">
+              <Label className="font-medium text-muted-foreground">
                 Cantidad Mínima
               </Label>
               <Input

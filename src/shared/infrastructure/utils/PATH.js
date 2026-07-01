@@ -6,5 +6,6 @@ export const PATH = {
     products: '/admin/products',
     orders: '/admin/orders',
     ventas: '/admin/ventas',
+    analytics: '/admin/analytics',
     login: '/',
 };

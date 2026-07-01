@@ -1,4 +1,3 @@
-"use client";
 
 import { Users, UserPlus, Star, WalletCards } from "lucide-react";
 import { useSelector } from "react-redux";

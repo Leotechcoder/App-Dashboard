@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useMemo } from "react";
+import { useSelector } from "react-redux";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -21,16 +21,61 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { getData } from "@/orders/application/itemSlice";
 import clsx from "clsx";
 import { formatCurrency } from "@/shared/utils/formatPriceLocal";
 
+/* ------------------------------------------------------------------
+ * Paleta de colores por token del theme.
+ * IMPORTANTE: en Tailwind v4 las clases se detectan por escaneo
+ * estático del código fuente. No se pueden armar dinámicamente con
+ * template literals (ej. `bg-[hsl(var(${color}))]`) porque el
+ * compilador nunca ve ese string completo y no genera el CSS.
+ * Por eso se define acá un mapa con las clases ya completas, y en
+ * el render solo se elige la llave (nunca se concatena el color).
+ * ------------------------------------------------------------------ */
+const COLOR_CLASSES = {
+  blue: {
+    tile: "bg-blue/10 hover:bg-blue/20",
+    text: "text-blue",
+    badge: "bg-blue/10 text-blue",
+  },
+  green: {
+    tile: "bg-green/10 hover:bg-green/20",
+    text: "text-green",
+    badge: "bg-green/10 text-green",
+  },
+  purple: {
+    tile: "bg-purple/10 hover:bg-purple/20",
+    text: "text-purple",
+    badge: "bg-purple/10 text-purple",
+  },
+  yellow: {
+    tile: "bg-yellow/10 hover:bg-yellow/20",
+    text: "text-yellow",
+    badge: "bg-yellow/10 text-yellow",
+  },
+  muted: {
+    tile: "bg-muted hover:bg-muted/70",
+    text: "text-muted-foreground",
+    badge: "bg-muted text-muted-foreground",
+  },
+};
+
+const STATUS_STYLES = {
+  PENDING: { badge: "outline", label: "Pendiente" },
+  PAID: { badge: "default", label: "Abonada" },
+  DELIVERED: { badge: "secondary", label: "Entregada" },
+};
+
+const getStatusStyles = (status) =>
+  STATUS_STYLES[status] || { badge: "outline", label: status };
+
 const OrderCard = ({ order, onBack, className = "" }) => {
   const items = useSelector((state) => state.items.data || []);
-  const dispatch = useDispatch();
+
   if (!order) {
     return (
       <div className="text-center text-muted-foreground">
@@ -39,8 +84,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
     );
   }
 
-
-  // 🔹 Obtener ítems de la orden
+  // 🔹 Ítems de la orden
   const orderItems = useMemo(() => {
     return items.filter((i) => i.orderId === order.id);
   }, [items, order.id]);
@@ -51,7 +95,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
     0
   );
 
-  // 🔹 Estimación de progreso (por estado)
+  // 🔹 Progreso estimado por estado
   const progressMap = {
     pending: 25,
     paid: 75,
@@ -59,7 +103,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
   };
   const progressValue = progressMap[order.status] || 0;
 
-  // 🔹 Status visual
+  // 🔹 Badge de estado (para el header)
   const getStatusBadge = (status) => {
     const variants = {
       paid: "default",
@@ -86,13 +130,13 @@ const OrderCard = ({ order, onBack, className = "" }) => {
     ? format(new Date(order.updatedAt), "dd MMM yyyy, HH:mm", { locale: es })
     : "—";
 
-  // 🔹 Métodos de pago (sin badge cuadrado, animados)
+  // 🔹 Métodos de pago
   const paymentMethods = useMemo(() => {
     if (!order.paymentInfo || !order.paymentInfo.amounts) return [];
     return Object.entries(order.paymentInfo.amounts)
-      .filter(([method, amount]) => amount)
+      .filter(([, amount]) => amount)
       .map(([method, amount]) => {
-        let color = "gray";
+        let color = "muted";
         if (method === "efectivo") color = "green";
         else if (method === "debito") color = "blue";
         else if (method === "credito") color = "purple";
@@ -101,29 +145,23 @@ const OrderCard = ({ order, onBack, className = "" }) => {
       });
   }, [order.paymentInfo]);
 
-  //Manejador con switch para tipos de status de la orden
-
-  const getStatusStyles = (status) => {
-    switch (status) {
-      case "PENDING":
-        return { badge: "outline", label: "Pendiente" };
-      case "PAID":
-        return { badge: "default", label: "Abonada" };
-      case "DELIVERED":
-        return { badge: "secondary", label: "Entregada" };
-      default:
-        return { badge: "outline", label: status };
-    }
-  };
+  // 🔹 Métricas destacadas (tiles con tooltip)
+  const metrics = [
+    { label: "Cantidad de Artículos", value: totalItems, color: "blue" },
+    { label: "Estado Actual", value: order.status?.toUpperCase(), color: "green" },
+  ];
 
   return (
     <TooltipProvider>
       <motion.div
         layout
-        className={`w-full h-full bg-linear-to-br from-[hsl(var(--background))] to-[hsl(var(--background-unit-2))] rounded-lg shadow-xl border-0 overflow-hidden ${className}`}
+        className={clsx(
+          "w-full h-full bg-linear-to-br from-background to-bg-unit-2 rounded-lg shadow-xl border-0 overflow-hidden",
+          className
+        )}
       >
         {/* HEADER */}
-        <CardHeader className="sticky top-0 z-20 bg-linear-to-r from-[hsl(var(--blue)/0.2)] to-[hsl(var(--blue)/0.9)] text-[hsl(var(--foreground))] rounded-t-lg shadow-md">
+        <CardHeader className="sticky top-0 z-20 bg-linear-to-r from-blue/20 to-blue/90 text-foreground rounded-t-lg shadow-md">
           <CardTitle className="flex items-center justify-between">
             <div className="flex flex-col space-y-1">
               <h3 className="text-2xl font-bold">
@@ -131,7 +169,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
               </h3>
               <div className="flex items-center space-x-2">
                 {getStatusBadge(order.status)}
-                <Badge variant="outline" className="border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))]">
+                <Badge variant="outline" className="border-border text-muted-foreground">
                   {order.deliveryType || "Sin tipo"}
                 </Badge>
               </div>
@@ -143,7 +181,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
                   onClick={onBack}
                   variant="secondary"
                   size="sm"
-                  className="bg-[hsl(var(--accent)/0.2)] text-[hsl(var(--green))] hover:bg-[hsl(var(--accent)/0.4)]"
+                  className="bg-accent/20 text-green hover:bg-accent/40"
                 >
                   ← Volver
                 </Button>
@@ -153,28 +191,29 @@ const OrderCard = ({ order, onBack, className = "" }) => {
         </CardHeader>
 
         {/* CONTENT SCROLLABLE */}
-        <CardContent className={clsx(" p-6 space-y-6", className)}>
+        <CardContent className={clsx("p-6 space-y-6", className)}>
           {/* Información del cliente */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1 text-[hsl(var(--muted-foreground))]">
-              <p className="text-sm font-medium ">
+            <div className="space-y-1 text-muted-foreground">
+              <p className="text-sm font-medium">
                 <strong>Cliente:</strong> {order.customerName}
               </p>
-              <p className="text-sm text-[hsl(var(--muted-foreground))]">
+              <p className="text-sm text-muted-foreground">
                 <strong>ID Cliente:</strong> {order.customerId}
               </p>
-              <p className="text-sm text-[hsl(var(--muted-foreground))]">
-                <strong>Método de entrega:</strong> <span className="capitalize">{order.deliveryType}</span>
+              <p className="text-sm text-muted-foreground">
+                <strong>Método de entrega:</strong>{" "}
+                <span className="capitalize">{order.deliveryType}</span>
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-[hsl(var(--muted-foreground))]">
+              <p className="text-sm text-muted-foreground">
                 <strong>Creación:</strong> {createdAt}
               </p>
-              <p className="text-sm text-[hsl(var(--muted-foreground))]">
+              <p className="text-sm text-muted-foreground">
                 <strong>Actualización:</strong> {updatedAt}
               </p>
-              <p className="text-sm text-[hsl(var(--muted-foreground))]">
+              <p className="text-sm text-muted-foreground">
                 <strong>Total:</strong> ${formatCurrency(order.total)}
               </p>
             </div>
@@ -186,27 +225,35 @@ const OrderCard = ({ order, onBack, className = "" }) => {
           <div className="space-y-4">
             <h4 className="font-semibold text-lg">Métricas de la Orden</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                { label: "Cantidad de Artículos", value: totalItems, color: "--blue" },
-                { label: "Estado Actual", value: order.status.toUpperCase(), color: "--green" },
-              ].map((metric, i) => (
-                <Tooltip key={i}>
-                  <TooltipTrigger>
-                    <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3, delay: i * 0.1 }}
-                      className={`text-center p-4 bg-[hsl(var(${metric.color}))] rounded-lg hover:bg-[hsl(var(${metric.color}))] transition`}
-                    >
-                      <p className={`text-2xl font-bold text-[hsl(var(${metric.color}))]`}>
-                        {getStatusStyles(metric.value).label}
-                      </p>
-                      <p className="text-sm text-[hsl(var(--muted-foreground))]">{metric.label}</p>
-                    </motion.div>
-                  </TooltipTrigger>
-                  <TooltipContent>{metric.label}</TooltipContent>
-                </Tooltip>
-              ))}
+              {metrics.map((metric, i) => {
+                const colorClasses = COLOR_CLASSES[metric.color] || COLOR_CLASSES.muted;
+                const isStatusMetric = STATUS_STYLES[metric.value] !== undefined;
+                const displayValue = isStatusMetric
+                  ? getStatusStyles(metric.value).label
+                  : metric.value;
+
+                return (
+                  <Tooltip key={i}>
+                    <TooltipTrigger asChild>
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3, delay: i * 0.1 }}
+                        className={clsx(
+                          "text-center p-4 rounded-lg transition",
+                          colorClasses.tile
+                        )}
+                      >
+                        <p className={clsx("text-2xl font-bold", colorClasses.text)}>
+                          {displayValue}
+                        </p>
+                        <p className="text-sm text-muted-foreground">{metric.label}</p>
+                      </motion.div>
+                    </TooltipTrigger>
+                    <TooltipContent>{metric.label}</TooltipContent>
+                  </Tooltip>
+                );
+              })}
             </div>
 
             {/* Métodos de pago */}
@@ -220,10 +267,15 @@ const OrderCard = ({ order, onBack, className = "" }) => {
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: idx * 0.1 }}
-                      className={`flex flex-col items-center px-4 py-2 rounded-xl bg-[hsl(var(${p.color})-50)] text-[hsl(var(${p.color}))] font-semibold`}
+                      className={clsx(
+                        "flex flex-col items-center px-4 py-2 rounded-xl font-semibold",
+                        COLOR_CLASSES[p.color].badge
+                      )}
                     >
                       <span className="capitalize">{p.method}</span>
-                      <span className="text-sm font-normal">${formatCurrency(p.amount)}</span>
+                      <span className="text-sm font-normal">
+                        ${formatCurrency(p.amount)}
+                      </span>
                     </motion.div>
                   ))
                 ) : (
@@ -237,7 +289,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
             <div>
               <p className="text-sm font-medium mb-2">Progreso de la Orden</p>
               <Progress value={progressValue} className="h-3" />
-              <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 {progressValue}% completada
               </p>
             </div>
@@ -248,9 +300,9 @@ const OrderCard = ({ order, onBack, className = "" }) => {
           {/* Artículos */}
           <div>
             <h4 className="font-medium mb-3">Artículos</h4>
-            <div className="rounded-md border border-[hsl(var(--border))]">
+            <div className="rounded-md border border-border">
               <Table>
-                <TableHeader className="sticky top-0 bg-white z-10">
+                <TableHeader className="sticky top-0 bg-background z-10">
                   <TableRow>
                     <TableHead>Producto</TableHead>
                     <TableHead>Cantidad</TableHead>
@@ -261,10 +313,7 @@ const OrderCard = ({ order, onBack, className = "" }) => {
                 <TableBody>
                   {orderItems.length === 0 ? (
                     <TableRow>
-                      <TableCell
-                        colSpan={4}
-                        className="text-center text-[hsl(var(--muted-foreground))]"
-                      >
+                      <TableCell colSpan={4} className="text-center text-muted-foreground">
                         No hay artículos en esta orden
                       </TableCell>
                     </TableRow>

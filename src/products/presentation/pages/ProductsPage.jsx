@@ -26,8 +26,8 @@ const Products = () => {
   return (
     <main
       className="
-        bg-[hsl(var(--background))]
-        text-[hsl(var(--foreground))]
+        bg-background
+        text-foreground
         rounded-xl
         px-6
         relative
@@ -61,7 +61,7 @@ const Products = () => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <h1 className="text-2xl font-semibold text-[hsl(var(--foreground))]">
+                <h1 className="text-2xl font-semibold text-foreground">
                   Gestión de Productos
                 </h1>
                 <InfoButton showHelp={handleToggleHelp} />
@@ -71,8 +71,8 @@ const Products = () => {
             {showHelp && (
               <motion.div
                 className="
-                  bg-[hsl(var(--card))]
-                  border-l-4 border-[hsl(var(--primary))]
+                  bg-card
+                  border-l-4 border-primary
                   rounded-lg
                   shadow-md
                   p-6
@@ -107,8 +107,8 @@ const HelpContent = ({ onClose }) => (
       onClick={onClose}
       className="
     absolute right-0
-    text-[hsl(var(--muted))]
-    hover:text-[hsl(var(--primary))]
+    text-muted
+    hover:text-primary
     font-bold
   "
     >
@@ -117,7 +117,7 @@ const HelpContent = ({ onClose }) => (
 
     <Info
       className="
-  text-[hsl(var(--primary))]
+  text-primary
   w-6 h-6 mt-1 shrink-0
 "
     />
@@ -127,7 +127,7 @@ const HelpContent = ({ onClose }) => (
         className="
   text-2xl
   font-bold
-  text-[hsl(var(--foreground))]
+  text-foreground
   mb-2
   tracking-tight
 "
@@ -138,7 +138,7 @@ const HelpContent = ({ onClose }) => (
         className="
   text-sm
   leading-relaxed
-  text-[hsl(var(--foreground))]
+  text-foreground
 "
       >
         En esta sección podés{" "}
@@ -146,7 +146,7 @@ const HelpContent = ({ onClose }) => (
         tienda. Cada producto incluye información clave como nombre, precio,
         disponibilidad y categoría.
       </p>
-      <p className="text-[hsl(var(--foreground))] mt-2 leading-relaxed text-sm pr-2">
+      <p className="text-foreground mt-2 leading-relaxed text-sm pr-2">
         Usá el formulario para cargar nuevos artículos o seleccioná uno
         existente para editarlo. Mantené tu inventario siempre actualizado para
         mejorar la gestión y la experiencia de los clientes.

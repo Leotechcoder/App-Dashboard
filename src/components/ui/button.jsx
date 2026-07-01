@@ -12,23 +12,23 @@ export function Button({ className, variant, size, asChild, ...props }) {
   // Variantes usando tokens HSL
   const variants = {
     default: `
-      bg-[hsl(var(--primary))]
-      text-[hsl(var(--primary-foreground))]
-      hover:bg-[hsl(var(--primary)/0.9)]
+      bg-primary
+      text-primary-foreground
+      hover:bg-primary/90
       hover:cursor-pointer
     `,
     outline: `
       border
-      bg-[hsl(var(--background))]
-      border-[hsl(var(--primary))]
-      text-[hsl(var(--primary-foreground))]
-      hover:bg-[hsl(var(--background-unit))]
+      bg-background
+      border-primary
+      text-primary
+      hover:bg-background/90
       hover:cursor-pointer
     `,
     ghost: `
       bg-transparent
-      text-[hsl(var(--muted-foreground))]
-      hover:bg-[hsl(var(--accent))]
+      text-muted-foreground
+      hover:bg-accent
       hover:cursor-pointer
     `,
   };

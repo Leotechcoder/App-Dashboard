@@ -111,7 +111,7 @@ const ImageDisplay = ({ image, allowDelete, onDelete, isFirst }) => {
   };
 
   return (
-    <div className="relative border border-[hsl(var(--border))] bg-[hsl(var(--background-unit))] overflow-hidden group w-full h-full">
+    <div className="relative border border-border bg-background-unit overflow-hidden group w-full h-full">
       <img
         src={image.url}
         alt="image"
@@ -122,7 +122,7 @@ const ImageDisplay = ({ image, allowDelete, onDelete, isFirst }) => {
         <button
           onClick={handleDelete}
           disabled={deleting}
-          className="absolute top-2 left-2 p-1.5 bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))] rounded-full hover:cursor-pointer transition"
+          className="absolute top-2 left-2 p-1.5 bg-destructive text-destructive-foreground rounded-full hover:cursor-pointer transition"
         >
           {deleting ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -293,7 +293,7 @@ export function ImageUploader({
       ))}
 
       {canAddMore && (
-        <div className="aspect-square w-full h-full text-[hsl(var(--dashboard))]">
+        <div className="aspect-square w-full h-full text-dashboard">
           <Upload onUpload={handleUpload} disabled={!canAddMore} />
         </div>
       )}

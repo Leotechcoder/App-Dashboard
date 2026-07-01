@@ -1,5 +1,3 @@
-// src/modules/products/components/ProductEditor.jsx
-"use client";
 
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
@@ -249,7 +247,7 @@ export function ProductEditor({
           >
             <div className="flex items-center gap-3">
               {showBackButton && (
-                <Button className={'text-[hsl(var(--muted-foreground))] hover:cursor-pointer hover:text-[hsl(var(--foreground))]'} variant="ghost" size="sm" onClick={handleCancel}>
+                <Button className={'text-muted-foreground hover:cursor-pointer hover:text-foreground'} variant="ghost" size="sm" onClick={handleCancel}>
                   <ArrowLeft className="w-4 h-4" />
                   Volver
                 </Button>
@@ -266,8 +264,7 @@ export function ProductEditor({
               variants={fadeInUp}
               transition={{ duration: 0.35 }}
             >
-              <Card className="bg-[hsl(var(--background-unit))]
-                border border-[hsl(var(--border))]">
+              <Card>
                 <CardHeader>
                   <CardTitle>General</CardTitle>
                 </CardHeader>
@@ -287,8 +284,7 @@ export function ProductEditor({
               variants={fadeInUp}
               transition={{ duration: 0.35, delay: 0.05 }}
             >
-              <Card className="bg-[hsl(var(--background-unit))]
-                border border-[hsl(var(--border))]">
+              <Card>
                 <CardHeader>
                   <CardTitle>Imágenes</CardTitle>
                   <CardDescription>
@@ -335,7 +331,7 @@ export function ProductEditor({
             variants={fadeInUp}
             transition={{ duration: 0.3, delay: 0.05 }}
           >
-            <Button variant="outline" className={"text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))"} onClick={handleCancel} disabled={isLoading}>
+            <Button variant="outline" className={"text-muted-foreground hover:text-foreground))"} onClick={handleCancel} disabled={isLoading}>
               Cancelar
             </Button>
 

@@ -1,52 +1,364 @@
+/* ============================================================
+   ORDERS MODULE — styles/features/orders.css
+   ============================================================ */
+
+/* ── CSS vars for orders ──────────────────────────────────── */
 :root {
-  --orders-bg: 0 0% 98%;
-  --orders-border: 214 32% 91%;
-  --orders-muted: 215 16% 47%;
-  --orders-accent: 38 92% 50%;
-}
+  --orders-bg:           210 17% 97%;
+  --orders-border:       214 32% 91%;
+  --orders-muted:        215 16% 47%;
+  --orders-accent:       38 92% 50%;
 
-.dark {
-  --orders-bg: 217 32% 17%;
-  --orders-border: 217 19% 27%;
-  --orders-muted: 215 20% 65%;
-  --orders-accent: 38 92% 55%;
-}
+  --orders-table-bg:     0 0% 100%;
+  --orders-table-hover:  210 100% 97%;
+  --orders-table-new:    142 70% 96%;
 
-:root {
-  /* =========================
-     ORDERS TABLE
-  ========================= */
-  --orders-table-bg: 0 0% 100%;
-  --orders-table-hover: 210 100% 97%;
-  --orders-table-selected: 210 90% 92%;
-  --orders-table-new: 142 70% 96%;
-
-  /* =========================
-     ORDERS ACTIONS
-  ========================= */
-  --orders-action-edit: 210 90% 45%;
+  --orders-action-edit:   210 90% 45%;
   --orders-action-delete: 0 84% 60%;
-  --orders-action-close: 142 70% 40%;
+  --orders-action-close:  142 70% 40%;
 
-  /* =========================
-     ORDERS FEEDBACK
-  ========================= */
-  --orders-success: 142 70% 40%;
-  --orders-danger: 0 84% 60%;
-  --orders-muted: 215 16% 47%;
+  /* Source palette */
+  --source-pos-bg:        208 80% 94%;
+  --source-pos-text:      208 80% 35%;
+  --source-pos-border:    208 80% 78%;
+
+  --source-app-bg:        256 70% 94%;
+  --source-app-text:      256 70% 38%;
+  --source-app-border:    256 70% 78%;
+
+  --source-wa-bg:         142 60% 92%;
+  --source-wa-text:       142 60% 30%;
+  --source-wa-border:     142 60% 68%;
+
+  --source-other-bg:      39 80% 94%;
+  --source-other-text:    39 80% 32%;
+  --source-other-border:  39 80% 72%;
 }
 
 .dark {
-  --orders-table-bg: 217 32% 17%;
-  --orders-table-hover: 217 32% 22%;
-  --orders-table-selected: 217 32% 27%;
-  --orders-table-new: 142 50% 22%;
+  --orders-bg:           217 32% 13%;
+  --orders-border:       217 19% 27%;
+  --orders-muted:        215 20% 65%;
+  --orders-accent:       38 92% 55%;
 
-  --orders-action-edit: 210 90% 60%;
+  --orders-table-bg:     217 32% 17%;
+  --orders-table-hover:  217 32% 22%;
+  --orders-table-new:    142 50% 22%;
+
+  --orders-action-edit:   210 90% 60%;
   --orders-action-delete: 0 84% 65%;
-  --orders-action-close: 142 70% 55%;
+  --orders-action-close:  142 70% 55%;
 
-  --orders-success: 142 70% 55%;
-  --orders-danger: 0 84% 65%;
-  --orders-muted: 215 20% 65%;
+  --source-pos-bg:        208 40% 20%;
+  --source-pos-text:      208 80% 70%;
+  --source-pos-border:    208 40% 32%;
+
+  --source-app-bg:        256 30% 22%;
+  --source-app-text:      256 70% 75%;
+  --source-app-border:    256 30% 35%;
+
+  --source-wa-bg:         142 30% 18%;
+  --source-wa-text:       142 60% 65%;
+  --source-wa-border:     142 30% 30%;
+
+  --source-other-bg:      39 30% 18%;
+  --source-other-text:    39 80% 65%;
+  --source-other-border:  39 30% 30%;
+}
+
+/* ── Page shell ───────────────────────────────────────────── */
+.orders-page {
+  width: 100%;
+  padding-top: 1.25rem;
+  padding-bottom: 1rem;
+  border-radius: 0.75rem;
+  background: hsl(var(--orders-bg));
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.orders-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 0 1.25rem 0.875rem;
+  border-bottom: 1px solid hsl(var(--orders-border));
+  background:hsl(var(--orders-bg))
+}
+
+.orders-header__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.orders-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+/* ── Delivery tabs ────────────────────────────────────────── */
+.orders-delivery-tabs {
+  display: flex;
+  gap: 0.375rem;
+  background: hsl(var(--background-unit));
+  border: 1px solid hsl(var(--orders-border));
+  border-radius: 999px;
+  padding: 3px;
+}
+
+.orders-delivery-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: hsl(var(--muted-foreground));
+  transition: background 0.18s, color 0.18s;
+  border: none;
+  background: transparent;
+}
+
+.orders-delivery-tab:hover {
+  background: hsl(var(--stroke));
+  color: hsl(var(--foreground));
+}
+
+.orders-delivery-tab--active {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  box-shadow: 0 1px 4px hsl(var(--primary) / 0.35);
+}
+
+.orders-delivery-tab--active:hover {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+/* ── Source filter chips ──────────────────────────────────── */
+.orders-source-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+.orders-source-filters__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.orders-source-filters__hint {
+  font-size: 0.72rem;
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
+  margin-left: 0.25rem;
+}
+
+.orders-source-chips {
+  display: flex;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+}
+
+.orders-source-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.18s;
+  background: hsl(var(--background-unit));
+  color: hsl(var(--muted-foreground));
+  border-color: hsl(var(--border));
+}
+
+.orders-source-chip:hover {
+  border-color: hsl(var(--primary) / 0.4);
+  color: hsl(var(--foreground));
+}
+
+.orders-source-chip__count {
+  min-width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: hsl(var(--stroke));
+  color: hsl(var(--foreground));
+  padding: 0 4px;
+}
+
+/* Chip activo — "all" */
+.orders-source-chip--all.orders-source-chip--active {
+  background: hsl(var(--primary) / 0.12);
+  border-color: hsl(var(--primary) / 0.5);
+  color: hsl(var(--primary));
+}
+
+/* Chip activo — pos */
+.orders-source-chip--pos.orders-source-chip--active {
+  background: hsl(var(--source-pos-bg));
+  border-color: hsl(var(--source-pos-border));
+  color: hsl(var(--source-pos-text));
+}
+
+/* Chip activo — app */
+.orders-source-chip--app.orders-source-chip--active {
+  background: hsl(var(--source-app-bg));
+  border-color: hsl(var(--source-app-border));
+  color: hsl(var(--source-app-text));
+}
+
+/* Chip activo — whatsapp */
+.orders-source-chip--whatsapp.orders-source-chip--active {
+  background: hsl(var(--source-wa-bg));
+  border-color: hsl(var(--source-wa-border));
+  color: hsl(var(--source-wa-text));
+}
+
+/* ── Source badge (inline en tabla) ───────────────────────── */
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.source-badge--pos {
+  background: hsl(var(--source-pos-bg));
+  border-color: hsl(var(--source-pos-border));
+  color: hsl(var(--source-pos-text));
+}
+
+.source-badge--app {
+  background: hsl(var(--source-app-bg));
+  border-color: hsl(var(--source-app-border));
+  color: hsl(var(--source-app-text));
+}
+
+.source-badge--whatsapp {
+  background: hsl(var(--source-wa-bg));
+  border-color: hsl(var(--source-wa-border));
+  color: hsl(var(--source-wa-text));
+}
+
+.source-badge--other {
+  background: hsl(var(--source-other-bg));
+  border-color: hsl(var(--source-other-border));
+  color: hsl(var(--source-other-text));
+}
+
+/* ── Table wrapper ────────────────────────────────────────── */
+.orders-table-wrapper {
+  background: hsl(var(--background));
+}
+
+.orders-table-scroll {
+  overflow-y: auto;
+  height: calc(90vh - 140px);
+  border-top: 1px solid hsl(var(--border));
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.orders-table-container {
+}
+
+
+.orders-table-row {
+  transition: background 0.2s;
+}
+
+.orders-table-row:hover {
+  background: hsl(var(--orders-table-hover)) !important;
+}
+
+.orders-table-row--selected {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* ── Action buttons ───────────────────────────────────────── */
+.orders-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: background 0.15s, opacity 0.15s;
+  background: transparent;
+}
+
+.orders-action-btn--edit {
+  color: hsl(var(--orders-action-edit));
+}
+.orders-action-btn--edit:hover {
+  background: hsl(var(--dashboard));
+}
+
+.orders-action-btn--delete {
+  color: hsl(var(--orders-action-delete));
+}
+.orders-action-btn--delete:hover {
+  background: hsl(var(--destructive) / 0.08);
+}
+
+.orders-action-btn--close {
+  color: hsl(var(--orders-action-close));
+  padding: 0.3rem 0.6rem;
+}
+.orders-action-btn--close:hover {
+  background: hsl(var(--green) / 0.1);
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.orders-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 3.5rem 1rem;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.orders-empty__icon {
+  font-size: 2rem;
+  opacity: 0.5;
+}
+
+/* ── Refreshing ───────────────────────────────────────────── */
+.orders-refreshing {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
 }

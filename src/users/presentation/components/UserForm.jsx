@@ -16,9 +16,10 @@ import {
   Phone,
   MapPin,
 } from "lucide-react";
-import Button from "../../../shared/presentation/components/Button";
-import Input from "../../../shared/presentation/components/Input";
-import Label from "../../../shared/presentation/components/Label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 /* ------------------------------------------
  * Estado inicial
@@ -127,7 +128,7 @@ const UserForm = () => {
         <motion.div
           className="fixed inset-0 z-50 flex justify-end p-4
                      backdrop-blur-sm
-                     bg-[hsl(var(--background)/0.6)]"
+                     bg-background/60"
           variants={backdropVariants}
           initial="hidden"
           animate="visible"
@@ -136,8 +137,8 @@ const UserForm = () => {
           <motion.div
             className="relative w-full max-w-md p-6 sm:p-8
                        rounded-2xl shadow-2xl
-                       bg-[hsl(var(--background-unit))]
-                       border border-[hsl(var(--border))]
+                       bg-bg-unit
+                       border border-border
                        overflow-y-auto max-h-screen no-scrollbar"
             variants={formVariants}
             initial="hidden"
@@ -149,8 +150,8 @@ const UserForm = () => {
               onClick={handleClose}
               aria-label="Cerrar formulario"
               className="absolute top-4 right-4
-                         text-[hsl(var(--primary))]
-                         hover:text-[hsl(var(--primary)/0.6)] transition
+                         text-primary
+                         hover:text-primary/60 transition
                          hover:cursor-pointer"
             >
               <X size={22} />
@@ -158,7 +159,7 @@ const UserForm = () => {
 
             {/* Title */}
             <h2 className="mb-4 text-xl sm:text-2xl font-bold
-                           text-[hsl(var(--foreground))]">
+                           text-foreground">
               Crear cliente online
             </h2>
 
@@ -168,26 +169,22 @@ const UserForm = () => {
               className="flex flex-col gap-3 sm:gap-4 scale-95"
             >
               {[
-                { id: "username", label: "Nombre de usuario", icon: <User />, type: "text" },
-                { id: "email", label: "Correo electrónico", icon: <Mail />, type: "email" },
-                { id: "password_", label: "Contraseña", icon: <Lock />, type: "password" },
-                { id: "phone", label: "Teléfono", icon: <Phone />, type: "text" },
-                { id: "address", label: "Dirección", icon: <MapPin />, type: "text" },
+                { id: "username", label: "Nombre de usuario", icon: <User className="h-4 w-4" />, type: "text" },
+                { id: "email", label: "Correo electrónico", icon: <Mail className="h-4 w-4" />, type: "email" },
+                { id: "password_", label: "Contraseña", icon: <Lock className="h-4 w-4" />, type: "password" },
+                { id: "phone", label: "Teléfono", icon: <Phone className="h-4 w-4" />, type: "text" },
+                { id: "address", label: "Dirección", icon: <MapPin className="h-4 w-4" />, type: "text" },
               ].map(({ id, label, icon, type }) => (
                 <div key={id} className="space-y-1">
                   <Label
                     htmlFor={id}
-                    className="text-sm sm:text-base
-                               text-[hsl(var(--muted-foreground))]"
+                    className="text-sm sm:text-base text-muted-foreground"
                   >
                     {label}
                   </Label>
 
                   <div className="relative">
-                    <span
-                      className="absolute left-3 top-1/2 -translate-y-1/2
-                                 text-[hsl(var(--primary))]"
-                    >
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary">
                       {icon}
                     </span>
 
@@ -199,20 +196,15 @@ const UserForm = () => {
                       onChange={handleInput}
                       placeholder={label}
                       aria-invalid={!!errors[id]}
-                      className="pl-10 w-full rounded-md
-                                 bg-[hsl(var(--input))]
-                                 text-[hsl(var(--foreground))]
-                                 border border-[hsl(var(--border))]
-                                 placeholder:text-[hsl(var(--muted-foreground))]
-                                 focus:border-[hsl(var(--primary))]
-                                 focus:ring-[hsl(var(--primary))]
-                                 transition-all"
+                      className={cn(
+                        "pl-10 w-full rounded-md bg-input text-foreground border-border placeholder:text-muted-foreground focus:border-primary focus:ring-primary transition-all",
+                        errors[id] && "border-destructive focus:border-destructive focus:ring-destructive"
+                      )}
                     />
                   </div>
 
                   {errors[id] && (
-                    <p className="text-xs sm:text-sm
-                                  text-[hsl(var(--destructive))] mt-1">
+                    <p className="text-xs sm:text-sm text-destructive mt-1">
                       {errors[id]}
                     </p>
                   )}
@@ -222,12 +214,7 @@ const UserForm = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2 px-4 rounded-md font-bold
-                           bg-[hsl(var(--primary))]
-                           text-[hsl(var(--primary-foreground))]
-                           hover:opacity-90
-                           disabled:opacity-50 disabled:cursor-not-allowed
-                           transition"
+                className="w-full font-bold bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition hover:cursor-pointer"
               >
                 {loading ? "Guardando..." : "Guardar"}
               </Button>

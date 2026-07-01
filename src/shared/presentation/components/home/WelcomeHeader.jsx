@@ -22,8 +22,8 @@ const WelcomeHeader = () => {
     <motion.div variants={fadeDown}>
       <Card
         className="
-          bg-[hsl(var(--background))]
-          text-[hsl(var(--foreground))]
+          bg-background
+          text-foreground
           border-none
           shadow-none
         "
@@ -37,8 +37,8 @@ const WelcomeHeader = () => {
           <div
             className="
               rounded-xl p-3
-              bg-[hsl(var(--accent))]
-              text-[hsl(var(--blue))]
+              bg-accent
+              text-blue
               shadow-sm
             "
           >
@@ -50,7 +50,7 @@ const WelcomeHeader = () => {
             <CardTitle
               className="
                 text-2xl font-semibold
-                text-[hsl(var(--foreground))]
+                text-foreground
               "
             >
               ¡Bienvenido, {username || "usuario"}!
@@ -59,10 +59,10 @@ const WelcomeHeader = () => {
             <CardDescription
               className="
                 mt-1
-                text-[hsl(var(--muted-foreground))]
+                text-muted-foreground
               "
             >
-              Aquí tienes un resumen del rendimiento de las ventas.
+              Aquí tienes el estado general del negocio en tiempo real.
             </CardDescription>
           </div>
         </CardHeader>
