@@ -10,12 +10,11 @@ import {
   Truck,
   Table,
   LayoutGrid,
+  Plus,
 } from "lucide-react";
 // Componentes internos
 import OrderDetails from "../components/orderDetails/OrderDetails";
-import { ButtonAddOrder } from "../components/Buttons";
-import { SearchOrder } from "../components/SearchOrder";
-import OrdersTableEnhanced from "../components/OrdersTableEnhanced";
+import OrdersTableEnhanced from "../components/ordersTable/OrdersTableEnhanced";
 
 // Redux
 import {
@@ -24,7 +23,7 @@ import {
   setFilteredOrders,
   setCurrentPageOrders,
   deleteDataOrder,
-} from "../../application/orderSlice";
+} from "@/orders/application/orderSlice";
 
 // Hooks
 import { useTableData } from "@/shared/hook/useTableDataO";
@@ -35,7 +34,9 @@ import {
 import { voidItemSelected } from "@/orders/application/itemSlice";
 import { voidSelectedProduct } from "@/products/application/productSlice";
 import { useScrollLock } from "@/shared/hook/useScrollLock";
-import { ConfirmDialog } from "@/shared/presentation/components/ConfirmDialog";
+import { ConfirmDialog } from "@/shared/presentation/components/utils/ConfirmDialog";
+import SearchBar from "@/shared/presentation/components/utils/SearchBar";
+import { Button } from "@/components/ui/button";
 
 // ── Constantes de origen ───────────────────────────────────────────────────
 export const ORDER_SOURCES = {
@@ -253,12 +254,22 @@ const OrdersPage = ({ setScrollTo }) => {
             ))}
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <ButtonAddOrder handleClick={handleCreateOrder} className="h-9" />
+          <div className="flex items-center gap-2 w-100">
 
-            <SearchOrder
+            <Button
+              onClick={handleCreateOrder}
+              size="sm"
+              className="w-35 shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              Nueva Orden
+            </Button>
+
+            <SearchBar
+              tipo="por ID o nombre"
               searchTerm={table.searchTerm}
               setSearchTerm={table.setSearchTerm}
+              className={"w-60"}
             />
           </div>
         </div>

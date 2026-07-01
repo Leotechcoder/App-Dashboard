@@ -7,7 +7,7 @@ import {
   createUserData,
   getUserData,
   toggleOpenForm,
-} from "../../application/userSlice";
+} from "@/users/application/userSlice";
 import {
   X,
   User,

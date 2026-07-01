@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react"
-const SearchBar = ({ tipo, searchTerm, setSearchTerm }) => {
+import { cn } from "@/lib/utils";
+const SearchBar = ({ tipo, searchTerm, setSearchTerm, className }) => {
 
   const handleSearch = (e) => {
     const value = e.target.value.trim().toLowerCase()
@@ -12,7 +13,7 @@ const SearchBar = ({ tipo, searchTerm, setSearchTerm }) => {
       <Input
         type="text"
         placeholder={`Buscar ${tipo}...`}
-        className="w-full pl-10 pr-4"
+        className={cn("w-full pl-10 pr-4", className)}
         value={searchTerm}
         onChange={handleSearch}
       />

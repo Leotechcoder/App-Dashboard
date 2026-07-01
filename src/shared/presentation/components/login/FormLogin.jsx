@@ -6,8 +6,8 @@ import {
   loginUserGoogle,
   registerUser,
   setClosedSession,
-} from "../../application/userSlice.js";
-import { Eye, EyeOff, Mail, Lock, User, Facebook } from "lucide-react";
+} from "@/users/application/userSlice.js";
+import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,6 +31,15 @@ const GoogleIcon = (props) => (
     <path
       fill="#EA4335"
       d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.45-3.45C17.94 1.19 15.24 0 12 0 7.31 0 3.28 2.7 1.31 6.57l4.01 3.09c.94-2.82 3.57-4.91 6.68-4.91z"
+    />
+  </svg>
+);
+
+const FacebookIcon = (props) => (
+  <svg viewBox="0 0 24 24" className="h-5 w-5" {...props}>
+    <path
+      fill="#1877F2"
+      d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24h11.495v-9.294H9.691v-3.622h3.129V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.794.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116C23.407 24 24 23.407 24 22.676V1.325C24 .593 23.407 0 22.675 0z"
     />
   </svg>
 );
@@ -257,7 +266,8 @@ export const FormLogin = ({ onExpandChange, isExpanded }) => {
               onClick={handleLoginFacebook}
               className="w-full bg-bg-unit border-border text-foreground/85 transition-colors hover:bg-bg-unit hover:border-blue hover:text-blue hover:cursor-pointer"
             >
-              <Facebook className="h-5 w-5" />
+              {/* <Facebook className="h-5 w-5" /> */}
+              <FacebookIcon />
               Facebook
             </Button>
           </div>

@@ -1,4 +1,3 @@
-"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
@@ -7,20 +6,20 @@ import {
   setFilteredUser,
   setCurrentPageUsers,
   toggleOpenForm,
-} from "../../application/userSlice.js";
+} from "@/users/application/userSlice.js";
 
 import { Pencil, Trash, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Pagination from "@/shared/presentation/components/Pagination.jsx";
+import Pagination from "@/shared/presentation/components/utils/Pagination.jsx";
 import { useTableData } from "@/shared/hook/useTableData.js";
 import { useScrollLock } from "@/shared/hook/useScrollLock.js";
 
 import EditUserForm from "./EditUserForm.jsx";
-import SearchBar from "./SearchBar.jsx";
+import SearchBar from "@/shared/presentation/components/utils/SearchBar.jsx";
 import KpisClientes from "./KpisClientes.jsx";
 import UserSheet from "./UserSheet.jsx";
 import UserForm from "./UserForm.jsx";
-import { ConfirmDialog } from "@/shared/presentation/components/ConfirmDialog";
+import { ConfirmDialog } from "@/shared/presentation/components/utils/ConfirmDialog.jsx";
 
 const UserList = ({ setScrollTo }) => {
   const dispatch = useDispatch();

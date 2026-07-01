@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 import { getUserAuth } from "@/users/application/userSlice";
 import { initializeAppData } from "@/shared/application/slices/appSlice.js";
-import LoadingScreen from "../presentation/components/LoadingScreen.jsx";
+import LoadingScreen from "../presentation/components/utils/LoadingScreen.jsx";
 
 const ProtectedRoute = () => {
   const dispatch = useDispatch();

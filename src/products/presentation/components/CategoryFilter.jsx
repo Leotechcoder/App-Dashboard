@@ -1,4 +1,4 @@
-// CategoryFilter.jsx
+
 import { useSelector } from "react-redux"
 
 export const FiltrosCategorias = ({ onCategoryChange, selectedCategory }) => {

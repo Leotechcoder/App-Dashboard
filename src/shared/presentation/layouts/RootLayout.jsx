@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { removeMessage } from "../../../users/application/userSlice.js";
 import { Toaster, toast } from "sonner";
-import ScrollToTop from "../components/ScrollToTop.jsx";
+import ScrollToTop from "../components/utils/ScrollToTop.jsx";
 import { useSocket } from "@/context/SocketContext.jsx";
 import { addOrderFromSocket } from "@/orders/application/orderSlice.js";
 import { addPendingOrderFromSocket } from "@/sales/application/salesSlice.js";

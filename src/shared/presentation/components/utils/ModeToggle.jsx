@@ -1,7 +1,7 @@
 import React from "react";
 import { Sun, Moon } from "lucide-react";
-import { Button } from "../../../components/ui/button.jsx"; // Import relativo
-import { useTheme } from "./ThemeProvider.jsx"; // Import relativo
+import { Button } from "@/components/ui/button.jsx"; 
+import { useTheme } from "../ThemeProvider.jsx";
 
 export function ModeToggle() {
   const { theme, setTheme } = useTheme();

@@ -6,7 +6,7 @@ import {
   updateData,
   setFormView,
   getDataProducts,
-} from "../../application/productSlice";
+} from "@/products/application/productSlice";
 
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";

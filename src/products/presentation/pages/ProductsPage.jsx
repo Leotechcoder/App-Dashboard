@@ -5,8 +5,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import TablaProductos from "../components/ProductList.jsx";
 import { Info } from "lucide-react";
-import InfoButton from "../../../orders/presentation/components/InfoButton.jsx";
-import { setShowHelpProducts } from "../../application/productSlice.js";
+import InfoButton from "@/shared/presentation/components/utils/InfoButton.jsx";
+import { setShowHelpProducts } from "@/products/application/productSlice.js";
 import { useScrollTo } from "@/shared/hook/useScrollTo.js";
 import { ProductEditor } from "../components/ProductEditor.jsx";
 

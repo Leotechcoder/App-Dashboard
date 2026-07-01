@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   getDataProducts,
   setSelectedProduct,
-} from "../../../../products/application/productSlice";
+} from "@/products/application/productSlice";
 
 const SearchItemsProduct = ({ tipo, setIsModalOpen, isModalOpen }) => {
   const { data } = useSelector((store) => store.products);

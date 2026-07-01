@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { voidSelectedProduct } from "../../../../products/application/productSlice";
-import { setItemSelected } from "../../../application/itemSlice";
-import { idGenerator } from "../../../../shared/infrastructure/utils/idGenerator";
+import { voidSelectedProduct } from "@/products/application/productSlice";
+import { setItemSelected } from "@/orders/application/itemSlice";
+import { idGenerator } from "@/shared/infrastructure/utils/idGenerator";
 
 const formatPrice = (price) => {
   if (price == null) return 0; // Maneja null y undefined

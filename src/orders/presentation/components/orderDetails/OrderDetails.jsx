@@ -1,25 +1,22 @@
-"use client";
 
 import { useEffect, useState } from "react";
 import { ArrowLeft, User, Package, Clock, ShoppingCart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { idGenerator } from "../../../../shared/infrastructure/utils/idGenerator";
+import { idGenerator } from "@/shared/infrastructure/utils/idGenerator";
 import {
   addItems,
   deleteItem,
   getData,
   updateDataItems,
-} from "../../../application/itemSlice";
-import { getUserData } from "../../../../users/application/userSlice";
+} from "@/orders/application/itemSlice";
 import {
   setSelectedProduct,
-  voidSelectedProduct,
-} from "../../../../products/application/productSlice";
+} from "@/products/application/productSlice";
 import {
   createDataOrder,
   updateDataOrder,
-} from "../../../application/orderSlice";
-import { Item } from "../../../domain/item";
+} from "@/orders/application/orderSlice";
+import { Item } from "@/orders/domain/item";
 
 import ItemModal from "./ItemModal";
 import OrderItemsTable from "./OrderItemsTable";
@@ -37,7 +34,6 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import clsx from "clsx";
-import { fetchPendingOrders } from "@/sales/application/salesThunks";
 
 export default function OrderDetails({ onBack, className }) {
   const dispatch = useDispatch();

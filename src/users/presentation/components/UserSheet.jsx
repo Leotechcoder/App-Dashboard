@@ -1,8 +1,7 @@
-"use client";
 
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setEditingUser, setFormView } from "../../application/userSlice";
+import { setEditingUser, setFormView } from "@/users/application/userSlice";
 import {
   Card,
   CardContent,

@@ -9,12 +9,12 @@ import {
   setCurrentPage,
   clearMessage,
   clearError, // 👈 importamos para limpiar
-} from "../../application/productSlice.js";
+} from "@/products/application/productSlice.js";
 import { Pencil, Trash, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button"
-import Pagination from "../../../shared/presentation/components/Pagination.jsx";
-import SearchBar from "../../../shared/presentation/components/SearchBar.jsx";
-import { useTableData } from "../../../shared/hook/useTableDataP.js";
+import Pagination from "@/shared/presentation/components/utils/Pagination.jsx";
+import SearchBar from "@/shared/presentation/components/utils/SearchBar.jsx";
+import { useTableData } from "@/shared/hook/useTableDataP.js";
 import { FiltrosCategorias } from "../components/CategoryFilter.jsx";
 import { toast } from "sonner"; // 👈 usamos sonner
 import { motion } from "framer-motion";

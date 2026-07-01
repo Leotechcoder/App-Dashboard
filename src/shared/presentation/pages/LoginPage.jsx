@@ -1,14 +1,14 @@
-"use client";
+
 import { useState, useCallback, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
-import { removeMessage } from "../../application/userSlice.js";
+import { removeMessage } from "@/users/application/userSlice.js";
 import { Toaster, toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import LoadingScreen from "../../../shared/presentation/components/LoadingScreen";
-import { FormLogin } from "../components/FormLogin";
-import Logo from "@/shared/presentation/components/Logo.jsx";
+import LoadingScreen from "../components/utils/LoadingScreen.jsx";
+import { FormLogin } from "../components/login/FormLogin.jsx";
+import Logo from "@/shared/presentation/components/login/Logo.jsx";
 
 const BG_IMAGE =
   "https://res.cloudinary.com/dp7cugael/image/upload/v1763185852/imagen-paredon_uayvic.jpg";

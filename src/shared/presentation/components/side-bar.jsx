@@ -16,9 +16,9 @@ import {
 import { LogOut, Home, Package, ShoppingCart, Users, BarChart3 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { logOutUser, setClosedSession } from "../../../users/application/userSlice";
-import { PATH } from "../../../shared/infrastructure/utils/PATH.js";
-import { ModeToggle } from "./ModeToggle";
+import { logOutUser, setClosedSession } from "@/users/application/userSlice";
+import { PATH } from "@/shared/infrastructure/utils/PATH.js";
+import { ModeToggle } from "../components/utils/ModeToggle.jsx";
 
 const menuItems = [
   { title: "Inicio",    to: PATH.home,      icon: Home },
