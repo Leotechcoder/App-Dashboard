@@ -45,7 +45,6 @@ export const ORDER_SOURCES = {
     label: "POS Local",
     userId: "Us-1310202-790",
     icon: Monitor,
-    color: "var(--blue)",
     badgeClass: "source-badge--pos",
     description: "Cargada desde el dashboard",
   },
@@ -54,16 +53,15 @@ export const ORDER_SOURCES = {
     label: "App Mesero",
     userId: "table-pos-app",
     icon: Smartphone,
-    color: "var(--purpure)",
     badgeClass: "source-badge--app",
     description: "Ingresada desde la app móvil",
   },
   whatsapp: {
     key: "whatsapp",
     label: "WhatsApp",
-    userId: "5492984307550@s.whatsapp.net",
+    // No hay un userId fijo: cada cliente tiene su propio JID de WhatsApp.
+    // Se detecta por patrón, ver WHATSAPP_JID_PATTERN + getOrderSource.
     icon: MessageCircle,
-    color: "var(--green)",
     badgeClass: "source-badge--whatsapp",
     description: "Pedido por WhatsApp",
   },
@@ -72,18 +70,23 @@ export const ORDER_SOURCES = {
     label: "Otro",
     userId: null,
     icon: LayoutGrid,
-    color: "var(--yellow)",
     badgeClass: "source-badge--other",
     description: "Origen desconocido",
   },
 };
 
+// Los JIDs de WhatsApp (vía Evolution API) siempre terminan en
+// "@s.whatsapp.net" (chat individual) o "@g.us" (grupo). Como cada
+// cliente tiene su propio número, no se puede matchear por igualdad
+// exacta como con POS/App Mesero — hay que detectar el patrón.
+const WHATSAPP_JID_PATTERN = /@(s\.whatsapp\.net|g\.us)$/;
+
 export function getOrderSource(userId) {
   if (!userId) return ORDER_SOURCES.other;
-  const found = Object.values(ORDER_SOURCES).find(
-    (s) => s.userId && s.userId === userId,
-  );
-  return found || ORDER_SOURCES.other;
+  if (userId === ORDER_SOURCES.pos.userId) return ORDER_SOURCES.pos;
+  if (userId === ORDER_SOURCES.app.userId) return ORDER_SOURCES.app;
+  if (WHATSAPP_JID_PATTERN.test(userId)) return ORDER_SOURCES.whatsapp;
+  return ORDER_SOURCES.other;
 }
 
 // ── Delivery tabs ──────────────────────────────────────────────────────────
@@ -109,13 +112,20 @@ const normalizeDeliveryType = (type) => {
   return value;
 };
 
-// ── Source filter chips ────────────────────────────────────────────────────
-const SOURCE_FILTERS = [
+// ── Source filter chips (definición completa) ──────────────────────────────
+const ALL_SOURCE_FILTERS = [
   { value: "all", label: "Todas", icon: LayoutGrid },
   { value: "pos", label: "POS Local", icon: Monitor },
   { value: "app", label: "App Mesero", icon: Smartphone },
   { value: "whatsapp", label: "WhatsApp", icon: MessageCircle },
 ];
+
+// ── Qué chips de origen se muestran según la pestaña de entrega activa ─────
+const SOURCE_FILTERS_BY_DELIVERY = {
+  delivery: ["all", "pos", "whatsapp"],
+  local: ["all", "pos", "app", "whatsapp"],
+  table: ["all", "pos", "app"],
+};
 
 // ──────────────────────────────────────────────────────────────────────────
 const OrdersPage = ({ setScrollTo }) => {
@@ -137,6 +147,13 @@ const OrdersPage = ({ setScrollTo }) => {
     orderId: null,
   });
 
+  // Chips de origen disponibles para la pestaña de entrega actual
+  const visibleSourceFilters = ALL_SOURCE_FILTERS.filter((filter) =>
+    (SOURCE_FILTERS_BY_DELIVERY[activeDelivery] || ["all"]).includes(
+      filter.value,
+    ),
+  );
+
   // Tabla con filtro combinado (deliveryType + status + source)
   const table = useTableData({
     stateKey: "orders",
@@ -149,27 +166,26 @@ const OrdersPage = ({ setScrollTo }) => {
         return false;
       if (order.status !== "pending") return false;
       if (activeSource === "all") return true;
-      const src = ORDER_SOURCES[activeSource];
-      return src ? order.userId === src.userId : true;
+      return getOrderSource(order.userId).key === activeSource;
     },
   });
 
   useScrollLock(openOrderDetails || createOrder);
 
-  // Contadores por origen (para badges en los chips)
+  // Contadores por origen (para badges en los chips), acotados a los
+  // orígenes que aplican a la pestaña de entrega activa
   const sourceCounts = (() => {
     const base = (dataOrders || []).filter(
       (o) =>
         normalizeDeliveryType(o.deliveryType) === activeDelivery &&
         o.status === "pending",
     );
-    return {
-      all: base.length,
-      pos: base.filter((o) => o.userId === ORDER_SOURCES.pos.userId).length,
-      app: base.filter((o) => o.userId === ORDER_SOURCES.app.userId).length,
-      whatsapp: base.filter((o) => o.userId === ORDER_SOURCES.whatsapp.userId)
-        .length,
-    };
+    const counts = { all: base.length, pos: 0, app: 0, whatsapp: 0 };
+    for (const order of base) {
+      const key = getOrderSource(order.userId).key;
+      if (counts[key] !== undefined) counts[key] += 1;
+    }
+    return counts;
   })();
 
   // Toast
@@ -218,8 +234,11 @@ const OrdersPage = ({ setScrollTo }) => {
     await dispatch(closeOrder({ orderId, paymentInfo }));
   };
 
+  // Al cambiar de pestaña de entrega, las sub-opciones de origen cambian,
+  // así que volvemos siempre a "Todas" para no quedar en un filtro inválido
   const handleActiveDelivery = (value) => {
     setActiveDelivery(value);
+    setActiveSource("all");
     setScrollTo(true);
   };
 
@@ -255,7 +274,6 @@ const OrdersPage = ({ setScrollTo }) => {
           </div>
 
           <div className="flex items-center gap-2 w-100">
-
             <Button
               onClick={handleCreateOrder}
               size="sm"
@@ -274,73 +292,80 @@ const OrdersPage = ({ setScrollTo }) => {
           </div>
         </div>
 
-        {/* Source filters */}
+        {/* Source filters — dependen de la pestaña de entrega activa */}
         <div className="flex items-center gap-3 flex-wrap">
           <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Origen:
           </span>
 
-          <div className="flex gap-1.5 flex-wrap">
-            {SOURCE_FILTERS.map(({ value, label, icon: Icon }) => {
-              const count = sourceCounts[value] ?? 0;
+          <AnimatePresence mode="popLayout">
+            <div className="flex gap-1.5 flex-wrap">
+              {visibleSourceFilters.map(({ value, label, icon: Icon }) => {
+                const count = sourceCounts[value] ?? 0;
 
-              return (
-                <button
-                  key={value}
-                  onClick={() => setActiveSource(value)}
-                  className={`
-                  inline-flex items-center gap-1.5
-                  px-3 py-1 rounded-full
-                  text-xs font-medium
-                  border transition-all cursor-pointer
+                return (
+                  <motion.button
+                    key={value}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.15 }}
+                    onClick={() => setActiveSource(value)}
+                    className={`
+                    inline-flex items-center gap-1.5
+                    px-3 py-1 rounded-full
+                    text-xs font-medium
+                    border transition-all cursor-pointer
 
-                  ${
-                    activeSource === value
-                      ? value === "all"
-                        ? "bg-primary/10 border-primary/40 text-primary"
+                    ${
+                      activeSource === value
+                        ? value === "all"
+                          ? "bg-primary/10 border-primary/40 text-primary"
+                          : ""
+                        : "bg-background border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    }
+
+                    ${
+                      activeSource === value && value === "pos"
+                        ? "source-badge--pos"
                         : ""
-                      : "bg-background border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                  }
+                    }
 
-                  ${
-                    activeSource === value && value === "pos"
-                      ? "source-badge--pos"
-                      : ""
-                  }
+                    ${
+                      activeSource === value && value === "app"
+                        ? "source-badge--app"
+                        : ""
+                    }
 
-                  ${
-                    activeSource === value && value === "app"
-                      ? "source-badge--app"
-                      : ""
-                  }
+                    ${
+                      activeSource === value && value === "whatsapp"
+                        ? "source-badge--whatsapp"
+                        : ""
+                    }
+                  `}
+                  >
+                    <Icon size={13} />
+                    <span>{label}</span>
 
-                  ${
-                    activeSource === value && value === "whatsapp"
-                      ? "source-badge--whatsapp"
-                      : ""
-                  }
-                `}
-                >
-                  <Icon size={13} />
-                  <span>{label}</span>
-
-                  {count > 0 && (
-                    <span
-                      className="
-                      min-w-[18px] h-[18px]
-                      flex items-center justify-center
-                      rounded-full
-                      px-1 text-[11px] font-bold
-                      bg-bg-unit-2 text-foreground
-                    "
-                    >
-                      {count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+                    {count > 0 && (
+                      <span
+                        className="
+                        min-w-[18px] h-[18px]
+                        flex items-center justify-center
+                        rounded-full
+                        px-1 text-[11px] font-bold
+                        bg-bg-unit-2 text-foreground
+                      "
+                      >
+                        {count}
+                      </span>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+          </AnimatePresence>
 
           {activeSource !== "all" && (
             <motion.span
