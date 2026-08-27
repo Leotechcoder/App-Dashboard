@@ -158,7 +158,7 @@ const OrdersPage = ({ setScrollTo }) => {
   const table = useTableData({
     stateKey: "orders",
     itemsPerPage: 10,
-    searchFields: ["id", "userName"],
+    searchFields: ["id", "userId"],
     setFilteredData: setFilteredOrders,
     setCurrentPage: setCurrentPageOrders,
     externalFilter: (order) => {

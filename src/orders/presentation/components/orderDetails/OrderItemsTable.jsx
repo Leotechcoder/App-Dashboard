@@ -8,7 +8,6 @@ const OrderItemsTable = ({
   removeProduct,
   updateProduct,
   calculateSubTotal,
-  isModalOpen,
   setIsModalOpen,
 }) => {
   return (
@@ -47,7 +46,6 @@ const OrderItemsTable = ({
         <SearchItemsProduct
           tipo="producto"
           setIsModalOpen={setIsModalOpen}
-          isModalOpen={isModalOpen}
         />
       </div>
 

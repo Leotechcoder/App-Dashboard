@@ -6,7 +6,6 @@ import { idGenerator } from "@/shared/infrastructure/utils/idGenerator";
 import {
   addItems,
   deleteItem,
-  getData,
   updateDataItems,
 } from "@/orders/application/itemSlice";
 import {
@@ -37,7 +36,6 @@ import clsx from "clsx";
 
 export default function OrderDetails({ onBack, className }) {
   const dispatch = useDispatch();
-  const { itemSelected } = useSelector((store) => store.items);
   const selectedOrder = useSelector((store) => store.orders.selectedOrder);
   const users = useSelector((store) => store.users.data);
 
@@ -52,6 +50,7 @@ export default function OrderDetails({ onBack, className }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [updateItem, setUpdateItem] = useState(false);
   const [deliveryType, setDeliveryType] = useState("local");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -60,6 +59,7 @@ export default function OrderDetails({ onBack, className }) {
     if (selectedOrder) {
       setItems(selectedOrder.items || []);
       setDeliveryType(selectedOrder.deliveryType || "local");
+      setDeliveryAddress(selectedOrder.deliveryAddress || "");
       setOrderDetails((prev) => ({
         ...prev,
         userId: selectedOrder.userId || prev.userId,
@@ -68,17 +68,6 @@ export default function OrderDetails({ onBack, className }) {
       }));
     }
   }, [selectedOrder]);
-
-  useEffect(() => {
-    if (itemSelected.length > 0) {
-      setItems((prev) => {
-        const unique = [...prev, ...itemSelected].filter(
-          (item, i, self) => i === self.findIndex((x) => x.id === item.id)
-        );
-        return unique;
-      });
-    }
-  }, [itemSelected]);
 
   const handleUserInput = (e) => {
     const value = e.target.value;
@@ -140,6 +129,7 @@ export default function OrderDetails({ onBack, className }) {
       totalAmount: calculateSubTotal,
       paymentInfo: null,
       deliveryType,
+      deliveryAddress: deliveryType === "delivery" ? deliveryAddress : null,
     };
 
     if (selectedOrder?.id) {
@@ -210,11 +200,17 @@ export default function OrderDetails({ onBack, className }) {
         }
       }
 
-      if (deliveryType !== selectedOrder.deliveryType) {
+      if (
+        deliveryType !== selectedOrder.deliveryType ||
+        deliveryAddress !== (selectedOrder.deliveryAddress || "")
+      ) {
         await dispatch(
           updateDataOrder({
             id: selectedOrder.id,
-            data: { deliveryType },
+            data: {
+              deliveryType,
+              deliveryAddress: deliveryType === "delivery" ? deliveryAddress : null,
+            },
           })
         );
       }
@@ -423,6 +419,30 @@ export default function OrderDetails({ onBack, className }) {
                 <SelectItem value="delivery">Delivery</SelectItem>
               </SelectContent>
             </Select>
+
+            {deliveryType === "delivery" && (
+              <div className="mt-3">
+                <Label
+                  className="text-sm mb-2 block"
+                  style={{ color: "hsl(var(--muted-foreground))" }}
+                >
+                  Dirección de entrega
+                </Label>
+                <Input
+                  value={deliveryAddress}
+                  onChange={(e) => setDeliveryAddress(e.target.value)}
+                  placeholder="Ej: Av. Roca 1234, General Roca"
+                  className={clsx(
+                    "h-10",
+                    "text-[hsl(var(--foreground))]",
+                    "bg-[hsl(var(--input))]",
+                    isEditing
+                      ? "border-[hsl(var(--blue)/0.5)] focus:border-[hsl(var(--blue))] focus:ring-[hsl(var(--blue))]"
+                      : "border-[hsl(var(--green)/0.5)] focus:border-[hsl(var(--green))] focus:ring-[hsl(var(--green))]"
+                  )}
+                />
+              </div>
+            )}
           </div>
         </CardContent>
 
@@ -433,9 +453,7 @@ export default function OrderDetails({ onBack, className }) {
             removeProduct={removeProduct}
             updateProduct={updateProduct}
             calculateSubTotal={calculateSubTotal}
-            isModalOpen={isModalOpen}
             setIsModalOpen={setIsModalOpen}
-            selectedOrder={selectedOrder}
           />
         </CardContent>
       </Card>

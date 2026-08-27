@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { voidSelectedProduct } from "@/products/application/productSlice";
-import { setItemSelected } from "@/orders/application/itemSlice";
 import { idGenerator } from "@/shared/infrastructure/utils/idGenerator";
 
 const formatPrice = (price) => {
@@ -18,10 +17,15 @@ const ItemModal = ({ setModal, setUpdateItem, updateItem, setItems, items }) => 
   const dispatch = useDispatch();
   const selectedProduct = useSelector((store) => store.products.selectedProduct);
 
-  if (!selectedProduct) return null;
-
-  const [quantity, setQuantity] = useState(1);
-  const [description, setDescription] = useState("");
+  // 🔑 Los hooks van SIEMPRE antes de cualquier return condicional.
+  // Antes había un `if (!selectedProduct) return null;` acá arriba, con
+  // useState/useEffect declarados después — eso viola las Reglas de Hooks:
+  // React cuenta cuántos hooks se llaman en cada render, y si ese número
+  // cambia entre renders (porque un render corta antes por el early return
+  // y otro no), React puede tirar "Rendered more hooks than during the
+  // previous render" o arrastrar estado de un hook a otro sin darse cuenta.
+  const [quantity, setQuantity] = useState(selectedProduct?.quantity || 1);
+  const [description, setDescription] = useState(selectedProduct?.description || "");
 
   // Maneja cierre del modal
   const handleClose = () => {
@@ -34,20 +38,21 @@ const ItemModal = ({ setModal, setUpdateItem, updateItem, setItems, items }) => 
 
   // Cierra modal al retroceder en el historial
   useEffect(() => {
-    if (selectedProduct) {
-      setQuantity(selectedProduct.quantity || 1);
-      setDescription(selectedProduct.description || "");
-      window.history.pushState({ modalOpen: true }, "");
-      const handlePopState = () => handleClose();
-      window.addEventListener("popstate", handlePopState);
-      return () => window.removeEventListener("popstate", handlePopState);
-    }
-  }, []);
+    if (!selectedProduct) return;
+
+    setQuantity(selectedProduct.quantity || 1);
+    setDescription(selectedProduct.description || "");
+    window.history.pushState({ modalOpen: true }, "");
+    const handlePopState = () => handleClose();
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProduct]);
+
+  if (!selectedProduct) return null;
 
   // Agregar o actualizar producto
   const handleSubmit = () => {
-    if (!selectedProduct) return;
-
     const newItem = {
       id: updateItem ? selectedProduct.id : idGenerator("Items"),
       productId: selectedProduct.productId,
@@ -56,14 +61,16 @@ const ItemModal = ({ setModal, setUpdateItem, updateItem, setItems, items }) => 
       unitPrice: selectedProduct.unitPrice,
       quantity: Number(quantity),
     };
-    console.log("Item actualizado:", newItem);
 
+    // 🔑 Antes, agregar un ítem nuevo pasaba por Redux
+    // (dispatch(setItemSelected(newItem))) y OrderDetails lo recogía con un
+    // useEffect separado. Pero ItemModal ya recibe `setItems` por prop —
+    // usarlo acá directo evita ese viaje innecesario por Redux y deja
+    // "agregar" y "actualizar" con el mismo mecanismo.
     if (updateItem) {
-      setItems((prev) =>
-        prev.map((i) => (i.id === newItem.id ? newItem : i))
-      );
+      setItems((prev) => prev.map((i) => (i.id === newItem.id ? newItem : i)));
     } else {
-      dispatch(setItemSelected(newItem));
+      setItems((prev) => [...prev, newItem]);
     }
 
     handleClose();

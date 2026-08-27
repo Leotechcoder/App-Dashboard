@@ -6,7 +6,7 @@ import {
   setSelectedProduct,
 } from "@/products/application/productSlice";
 
-const SearchItemsProduct = ({ tipo, setIsModalOpen, isModalOpen }) => {
+const SearchItemsProduct = ({ tipo, setIsModalOpen }) => {
   const { data } = useSelector((store) => store.products);
   const dispatch = useDispatch();
 
@@ -52,7 +52,7 @@ const SearchItemsProduct = ({ tipo, setIsModalOpen, isModalOpen }) => {
       quantity: 1,
     };
     dispatch(setSelectedProduct(newItem));
-    setIsModalOpen(!isModalOpen);
+    setIsModalOpen(true);
     setBuscadorTerm("");
     setFilteredResults([]);
     setSelectedIndex(-1);
