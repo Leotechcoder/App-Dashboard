@@ -35,9 +35,12 @@ export class OrderRepository {
       updatedAt: raw.updated_at || raw.updatedAt,
       deliveryType: raw.deliveryType,
       deliveryAddress: raw.delivery_address || raw.deliveryAddress,
+      source: raw.source,
     });
   }
 
+  // ⚠️ `source` nunca se manda en el DTO de creación: lo determina el
+  // backend según el endpoint que recibe la orden, no el cliente.
   _toDTO(order) {
     return {
       userId: order.userId,

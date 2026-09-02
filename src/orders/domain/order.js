@@ -1,5 +1,5 @@
 export class Order {
-  constructor({ id, userId, userName, totalAmount, status, itemsId, createdAt, updatedAt, deliveryType, deliveryAddress }) {
+  constructor({ id, userId, userName, totalAmount, status, itemsId, createdAt, updatedAt, deliveryType, deliveryAddress, source }) {
     this.id = id
     this.userId = userId
     this.userName = userName
@@ -10,6 +10,7 @@ export class Order {
     this.itemsId = itemsId
     this.createdAt = createdAt
     this.updatedAt = updatedAt
+    this.source = source
   }
 
   // Ejemplo: Lógica de dominio (validaciones, estados, etc.)
@@ -17,7 +18,7 @@ export class Order {
     return this.status?.toLowerCase() === "abonada"
   }
 
-   toObject() {
+  toObject() {
     return { ...this }
   }
 }

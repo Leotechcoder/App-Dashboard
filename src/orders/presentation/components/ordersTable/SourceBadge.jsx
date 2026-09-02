@@ -1,18 +1,20 @@
 import { LayoutGrid } from "lucide-react";
-import { getOrderSource } from "../../pages/OrdersPage";
+import { ORDER_SOURCES } from "../../pages/OrdersPage";
 import { SOURCE_ICON_MAP } from "./ordersTable.constants";
 
-const SourceBadge = ({ userId }) => {
-  const source = getOrderSource(userId);
-  const Icon = SOURCE_ICON_MAP[source.key] || LayoutGrid;
+// Recibe el origen ya resuelto por el backend (`order.source`), no más
+// inferencia por userId.
+const SourceBadge = ({ source }) => {
+  const meta = ORDER_SOURCES[source] || ORDER_SOURCES.other;
+  const Icon = SOURCE_ICON_MAP[meta.key] || LayoutGrid;
 
   return (
     <span
-      className={`source-badge source-badge--${source.key}`}
-      title={source.description}
+      className={`source-badge source-badge--${meta.key}`}
+      title={meta.description}
     >
       <Icon size={11} />
-      {source.label}
+      {meta.label}
     </span>
   );
 };

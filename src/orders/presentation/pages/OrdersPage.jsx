@@ -38,12 +38,14 @@ import { ConfirmDialog } from "@/shared/presentation/components/utils/ConfirmDia
 import SearchBar from "@/shared/presentation/components/utils/SearchBar";
 import { Button } from "@/components/ui/button";
 
-// ── Constantes de origen ───────────────────────────────────────────────────
+// ── Metadata de origen para mostrar en UI ───────────────────────────────────
+// El origen (`order.source`) ahora lo setea el backend en el momento de
+// creación (según qué endpoint recibió la orden), no se infiere más acá.
+// Este objeto es solo un lookup de label/ícono/descripción por esa clave.
 export const ORDER_SOURCES = {
   pos: {
     key: "pos",
     label: "POS Local",
-    userId: "Us-1310202-790",
     icon: Monitor,
     badgeClass: "source-badge--pos",
     description: "Cargada desde el dashboard",
@@ -51,7 +53,6 @@ export const ORDER_SOURCES = {
   app: {
     key: "app",
     label: "App Mesero",
-    userId: "table-pos-app",
     icon: Smartphone,
     badgeClass: "source-badge--app",
     description: "Ingresada desde la app móvil",
@@ -59,8 +60,6 @@ export const ORDER_SOURCES = {
   whatsapp: {
     key: "whatsapp",
     label: "WhatsApp",
-    // No hay un userId fijo: cada cliente tiene su propio JID de WhatsApp.
-    // Se detecta por patrón, ver WHATSAPP_JID_PATTERN + getOrderSource.
     icon: MessageCircle,
     badgeClass: "source-badge--whatsapp",
     description: "Pedido por WhatsApp",
@@ -68,26 +67,11 @@ export const ORDER_SOURCES = {
   other: {
     key: "other",
     label: "Otro",
-    userId: null,
     icon: LayoutGrid,
     badgeClass: "source-badge--other",
     description: "Origen desconocido",
   },
 };
-
-// Los JIDs de WhatsApp (vía Evolution API) siempre terminan en
-// "@s.whatsapp.net" (chat individual) o "@g.us" (grupo). Como cada
-// cliente tiene su propio número, no se puede matchear por igualdad
-// exacta como con POS/App Mesero — hay que detectar el patrón.
-const WHATSAPP_JID_PATTERN = /@(s\.whatsapp\.net|g\.us)$/;
-
-export function getOrderSource(userId) {
-  if (!userId) return ORDER_SOURCES.other;
-  if (userId === ORDER_SOURCES.pos.userId) return ORDER_SOURCES.pos;
-  if (userId === ORDER_SOURCES.app.userId) return ORDER_SOURCES.app;
-  if (WHATSAPP_JID_PATTERN.test(userId)) return ORDER_SOURCES.whatsapp;
-  return ORDER_SOURCES.other;
-}
 
 // ── Delivery tabs ──────────────────────────────────────────────────────────
 const DELIVERY_TABS = [
@@ -166,7 +150,7 @@ const OrdersPage = ({ setScrollTo }) => {
         return false;
       if (order.status !== "pending") return false;
       if (activeSource === "all") return true;
-      return getOrderSource(order.userId).key === activeSource;
+      return (order.source || "other") === activeSource;
     },
   });
 
@@ -182,7 +166,7 @@ const OrdersPage = ({ setScrollTo }) => {
     );
     const counts = { all: base.length, pos: 0, app: 0, whatsapp: 0 };
     for (const order of base) {
-      const key = getOrderSource(order.userId).key;
+      const key = order.source || "other";
       if (counts[key] !== undefined) counts[key] += 1;
     }
     return counts;

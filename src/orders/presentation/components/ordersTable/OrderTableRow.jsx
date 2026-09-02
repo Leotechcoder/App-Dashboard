@@ -62,7 +62,7 @@ const OrderTableRow = ({
 
       {/* Origen */}
       <TableCell className="px-2 py-3">
-        <SourceBadge userId={order.userId} />
+        <SourceBadge source={order.source} />
       </TableCell>
 
       {/* Cliente */}
