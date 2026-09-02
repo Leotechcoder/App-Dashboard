@@ -107,7 +107,15 @@ const orderSlice = createSlice({
       })
       .addCase(createDataOrder.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.data.unshift(action.payload);
+
+        // ⚠️ El backend emite el socket "order:new" ANTES de responder este
+        // mismo POST, así que la orden puede llegar acá vía addOrderFromSocket
+        // primero. Sin este chequeo quedaba duplicada en el dashboard.
+        const exists = state.data.some((o) => o.id === action.payload.id);
+        if (!exists) {
+          state.data.unshift(action.payload);
+        }
+
         state.message = "Orden creada! (OvO)";
       })
       .addCase(createDataOrder.rejected, (state, action) => {
