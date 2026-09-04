@@ -41,3 +41,5 @@ export const PAYMENT_OPTIONS = [
   { key: "debito", label: "Débito", icon: Smartphone },
   { key: "transferencia", label: "Transferencia", icon: Smartphone },
 ];
+
+export const OPEN_ORDER_STATUSES = ["pending", "ready-to-pay"];

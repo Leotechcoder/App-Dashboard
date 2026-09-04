@@ -210,8 +210,20 @@ export const LoginPage = () => {
                 isExpanded={isFormExpanded}
               />
             </div>
+        <div className="px-8 h-full overflow-y-auto">
+          <div className="text-sm font-normal text-foreground mb-2">
+            Si tienes dudas, utiliza este correo y contraseña para acceder al sistema.
+          </div>
+          <div className="text-sm font-normal text-foreground mb-1">
+            Correo: <span className="font-semibold">correo@ejemplo.com</span>
+          </div>
+          <div className="text-sm font-normal text-foreground mb-4">
+            Contraseña: <span className="font-semibold">Correo1234</span>
+          </div>
+        </div>
           </motion.div>
         </div>
+
 
         {/* CLOSE BUTTON */}
         {isFormExpanded && (

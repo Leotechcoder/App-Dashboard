@@ -37,6 +37,7 @@ import { useScrollLock } from "@/shared/hook/useScrollLock";
 import { ConfirmDialog } from "@/shared/presentation/components/utils/ConfirmDialog";
 import SearchBar from "@/shared/presentation/components/utils/SearchBar";
 import { Button } from "@/components/ui/button";
+import { OPEN_ORDER_STATUSES } from "../components/ordersTable/ordersTable.constants";
 
 // ── Metadata de origen para mostrar en UI ───────────────────────────────────
 // El origen (`order.source`) ahora lo setea el backend en el momento de
@@ -107,7 +108,7 @@ const ALL_SOURCE_FILTERS = [
 // ── Qué chips de origen se muestran según la pestaña de entrega activa ─────
 const SOURCE_FILTERS_BY_DELIVERY = {
   delivery: ["all", "pos", "whatsapp"],
-  local: ["all", "pos", "app", "whatsapp"],
+  local: ["all", "pos", "whatsapp"],
   table: ["all", "pos", "app"],
 };
 
@@ -148,8 +149,8 @@ const OrdersPage = ({ setScrollTo }) => {
     externalFilter: (order) => {
       if (normalizeDeliveryType(order.deliveryType) !== activeDelivery)
         return false;
-      if (order.status !== "pending") return false;
-      if (activeSource === "all") return true;
+      if (!OPEN_ORDER_STATUSES.includes(order.status)) return false;
+      if (activeSource === "all") return true;    
       return (order.source || "other") === activeSource;
     },
   });
@@ -162,7 +163,7 @@ const OrdersPage = ({ setScrollTo }) => {
     const base = (dataOrders || []).filter(
       (o) =>
         normalizeDeliveryType(o.deliveryType) === activeDelivery &&
-        o.status === "pending",
+        OPEN_ORDER_STATUSES.includes(o.status),
     );
     const counts = { all: base.length, pos: 0, app: 0, whatsapp: 0 };
     for (const order of base) {
