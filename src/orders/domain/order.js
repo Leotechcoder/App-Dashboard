@@ -1,5 +1,5 @@
 export class Order {
-  constructor({ id, userId, userName, totalAmount, status, itemsId, createdAt, updatedAt, deliveryType, deliveryAddress, source }) {
+  constructor({ id, userId, userName, totalAmount, status, itemsId, createdAt, updatedAt, deliveryType, deliveryAddress, source, tableId }) {
     this.id = id
     this.userId = userId
     this.userName = userName
@@ -11,6 +11,7 @@ export class Order {
     this.createdAt = createdAt
     this.updatedAt = updatedAt
     this.source = source
+    this.tableId = tableId  
   }
 
   // Ejemplo: Lógica de dominio (validaciones, estados, etc.)

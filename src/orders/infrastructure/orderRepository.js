@@ -36,11 +36,13 @@ export class OrderRepository {
       deliveryType: raw.deliveryType,
       deliveryAddress: raw.delivery_address || raw.deliveryAddress,
       source: raw.source,
+      tableId: raw.table_id || raw.tableId,
     });
   }
 
   // ⚠️ `source` nunca se manda en el DTO de creación: lo determina el
   // backend según el endpoint que recibe la orden, no el cliente.
+  // `tableId` sí se manda: el backend no puede adivinar qué mesa es.
   _toDTO(order) {
     return {
       userId: order.userId,
@@ -49,6 +51,7 @@ export class OrderRepository {
       items: order.items || [],
       totalAmount: order.totalAmount,
       deliveryType: order.deliveryType,
+      tableId: order.tableId,
     };
   }
 }

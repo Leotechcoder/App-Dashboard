@@ -6,6 +6,7 @@ import itemReducer     from "../../orders/application/itemSlice"
 import salesReducer    from "../../sales/application/salesSlice"
 import appReducer      from "@/shared/application/slices/appSlice"
 import analyticsReducer from "../../analytics/application/analyticsSlice"
+import tablesReducer from "../../tables/application/tableSlice"
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     sales:     salesReducer,
     app:       appReducer,
     analytics: analyticsReducer,
+    tables:    tablesReducer,
   },
 })
 

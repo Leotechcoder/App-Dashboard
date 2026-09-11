@@ -9,6 +9,7 @@ import Products from "@/products/presentation/pages/ProductsPage.jsx"
 import { SalesDashboardView } from "@/sales/presentation/pages/SalesDashboardView.jsx"
 import { AnalyticsDashboard } from "@/analytics/presentation/pages/AnalyticsDashboard.jsx"
 import ProtectedRoute from "@/shared/middleware/ProtectedRoutes.jsx"
+import TablesPage from "@/tables/presentation/pages/TablesPage.jsx" 
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
           { path: "products",  element: <Products /> },
           { path: "ventas",    element: <SalesDashboardView /> },
           { path: "analytics", element: <AnalyticsDashboard /> },
+          { path: "tables",    element: <TablesPage /> },
           { path: "*",         element: <ErrorUrl /> },
         ],
       },

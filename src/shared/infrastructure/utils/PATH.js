@@ -8,4 +8,5 @@ export const PATH = {
     ventas: '/admin/ventas',
     analytics: '/admin/analytics',
     login: '/',
+    tables: '/admin/tables',
 };

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 import {
@@ -115,6 +116,7 @@ const SOURCE_FILTERS_BY_DELIVERY = {
 // ──────────────────────────────────────────────────────────────────────────
 const OrdersPage = ({ setScrollTo }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const shownMessageRef = useRef("");
 
   const { selectedOrder, isLoading, error, message } = useSelector(
@@ -147,6 +149,10 @@ const OrdersPage = ({ setScrollTo }) => {
     setFilteredData: setFilteredOrders,
     setCurrentPage: setCurrentPageOrders,
     externalFilter: (order) => {
+      // Las órdenes de la App Mesero son pedidos de mesa: deben verse
+      // únicamente en la pestaña "Mesa", sin importar el deliveryType
+      // que traiga la orden.
+      if (order.source === "app" && activeDelivery !== "table") return false;
       if (normalizeDeliveryType(order.deliveryType) !== activeDelivery)
         return false;
       if (!OPEN_ORDER_STATUSES.includes(order.status)) return false;
@@ -162,6 +168,7 @@ const OrdersPage = ({ setScrollTo }) => {
   const sourceCounts = (() => {
     const base = (dataOrders || []).filter(
       (o) =>
+        !(o.source === "app" && activeDelivery !== "table") &&
         normalizeDeliveryType(o.deliveryType) === activeDelivery &&
         OPEN_ORDER_STATUSES.includes(o.status),
     );
@@ -259,14 +266,25 @@ const OrdersPage = ({ setScrollTo }) => {
           </div>
 
           <div className="flex items-center gap-2 w-100">
-            <Button
-              onClick={handleCreateOrder}
-              size="sm"
-              className="w-35 shadow-sm"
-            >
-              <Plus className="w-4 h-4" />
-              Nueva Orden
-            </Button>
+            {activeDelivery === "table" ? (
+              <Button
+                onClick={() => navigate("/admin/tables")}
+                size="sm"
+                className="shadow-sm"
+              >
+                <LayoutGrid className="w-4 h-4" />
+                Gestionar Mesas
+              </Button>
+            ) : (
+              <Button
+                onClick={handleCreateOrder}
+                size="sm"
+                className="w-35 shadow-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Nueva Orden
+              </Button>
+            )}
 
             <SearchBar
               tipo="orden por ID"
