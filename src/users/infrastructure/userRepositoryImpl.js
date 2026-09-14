@@ -1,5 +1,5 @@
 // infra/UserRepositoryImpl.js
-import { UserRepository } from "../domain/userRepository.js"
+import { UserRepository } from "../domain/UserRepository.js"
 import { userApi } from "../../shared/infrastructure/api/userApi.js"
 
 export class UserRepositoryImpl extends UserRepository {

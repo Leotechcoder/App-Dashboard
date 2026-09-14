@@ -1,4 +1,4 @@
-import { AuthRepository } from "../domain/authRepository.js"
+import { AuthRepository } from "../domain/AuthRepository.js"
 import { authApi } from "../../shared/infrastructure/api/authApi.js"
 
 export class AuthRepositoryImpl extends AuthRepository {
