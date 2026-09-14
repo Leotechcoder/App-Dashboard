@@ -1,4 +1,8 @@
+<<<<<<< HEAD:src/users/application/userService.js
 // application/UserService.js
+=======
+
+>>>>>>> baddd1c9bc1af46bf110b3ed5e1d0312536169be:src/users/application/UserService.js
 import { User } from "../domain/User.js"
 
 export class UserService {
