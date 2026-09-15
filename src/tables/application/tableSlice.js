@@ -61,25 +61,31 @@ const tableSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getDataTables.pending, (state) => { state.isLoading = true })
+      .addCase(getDataTables.pending, (state) => { state.isLoading = true 
+        state.error = null
+       })
       .addCase(getDataTables.fulfilled, (state, action) => {
         state.isLoading = false
         state.data = action.payload
+        state.error = null
       })
       .addCase(getDataTables.rejected, (state, action) => {
         state.isLoading = false
-        state.error = action.error.message
+        state.error = action.payload || action.error.message
       })
+      
       .addCase(createDataTable.fulfilled, (state, action) => {
         state.data.push(action.payload)
         state.message = "Mesa creada"
       })
       .addCase(createDataTable.rejected, (state, action) => { state.error = action.payload })
+      
       .addCase(updateDataTable.fulfilled, (state, action) => {
         state.data = state.data.map((t) => (t.id === action.payload.id ? action.payload : t))
         state.message = "Mesa actualizada"
       })
       .addCase(updateDataTable.rejected, (state, action) => { state.error = action.payload })
+
       .addCase(deleteDataTable.fulfilled, (state, action) => {
         state.data = state.data.filter((t) => t.id !== action.payload)
         state.message = "Mesa eliminada"

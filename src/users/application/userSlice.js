@@ -1,4 +1,4 @@
-// application/userSlice.js
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
 // Capas de la arquitectura limpia users

@@ -11,8 +11,11 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+# Archivos para pruebas
 pruebas
 pruebas\PreviewPage.jsx
+check-import-casing.cjs
+
 # Environment variables
 .env
 *.local
