@@ -1,101 +1,207 @@
+
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
-import { motion } from "framer-motion"
-import { BarChart3, RefreshCw, GitCompare } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion"
+import {
+  BarChart3,
+  RefreshCw,
+  GitCompare,
+  Package,
+} from "lucide-react"
+import { toast } from "sonner"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { toast } from "sonner"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
 
-// Fase 2 — thunks
 import {
   fetchTopProducts,
   fetchSalesByCategory,
   fetchSalesByHour,
-  // Fase 3
   fetchSalesComparison,
 } from "../../application/analyticsThunks"
+
 import { setAnalyticsFilters } from "../../application/analyticsSlice"
 
-// Fase 2 — widgets
-import { TopProductsWidget }    from "../components/TopProductsWidget"
+import { TopProductsWidget } from "../components/TopProductsWidget"
 import { SalesByCategoryChart } from "../components/SalesByCategoryChart"
-import { PeakHoursChart }       from "../components/PeakHoursChart"
+import { PeakHoursChart } from "../components/PeakHoursChart"
 
-// Fase 3 — widgets
-import { ComparativeKPIs }      from "../components/ComparativeKPIs"
-import { SalesTrendChart }      from "../components/SalesTrendChart"
-import { LowRotationProducts }  from "../components/LowRotationProducts"
+import { ComparativeKPIs } from "../components/ComparativeKPIs"
+import { SalesTrendChart } from "../components/SalesTrendChart"
+import { LowRotationProducts } from "../components/LowRotationProducts"
 
-// ── Helpers ───────────────────────────────────────────────────────────────
-const toISODate = (date) => date.toISOString().split("T")[0]
+import { SalesTable } from "@/sales/presentation/components/SalesTable"
+import { SalesChart } from "@/sales/presentation/components/SalesChart"
+import { SalesMetrics } from "@/sales/presentation/components/SalesMetrics"
+import { SalesFilters } from "@/sales/presentation/components/SalesFilters"
+import OrderCard from "@/sales/presentation/components/OrderSalesSheet"
+
+import { useSalesData } from "@/sales/presentation/hooks/useSalesData"
+import { useSalesHistory } from "@/sales/presentation/hooks/useSalesHistory"
+
+import { useScrollLock } from "@/shared/hook/useScrollLock"
+
+import { cn } from "@/lib/utils"
+
+/* ============================================================
+   Helpers
+============================================================ */
+
+const toISODate = (date) =>
+  date.toISOString().split("T")[0]
 
 const getDefaultRange = () => {
-  const now   = new Date()
-  const start = new Date(now.getFullYear(), now.getMonth(), 1)
-  const end   = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-  return { startDate: toISODate(start), endDate: toISODate(end) }
+  const now = new Date()
+
+  const start = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    1
+  )
+
+  const end = new Date(
+    now.getFullYear(),
+    now.getMonth() + 1,
+    0
+  )
+
+  return {
+    startDate: toISODate(start),
+    endDate: toISODate(end),
+  }
 }
 
 const getPrevMonthRange = () => {
-  const now   = new Date()
-  const start = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-  const end   = new Date(now.getFullYear(), now.getMonth(), 0)
-  return { startDate: toISODate(start), endDate: toISODate(end) }
+  const now = new Date()
+
+  const start = new Date(
+    now.getFullYear(),
+    now.getMonth() - 1,
+    1
+  )
+
+  const end = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    0
+  )
+
+  return {
+    startDate: toISODate(start),
+    endDate: toISODate(end),
+  }
 }
 
-const fadeUp = {
-  initial:    { opacity: 0, y: 12 },
-  animate:    { opacity: 1, y: 0 },
-  transition: { duration: 0.3 },
+/* ============================================================
+   Animaciones
+============================================================ */
+
+const fadeSlide = {
+  initial: {
+    opacity: 0,
+    y: 10,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+  },
+  exit: {
+    opacity: 0,
+    y: 10,
+  },
+  transition: {
+    duration: 0.35,
+    ease: "easeOut",
+  },
 }
 
-// ── Componente de filtros reutilizable ────────────────────────────────────
-function DateRangeFilter({ startDate, endDate, onStartChange, onEndChange, onApply, shortcuts }) {
+/* ============================================================
+   Date Range Filter
+============================================================ */
+
+function DateRangeFilter({
+  startDate,
+  endDate,
+  onStartChange,
+  onEndChange,
+  onApply,
+  shortcuts,
+}) {
   return (
     <Card>
       <CardContent className="pt-4">
-        <div className="flex flex-col sm:flex-row items-end gap-3 flex-wrap">
+        <div className="flex flex-col items-end gap-3 sm:flex-row sm:flex-wrap">
+
           {shortcuts && (
-            <div className="flex gap-2 flex-wrap">
-              {shortcuts.map((s) => (
+            <div className="flex flex-wrap gap-2">
+              {shortcuts.map((shortcut) => (
                 <Button
-                  key={s.key}
+                  key={shortcut.key}
                   variant="outline"
                   size="sm"
-                  onClick={s.onClick}
-                  className="hover:cursor-pointer text-xs"
+                  onClick={shortcut.onClick}
+                  className="text-xs hover:cursor-pointer"
                 >
-                  {s.label}
+                  {shortcut.label}
                 </Button>
               ))}
             </div>
           )}
+
           <div className="flex items-end gap-2">
+
             <div className="space-y-1">
-              <Label className="text-xs text-[hsl(var(--muted-foreground))]">Desde</Label>
+              <Label className="text-xs text-muted-foreground">
+                Desde
+              </Label>
+
               <Input
                 type="date"
                 value={startDate}
-                onChange={(e) => onStartChange(e.target.value)}
-                className="h-8 text-sm w-36"
+                onChange={(event) =>
+                  onStartChange(event.target.value)
+                }
+                className="h-8 w-36 text-sm"
               />
             </div>
+
             <div className="space-y-1">
-              <Label className="text-xs text-[hsl(var(--muted-foreground))]">Hasta</Label>
+              <Label className="text-xs text-muted-foreground">
+                Hasta
+              </Label>
+
               <Input
                 type="date"
                 value={endDate}
-                onChange={(e) => onEndChange(e.target.value)}
-                className="h-8 text-sm w-36"
+                onChange={(event) =>
+                  onEndChange(event.target.value)
+                }
+                className="h-8 w-36 text-sm"
               />
             </div>
-            <Button size="sm" onClick={onApply} className="h-8 gap-1.5 hover:cursor-pointer">
+
+            <Button
+              size="sm"
+              onClick={onApply}
+              className="h-8 gap-1.5 hover:cursor-pointer"
+            >
               <RefreshCw className="h-3.5 w-3.5" />
               Aplicar
             </Button>
+
           </div>
         </div>
       </CardContent>
@@ -103,218 +209,741 @@ function DateRangeFilter({ startDate, endDate, onStartChange, onEndChange, onApp
   )
 }
 
-// ── Componente principal ──────────────────────────────────────────────────
+/* ============================================================
+   Componente principal
+============================================================ */
+
 export function AnalyticsDashboard() {
-  const dispatch     = useDispatch()
+  const dispatch = useDispatch()
+
   const defaultRange = getDefaultRange()
-  const prevRange    = getPrevMonthRange()
+  const prevRange = getPrevMonthRange()
 
-  // ── Estado Fase 2 ─────────────────────────────────────────────────────
-  const [startDate, setStartDate] = useState(defaultRange.startDate)
-  const [endDate,   setEndDate]   = useState(defaultRange.endDate)
+  /* ==========================================================
+     Estado Fase 2
+  ========================================================== */
 
-  // ── Estado Fase 3 — comparativa ───────────────────────────────────────
-  const [p1Start, setP1Start] = useState(prevRange.startDate)
-  const [p1End,   setP1End]   = useState(prevRange.endDate)
-  const [p2Start, setP2Start] = useState(defaultRange.startDate)
-  const [p2End,   setP2End]   = useState(defaultRange.endDate)
+  const [startDate, setStartDate] = useState(
+    defaultRange.startDate
+  )
 
-  // ── Fase 2: fetch de los 3 widgets ────────────────────────────────────
+  const [endDate, setEndDate] = useState(
+    defaultRange.endDate
+  )
+
+  /* ==========================================================
+     Estado Fase 3
+  ========================================================== */
+
+  const [p1Start, setP1Start] = useState(
+    prevRange.startDate
+  )
+
+  const [p1End, setP1End] = useState(
+    prevRange.endDate
+  )
+
+  const [p2Start, setP2Start] = useState(
+    defaultRange.startDate
+  )
+
+  const [p2End, setP2End] = useState(
+    defaultRange.endDate
+  )
+
+  /* ==========================================================
+     Ventas cerradas
+  ========================================================== */
+
+  const {
+    orders,
+    totalEarnings,
+    loading,
+  } = useSalesData()
+
+  const {
+    filters,
+    updateFilters,
+  } = useSalesHistory()
+
+  const [selectedOrderCard, setSelectedOrderCard] =
+    useState(null)
+
+  useScrollLock(!!selectedOrderCard)
+
+  /* ==========================================================
+     Fetch Fase 2
+  ========================================================== */
+
   const fetchPhase2 = async (start, end) => {
-    if (!start || !end) { toast.error("Seleccioná un rango válido"); return }
-    if (new Date(start) > new Date(end)) { toast.error("La fecha de inicio debe ser anterior a la de fin"); return }
+    if (!start || !end) {
+      toast.error("Seleccioná un rango válido")
+      return
+    }
 
-    dispatch(setAnalyticsFilters({ startDate: start, endDate: end }))
+    if (new Date(start) > new Date(end)) {
+      toast.error(
+        "La fecha de inicio debe ser anterior a la de fin"
+      )
+      return
+    }
+
+    dispatch(
+      setAnalyticsFilters({
+        startDate: start,
+        endDate: end,
+      })
+    )
+
     await Promise.all([
-      dispatch(fetchTopProducts({ startDate: start, endDate: end, limit: 10 })),
-      dispatch(fetchSalesByCategory({ startDate: start, endDate: end })),
-      dispatch(fetchSalesByHour({ startDate: start, endDate: end })),
+      dispatch(
+        fetchTopProducts({
+          startDate: start,
+          endDate: end,
+          limit: 10,
+        })
+      ),
+
+      dispatch(
+        fetchSalesByCategory({
+          startDate: start,
+          endDate: end,
+        })
+      ),
+
+      dispatch(
+        fetchSalesByHour({
+          startDate: start,
+          endDate: end,
+        })
+      ),
     ])
   }
 
-  // ── Fase 3: fetch de comparativa ──────────────────────────────────────
-  const fetchPhase3 = async (p1s, p1e, p2s, p2e) => {
-    if (!p1s || !p1e || !p2s || !p2e) { toast.error("Completá todos los rangos"); return }
-    await dispatch(fetchSalesComparison({ p1Start: p1s, p1End: p1e, p2Start: p2s, p2End: p2e }))
+  /* ==========================================================
+     Fetch Fase 3
+  ========================================================== */
+
+  const fetchPhase3 = async (
+    p1s,
+    p1e,
+    p2s,
+    p2e
+  ) => {
+    if (!p1s || !p1e || !p2s || !p2e) {
+      toast.error("Completá todos los rangos")
+      return
+    }
+
+    await dispatch(
+      fetchSalesComparison({
+        p1Start: p1s,
+        p1End: p1e,
+        p2Start: p2s,
+        p2End: p2e,
+      })
+    )
   }
 
-  // Shortcuts Fase 2
+  /* ==========================================================
+     Shortcuts
+  ========================================================== */
+
   const makeShortcut = (key) => {
     const now = new Date()
-    let start, end
+
+    let start
+    let end
+
     if (key === "today") {
       start = end = toISODate(now)
-    } else if (key === "week") {
-      const day = now.getDay() || 7
-      start = toISODate(new Date(now.getFullYear(), now.getMonth(), now.getDate() - day + 1))
-      end   = toISODate(now)
-    } else if (key === "month") {
-      start = toISODate(new Date(now.getFullYear(), now.getMonth(), 1))
-      end   = toISODate(new Date(now.getFullYear(), now.getMonth() + 1, 0))
-    } else if (key === "lastmonth") {
-      start = toISODate(new Date(now.getFullYear(), now.getMonth() - 1, 1))
-      end   = toISODate(new Date(now.getFullYear(), now.getMonth(), 0))
     }
-    setStartDate(start); setEndDate(end)
+
+    if (key === "week") {
+      const day = now.getDay() || 7
+
+      start = toISODate(
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() - day + 1
+        )
+      )
+
+      end = toISODate(now)
+    }
+
+    if (key === "month") {
+      start = toISODate(
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          1
+        )
+      )
+
+      end = toISODate(
+        new Date(
+          now.getFullYear(),
+          now.getMonth() + 1,
+          0
+        )
+      )
+    }
+
+    if (key === "lastmonth") {
+      start = toISODate(
+        new Date(
+          now.getFullYear(),
+          now.getMonth() - 1,
+          1
+        )
+      )
+
+      end = toISODate(
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          0
+        )
+      )
+    }
+
+    setStartDate(start)
+    setEndDate(end)
+
     fetchPhase2(start, end)
   }
 
-  // Carga inicial
+  /* ==========================================================
+     Carga inicial
+  ========================================================== */
+
   useEffect(() => {
-    fetchPhase2(defaultRange.startDate, defaultRange.endDate)
+    fetchPhase2(
+      defaultRange.startDate,
+      defaultRange.endDate
+    )
   }, [])
 
+  /* ==========================================================
+     Render
+  ========================================================== */
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="space-y-6 px-4 md:px-6 py-2"
-    >
-      {/* ── Header ───────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-3">
-        {/* <BarChart3 className="h-6 w-6 text-[hsl(var(--primary))]" /> */}
-        <h2 className="text-2xl font-semibold tracking-tight text-[hsl(var(--foreground))]">
-          Gestión Comercial
-        </h2>
-      </div>
+    <main className="min-h-[95vh] w-full overflow-hidden">
 
-      {/* ── Tabs: Fase 2 / Fase 3 ─────────────────────────────────────── */}
-      <Tabs defaultValue="comercial" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="comercial" className="gap-2">
-            <BarChart3 className="h-4 w-4" /> Comercial
-          </TabsTrigger>
-          <TabsTrigger value="avanzada" className="gap-2">
-            <GitCompare className="h-4 w-4" /> Analítica Avanzada
-          </TabsTrigger>
-        </TabsList>
+      <AnimatePresence mode="wait">
 
-        {/* ══ TAB FASE 2: Dashboard Comercial ════════════════════════════ */}
-        <TabsContent value="comercial" className="space-y-4">
-          <motion.div {...fadeUp}>
-            <DateRangeFilter
-              startDate={startDate}
-              endDate={endDate}
-              onStartChange={setStartDate}
-              onEndChange={setEndDate}
-              onApply={() => fetchPhase2(startDate, endDate)}
-              shortcuts={[
-                { key: "today",     label: "Hoy",          onClick: () => makeShortcut("today") },
-                { key: "week",      label: "Esta semana",   onClick: () => makeShortcut("week") },
-                { key: "month",     label: "Este mes",      onClick: () => makeShortcut("month") },
-                { key: "lastmonth", label: "Mes anterior",  onClick: () => makeShortcut("lastmonth") },
-              ]}
-            />
-          </motion.div>
+        <motion.section
+          key="analyticsDashboard"
+          {...fadeSlide}
+          className="w-full"
+        >
 
-          <motion.div {...fadeUp} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <TopProductsWidget />
-            <SalesByCategoryChart />
-            <PeakHoursChart />
-          </motion.div>
-        </TabsContent>
+          {/* ==================================================
+              Header
+          =================================================== */}
 
-        {/* ══ TAB FASE 3: Analítica Avanzada ═════════════════════════════ */}
-        <TabsContent value="avanzada" className="space-y-6">
+          <header className="mb-5 flex items-center px-6">
+            <div className="flex items-center gap-3">
 
-          {/* ── Sección comparativa ───────────────────────────────────── */}
-          <motion.div {...fadeUp} className="space-y-3">
-            <h3 className="text-sm font-semibold text-[hsl(var(--foreground))] flex items-center gap-2">
-              <GitCompare className="h-4 w-4 text-[hsl(var(--primary))]" />
-              Comparativa de Períodos
-            </h3>
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+                <BarChart3 className="h-5 w-5 text-primary" />
+              </div>
 
-            <Card>
-              <CardContent className="pt-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Período 1 */}
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-[hsl(var(--muted-foreground))]">
-                      Período base
-                    </p>
-                    <div className="flex gap-2">
-                      <div className="space-y-1 flex-1">
-                        <Label className="text-xs">Desde</Label>
-                        <Input type="date" value={p1Start} onChange={(e) => setP1Start(e.target.value)} className="h-8 text-sm" />
-                      </div>
-                      <div className="space-y-1 flex-1">
-                        <Label className="text-xs">Hasta</Label>
-                        <Input type="date" value={p1End} onChange={(e) => setP1End(e.target.value)} className="h-8 text-sm" />
-                      </div>
-                    </div>
-                  </div>
+              <div>
+                <h1 className="text-xl font-semibold tracking-tight text-foreground">
+                  Gestión Comercial
+                </h1>
 
-                  {/* Período 2 */}
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-[hsl(var(--muted-foreground))]">
-                      Período actual
-                    </p>
-                    <div className="flex gap-2">
-                      <div className="space-y-1 flex-1">
-                        <Label className="text-xs">Desde</Label>
-                        <Input type="date" value={p2Start} onChange={(e) => setP2Start(e.target.value)} className="h-8 text-sm" />
-                      </div>
-                      <div className="space-y-1 flex-1">
-                        <Label className="text-xs">Hasta</Label>
-                        <Input type="date" value={p2End} onChange={(e) => setP2End(e.target.value)} className="h-8 text-sm" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <Button
-                  size="sm"
-                  onClick={() => fetchPhase3(p1Start, p1End, p2Start, p2End)}
-                  className="mt-4 gap-1.5 hover:cursor-pointer"
-                >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  Comparar períodos
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* KPIs comparativos */}
-            <ComparativeKPIs />
-
-            {/* Gráfico de tendencia */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <SalesTrendChart
-                period1Label="Período base"
-                period2Label="Período actual"
-              />
-            </div>
-          </motion.div>
-
-          {/* ── Sección baja rotación ─────────────────────────────────── */}
-          <motion.div {...fadeUp} className="space-y-3">
-            <h3 className="text-sm font-semibold text-[hsl(var(--foreground))] flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-[hsl(var(--destructive))]" />
-              Baja Rotación de Productos
-            </h3>
-
-            <Card>
-              <CardContent className="pt-4">
-                <p className="text-xs text-[hsl(var(--muted-foreground))] mb-3">
-                  Usá el rango de fechas del tab Comercial o seleccioná uno específico.
+                <p className="text-xs text-muted-foreground">
+                  Analizá el rendimiento de tus ventas y obtené
+                  información sobre tu negocio.
                 </p>
-                <DateRangeFilter
-                  startDate={startDate}
-                  endDate={endDate}
-                  onStartChange={setStartDate}
-                  onEndChange={setEndDate}
-                  onApply={() => fetchPhase2(startDate, endDate)}
-                />
-              </CardContent>
-            </Card>
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LowRotationProducts startDate={startDate} endDate={endDate} />
             </div>
+          </header>
+
+          {/* ==================================================
+              Tabs
+          =================================================== */}
+
+          <section className="px-6">
+
+            <Tabs
+              defaultValue="comercial"
+              className="space-y-5"
+            >
+
+              <TabsList className="flex flex-wrap gap-2">
+
+                {/* Comercial */}
+
+                <TabsTrigger
+                  value="comercial"
+                  className={cn(
+                    "flex flex-1 items-center justify-center gap-2 md:flex-none",
+                    "data-[state=inactive]:border-accent",
+                    "data-[state=inactive]:hover:bg-accent/90",
+                    "data-[state=active]:bg-primary/5",
+                    "data-[state=active]:text-primary"
+                  )}
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  Comercial
+                </TabsTrigger>
+
+                {/* Ventas */}
+
+                <TabsTrigger
+                  value="sales"
+                  className={cn(
+                    "flex flex-1 items-center justify-center gap-2 md:flex-none",
+                    "data-[state=inactive]:border-accent",
+                    "data-[state=inactive]:hover:bg-accent/90",
+                    "data-[state=active]:bg-primary/5",
+                    "data-[state=active]:text-primary"
+                  )}
+                >
+                  <Package className="h-4 w-4" />
+                  Ventas Cerradas
+                </TabsTrigger>
+
+                {/* Analítica avanzada */}
+
+                <TabsTrigger
+                  value="avanzada"
+                  className={cn(
+                    "flex flex-1 items-center justify-center gap-2 md:flex-none",
+                    "data-[state=inactive]:border-accent",
+                    "data-[state=inactive]:hover:bg-accent/90",
+                    "data-[state=active]:bg-primary/5",
+                    "data-[state=active]:text-primary"
+                  )}
+                >
+                  <GitCompare className="h-4 w-4" />
+                  Analítica Avanzada
+                </TabsTrigger>
+
+              </TabsList>
+
+              {/* ==================================================
+                  TAB — COMERCIAL
+              =================================================== */}
+
+              <TabsContent
+                value="comercial"
+                className="space-y-5"
+              >
+
+                {/* Filtros */}
+
+                <motion.div {...fadeSlide}>
+                  <DateRangeFilter
+                    startDate={startDate}
+                    endDate={endDate}
+                    onStartChange={setStartDate}
+                    onEndChange={setEndDate}
+                    onApply={() =>
+                      fetchPhase2(
+                        startDate,
+                        endDate
+                      )
+                    }
+                    shortcuts={[
+                      {
+                        key: "today",
+                        label: "Hoy",
+                        onClick: () =>
+                          makeShortcut("today"),
+                      },
+                      {
+                        key: "week",
+                        label: "Esta semana",
+                        onClick: () =>
+                          makeShortcut("week"),
+                      },
+                      {
+                        key: "month",
+                        label: "Este mes",
+                        onClick: () =>
+                          makeShortcut("month"),
+                      },
+                      {
+                        key: "lastmonth",
+                        label: "Mes anterior",
+                        onClick: () =>
+                          makeShortcut("lastmonth"),
+                      },
+                    ]}
+                  />
+                </motion.div>
+
+                {/* Widgets */}
+
+                <motion.div
+                  {...fadeSlide}
+                  className="grid grid-cols-1 gap-4 md:grid-cols-2"
+                >
+                  <TopProductsWidget />
+
+                  <SalesByCategoryChart />
+
+                  <PeakHoursChart />
+                </motion.div>
+
+              </TabsContent>
+
+              {/* ==================================================
+                  TAB — ANALÍTICA AVANZADA
+              =================================================== */}
+
+              <TabsContent
+                value="avanzada"
+                className="space-y-6"
+              >
+
+                {/* Comparativa */}
+
+                <motion.section
+                  {...fadeSlide}
+                  className="space-y-4"
+                >
+
+                  <div className="flex items-center gap-2">
+                    <GitCompare className="h-4 w-4 text-primary" />
+
+                    <h2 className="text-sm font-semibold text-foreground">
+                      Comparativa de Períodos
+                    </h2>
+                  </div>
+
+                  <Card>
+                    <CardContent className="pt-4">
+
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                        {/* Período base */}
+
+                        <div className="space-y-2">
+
+                          <p className="text-xs font-medium text-muted-foreground">
+                            Período base
+                          </p>
+
+                          <div className="flex gap-2">
+
+                            <div className="flex-1 space-y-1">
+                              <Label className="text-xs">
+                                Desde
+                              </Label>
+
+                              <Input
+                                type="date"
+                                value={p1Start}
+                                onChange={(event) =>
+                                  setP1Start(
+                                    event.target.value
+                                  )
+                                }
+                                className="h-8 text-sm"
+                              />
+                            </div>
+
+                            <div className="flex-1 space-y-1">
+                              <Label className="text-xs">
+                                Hasta
+                              </Label>
+
+                              <Input
+                                type="date"
+                                value={p1End}
+                                onChange={(event) =>
+                                  setP1End(
+                                    event.target.value
+                                  )
+                                }
+                                className="h-8 text-sm"
+                              />
+                            </div>
+
+                          </div>
+                        </div>
+
+                        {/* Período actual */}
+
+                        <div className="space-y-2">
+
+                          <p className="text-xs font-medium text-muted-foreground">
+                            Período actual
+                          </p>
+
+                          <div className="flex gap-2">
+
+                            <div className="flex-1 space-y-1">
+                              <Label className="text-xs">
+                                Desde
+                              </Label>
+
+                              <Input
+                                type="date"
+                                value={p2Start}
+                                onChange={(event) =>
+                                  setP2Start(
+                                    event.target.value
+                                  )
+                                }
+                                className="h-8 text-sm"
+                              />
+                            </div>
+
+                            <div className="flex-1 space-y-1">
+                              <Label className="text-xs">
+                                Hasta
+                              </Label>
+
+                              <Input
+                                type="date"
+                                value={p2End}
+                                onChange={(event) =>
+                                  setP2End(
+                                    event.target.value
+                                  )
+                                }
+                                className="h-8 text-sm"
+                              />
+                            </div>
+
+                          </div>
+                        </div>
+
+                      </div>
+
+                      <Button
+                        size="sm"
+                        onClick={() =>
+                          fetchPhase3(
+                            p1Start,
+                            p1End,
+                            p2Start,
+                            p2End
+                          )
+                        }
+                        className="mt-4 gap-1.5 hover:cursor-pointer"
+                      >
+                        <RefreshCw className="h-3.5 w-3.5" />
+                        Comparar períodos
+                      </Button>
+
+                    </CardContent>
+                  </Card>
+
+                  <ComparativeKPIs />
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <SalesTrendChart
+                      period1Label="Período base"
+                      period2Label="Período actual"
+                    />
+                  </div>
+
+                </motion.section>
+
+                {/* Baja rotación */}
+
+                <motion.section
+                  {...fadeSlide}
+                  className="space-y-4"
+                >
+
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="h-4 w-4 text-destructive" />
+
+                    <h2 className="text-sm font-semibold text-foreground">
+                      Baja Rotación de Productos
+                    </h2>
+                  </div>
+
+                  <div className="rounded-xl border border-border bg-bg-unit p-4 shadow-sm">
+
+                    <p className="mb-4 text-xs text-muted-foreground">
+                      Usá el rango de fechas del tab Comercial
+                      o seleccioná uno específico.
+                    </p>
+
+                    <DateRangeFilter
+                      startDate={startDate}
+                      endDate={endDate}
+                      onStartChange={setStartDate}
+                      onEndChange={setEndDate}
+                      onApply={() =>
+                        fetchPhase2(
+                          startDate,
+                          endDate
+                        )
+                      }
+                    />
+
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <LowRotationProducts
+                      startDate={startDate}
+                      endDate={endDate}
+                    />
+                  </div>
+
+                </motion.section>
+
+              </TabsContent>
+
+              {/* ==================================================
+                  TAB — VENTAS CERRADAS
+              =================================================== */}
+
+              <TabsContent
+                value="sales"
+                className="space-y-5"
+              >
+
+                <motion.div {...fadeSlide}>
+                  <SalesFilters
+                    filters={filters}
+                    onFiltersChange={updateFilters}
+                  />
+                </motion.div>
+
+                <motion.div {...fadeSlide}>
+                  <SalesMetrics
+                    orders={orders}
+                    totalEarnings={totalEarnings}
+                  />
+                </motion.div>
+
+                <motion.div {...fadeSlide}>
+                  <SalesChart orders={orders} />
+                </motion.div>
+
+                <motion.div {...fadeSlide}>
+
+                  <Card>
+
+                    <CardHeader>
+                      <CardTitle>
+                        Historial de Ventas Cerradas
+                      </CardTitle>
+                    </CardHeader>
+
+                    <CardContent className="overflow-x-auto">
+
+                      {loading ? (
+
+                        <div className="py-8 text-center text-muted-foreground">
+                          Cargando órdenes...
+                        </div>
+
+                      ) : orders.length > 0 ? (
+
+                        <SalesTable
+                          orders={orders}
+                          onSelectOrder={
+                            setSelectedOrderCard
+                          }
+                        />
+
+                      ) : (
+
+                        <div className="py-8 text-center text-muted-foreground">
+                          No hay órdenes cerradas en este período
+                        </div>
+
+                      )}
+
+                    </CardContent>
+
+                  </Card>
+
+                </motion.div>
+
+              </TabsContent>
+
+            </Tabs>
+
+          </section>
+
+        </motion.section>
+
+      </AnimatePresence>
+
+      {/* ========================================================
+          Order Sheet
+      ========================================================= */}
+
+      <AnimatePresence>
+        {selectedOrderCard && (
+
+          <motion.div
+            className="
+              fixed
+              inset-0
+              z-50
+              flex
+              items-center
+              justify-end
+              bg-background/40
+              px-4
+              backdrop-blur-sm
+            "
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+
+            <motion.div
+              className="
+                w-full
+                max-w-5xl
+                max-h-[95vh]
+                overflow-hidden
+                rounded-lg
+                bg-card
+                shadow-xl
+              "
+              initial={{
+                scale: 0.9,
+                x: 100,
+              }}
+              animate={{
+                scale: 1,
+                x: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                x: 100,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 150,
+                damping: 18,
+              }}
+            >
+
+              <OrderCard
+                order={selectedOrderCard}
+                onBack={() =>
+                  setSelectedOrderCard(null)
+                }
+                className="h-[calc(100dvh-145px)] overflow-y-auto"
+              />
+
+            </motion.div>
+
           </motion.div>
 
-        </TabsContent>
-      </Tabs>
-    </motion.div>
-  )
-}
+        )}
+      </AnimatePresence>
+
+    </main>
+  )}

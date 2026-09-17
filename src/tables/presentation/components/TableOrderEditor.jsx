@@ -57,7 +57,7 @@ export function TableOrderEditor({ table, order, onClose, onSaved }) {
         productId: item.productId,
         productName: item.productName,
         unitPrice: item.unitPrice,
-        quantity: item.quantity,
+        quantity: Number(item.quantity),
         description: item.description || "",
       }))
     )
@@ -150,8 +150,10 @@ export function TableOrderEditor({ table, order, onClose, onSaved }) {
           })
         ).unwrap()
       } else {
-        const data = { items: itemsForSync() }
-        if (markReady) data.status = "ready-to-pay"
+        const data = markReady
+            ? { status: "ready-to-pay" }
+            : { items: itemsForSync() }
+        
         await dispatch(updateDataOrder({ id: order.id, data })).unwrap()
       }
 

@@ -36,6 +36,7 @@ export function Button({ className, variant, size, asChild, ...props }) {
   const sizes = {
     default: "h-9 px-4",
     sm: "h-8 px-3",
+    md: "h-9 px-4",
     lg: "h-10 px-6",
     icon: "h-9 w-9 p-2",
   };

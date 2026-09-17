@@ -1,4 +1,4 @@
-import { Order } from "../domain/order.js";
+import { Order } from "../domain/Order.js";
 import { orderApi } from "../../shared/infrastructure/api/orderApi.js";
 
 export class OrderRepository {

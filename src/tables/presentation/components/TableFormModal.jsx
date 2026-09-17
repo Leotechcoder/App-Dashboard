@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { validateTable } from "@/tables/domain/Table"
+import { cn } from "@/lib/utils"
 
 /**
  * Sirve tanto para crear como para editar.
@@ -99,9 +100,10 @@ export function TableFormModal({
             space-y-4
             overflow-y-auto
             pr-1
+            pb-3
           "
         >
-          <div className="space-y-2">
+          <div className="space-y-2 px-1">
             <Label htmlFor="number">
               Número
             </Label>
@@ -110,6 +112,7 @@ export function TableFormModal({
               id="number"
               type="number"
               min="1"
+              className={cn("")}
               autoFocus
               value={values.number}
               onChange={(e) =>
@@ -121,7 +124,7 @@ export function TableFormModal({
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 px-1">
             <Label htmlFor="shape">
               Forma
             </Label>
@@ -151,7 +154,7 @@ export function TableFormModal({
             </Select>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 px-1">
             <Label htmlFor="capacity">
               Capacidad
             </Label>

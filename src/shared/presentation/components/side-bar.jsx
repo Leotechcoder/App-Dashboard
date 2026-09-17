@@ -13,7 +13,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
-import { LogOut, Home, Package, ShoppingCart, Users, BarChart3, Armchair } from "lucide-react";
+import { LogOut, Home, Package, BadgeDollarSign, Users, BarChart3, Armchair } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logOutUser, setClosedSession } from "@/users/application/userSlice";
@@ -22,11 +22,11 @@ import { ModeToggle } from "../components/utils/ModeToggle.jsx";
 
 const menuItems = [
   { title: "Inicio",    to: PATH.home,      icon: Home },
-  { title: "Órdenes",   to: PATH.ventas,    icon: ShoppingCart },
+  { title: "Caja",   to: PATH.cashRegister,    icon: BadgeDollarSign },
   { title: "Mesas",     to: PATH.tables,    icon: Armchair },
-  { title: "Productos", to: PATH.products,  icon: Package },
   { title: "Analítica", to: PATH.analytics, icon: BarChart3 },
-  { title: "Usuarios",  to: PATH.contact,   icon: Users },
+  { title: "Productos", to: PATH.products,  icon: Package },
+  { title: "Clientes",  to: PATH.customers,   icon: Users },
 ];
 
 export default function Sidebar() {

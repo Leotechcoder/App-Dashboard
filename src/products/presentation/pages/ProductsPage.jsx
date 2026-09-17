@@ -1,161 +1,136 @@
-// =========================
-// 📦 Imports
-// =========================
-import { useSelector, useDispatch } from "react-redux";
-import { AnimatePresence, motion } from "framer-motion";
-import TablaProductos from "../components/ProductList.jsx";
-import { Info } from "lucide-react";
-import InfoButton from "@/shared/presentation/components/utils/InfoButton.jsx";
-import { setShowHelpProducts } from "@/products/application/productSlice.js";
-import { useScrollTo } from "@/shared/hook/useScrollTo.js";
-import { ProductEditor } from "../components/ProductEditor.jsx";
 
-// =========================
-// 🧭 Componente principal
-// =========================
+import { useSelector } from "react-redux"
+import { AnimatePresence, motion } from "framer-motion"
+import { Package } from "lucide-react"
+
+import TablaProductos from "../components/ProductList.jsx"
+import { ProductEditor } from "../components/ProductEditor.jsx"
+
+import { useScrollTo } from "@/shared/hook/useScrollTo.js"
+
+/* ============================================================
+   Animaciones
+============================================================ */
+
+const fadeSlide = {
+  initial: {
+    opacity: 0,
+    y: 10,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+  },
+  exit: {
+    opacity: 0,
+    y: 10,
+  },
+  transition: {
+    duration: 0.35,
+    ease: "easeOut",
+  },
+}
+
+/* ============================================================
+   Componente principal
+============================================================ */
+
 const Products = () => {
-  const dispatch = useDispatch();
-  const { isFormView, isEditing, showHelp, categorias } = useSelector(
-    (store) => store.products
-  );
+  const {
+    isFormView,
+    isEditing,
+    categorias,
+  } = useSelector((store) => store.products)
 
-  const { setScrollTo, tableRef } = useScrollTo({ offset: 8 });
-
-  const handleToggleHelp = () => dispatch(setShowHelpProducts());
+  const {
+    setScrollTo,
+    tableRef,
+  } = useScrollTo({
+    offset: 8,
+  })
 
   return (
-    <main
-      className="
-        bg-background
-        text-foreground
-        rounded-xl
-        px-6
-        relative
-        min-h-[600px]
-      "
-    >
+    <main className="min-h-[95vh] w-full overflow-hidden">
+
       <AnimatePresence mode="wait">
+
+        {/* ==================================================
+            PRODUCT EDITOR
+        =================================================== */}
+
         {isFormView ? (
-          <motion.div
-            key={isEditing ? "editForm" : "form"}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.4 }}
+
+          <motion.section
+            key={isEditing ? "editProduct" : "newProduct"}
+            {...fadeSlide}
+            className="w-full"
           >
             <ProductEditor
               initialProduct={isEditing}
               categories={categorias.data}
             />
-          </motion.div>
+          </motion.section>
+
         ) : (
-          <motion.div
-            key="table"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+
+          /* ==================================================
+             PRODUCT LIST
+          =================================================== */
+
+          <motion.section
+            key="productList"
+            {...fadeSlide}
+            className="w-full"
           >
-            {!showHelp && (
-              <motion.div
-                className="flex items-center justify-between mb-4"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <h1 className="text-2xl font-semibold text-foreground">
-                  Gestión de Productos
-                </h1>
-                <InfoButton showHelp={handleToggleHelp} />
-              </motion.div>
-            )}
 
-            {showHelp && (
-              <motion.div
-                className="
-                  bg-card
-                  border-l-4 border-primary
-                  rounded-lg
-                  shadow-md
-                  p-6
-                  mb-6
-                  relative
-                  max-w-5xl
-                  ml-5
-                "
-              >
-                <HelpContent onClose={handleToggleHelp} />
-              </motion.div>
-            )}
+            {/* ----------------------------------------------
+                Header
+            ----------------------------------------------- */}
 
-            <section ref={tableRef}>
-              <TablaProductos setScrollTo={setScrollTo} />
+            <header className="mb-5 flex items-center px-6">
+
+              <div className="flex items-center gap-3">
+
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+                  <Package className="h-5 w-5 text-primary" />
+                </div>
+
+                <div>
+
+                  <h1 className="text-xl font-semibold tracking-tight text-foreground">
+                    Gestión de Productos
+                  </h1>
+
+                  <p className="text-xs text-muted-foreground">
+                    Administrá tu catálogo, precios, disponibilidad y categorías.
+                  </p>
+
+                </div>
+
+              </div>
+
+            </header>
+
+            {/* ----------------------------------------------
+                Product List
+            ----------------------------------------------- */}
+
+            <section
+              ref={tableRef}
+              className="px-6 pb-4"
+            >
+              <TablaProductos
+                setScrollTo={setScrollTo}
+              />
             </section>
-          </motion.div>
+
+          </motion.section>
         )}
+
       </AnimatePresence>
+
     </main>
-  );
-};
+  )
+}
 
-// =========================
-// 🧩 Subcomponentes
-// =========================
-
-// Ayuda contextual (sección de información)
-const HelpContent = ({ onClose }) => (
-  <div className="flex items-start space-x-3 relative">
-    <button
-      onClick={onClose}
-      className="
-    absolute right-0
-    text-muted
-    hover:text-primary
-    font-bold
-  "
-    >
-      ✕
-    </button>
-
-    <Info
-      className="
-  text-primary
-  w-6 h-6 mt-1 shrink-0
-"
-    />
-
-    <div>
-      <h2
-        className="
-  text-2xl
-  font-bold
-  text-foreground
-  mb-2
-  tracking-tight
-"
-      >
-        Gestión de Productos
-      </h2>
-      <p
-        className="
-  text-sm
-  leading-relaxed
-  text-foreground
-"
-      >
-        En esta sección podés{" "}
-        <strong>agregar, editar o eliminar productos</strong> del catálogo de tu
-        tienda. Cada producto incluye información clave como nombre, precio,
-        disponibilidad y categoría.
-      </p>
-      <p className="text-foreground mt-2 leading-relaxed text-sm pr-2">
-        Usá el formulario para cargar nuevos artículos o seleccioná uno
-        existente para editarlo. Mantené tu inventario siempre actualizado para
-        mejorar la gestión y la experiencia de los clientes.
-      </p>
-    </div>
-  </div>
-);
-
-// =========================
-// 🏁 Export
-// =========================
-export default Products;
+export default Products

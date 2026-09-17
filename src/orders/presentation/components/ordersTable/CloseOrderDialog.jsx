@@ -66,7 +66,7 @@ const CloseOrderDialog = ({ order, open, onOpenChange, onConfirm }) => {
       methods: Object.keys(payments).filter((m) => payments[m]),
       amounts,
     };
-    await onConfirm?.(order.id, paymentInfo);
+    await onConfirm?.(order.id, paymentInfo, order.status);
     onOpenChange(false);
   };
 

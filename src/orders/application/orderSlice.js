@@ -1,7 +1,7 @@
 // orders/application/orderSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { OrderRepository } from "../infrastructure/orderRepository.js";
-import { OrderService } from "../application/orderService.js";
+import { OrderRepository } from "../infrastructure/OrderRepository.js";
+import { OrderService } from "./OrderService.js";
 import { paginacionOrders } from "../../shared/infrastructure/utils/stateInitial.js";
 
 const orderService = new OrderService(new OrderRepository());

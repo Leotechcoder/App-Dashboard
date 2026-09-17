@@ -239,9 +239,9 @@ const OrdersPage = ({ setScrollTo }) => {
   if (error) return <Message text={`Error: ${error}`} type="error" />;
 
   return (
-    <main className="w-full pt-5 pb-4 rounded-xl bg-bg-unit">
+    <main className="w-full pb-4 rounded-xl bg-background">
       {/* HEADER */}
-      <div className="flex flex-col gap-3 px-5 pb-4  bg-bg-unit">
+      <div className="flex flex-col gap-3 px-5 pb-4 pt-2 border border-border rounded-xl">
         {/* Tabs + acciones */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex gap-1 p-1 rounded-full border border-border bg-background">
@@ -254,8 +254,8 @@ const OrdersPage = ({ setScrollTo }) => {
                 text-xs font-medium transition-all cursor-pointer
                 ${
                   activeDelivery === value
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:bg-bg-unit-2 hover:text-foreground"
+                    ? "bg-accent/90 text-primary border border-primary shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
                 }
               `}
               >
@@ -265,7 +265,7 @@ const OrdersPage = ({ setScrollTo }) => {
             ))}
           </div>
 
-          <div className="flex items-center gap-2 w-100">
+          <div className="flex items-center gap-3 w-100">
             {activeDelivery === "table" ? (
               <Button
                 onClick={() => navigate("/admin/tables")}
@@ -290,7 +290,7 @@ const OrdersPage = ({ setScrollTo }) => {
               tipo="orden por ID"
               searchTerm={table.searchTerm}
               setSearchTerm={table.setSearchTerm}
-              className={"w-60"}
+              className={"w-50 h-8"}
             />
           </div>
         </div>
@@ -382,6 +382,7 @@ const OrdersPage = ({ setScrollTo }) => {
           )}
         </div>
       </div>
+      {/* <hr className="border-border"/> */}
 
       {/* TABLA */}
       <div className="bg-background">
@@ -401,8 +402,7 @@ const OrdersPage = ({ setScrollTo }) => {
               key="table"
               className="
               overflow-y-auto
-               border-b border-border
-              h-[calc(90vh-140px)]
+              h-[calc(90vh-160px)]
             "
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}

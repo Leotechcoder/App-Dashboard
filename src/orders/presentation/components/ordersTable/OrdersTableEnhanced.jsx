@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Table,
   TableBody,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -77,40 +78,46 @@ const OrdersTableEnhanced = ({
 
   return (
     <>
-      <div className="orders-table-container">
-        <Table>
-          <TableHeader className="orders-table-header">
-            <TableRow>
-              {TABLE_HEADERS.map((head) => (
-                <TableHead key={head} className="text-xs whitespace-nowrap">
-                  {head}
-                </TableHead>
+      {/* Contenedor con altura fija: header + body scrollean, footer siempre abajo */}
+      <div className="flex flex-col h-[380px] border border-border rounded-lg overflow-hidden">
+        
+        {/* Área scrolleable: header sticky + filas */}
+          <Table>
+            <TableHeader className="bg-accent sticky top-0 z-100">
+              <TableRow>
+                {TABLE_HEADERS.map((head) => (
+                  <TableHead key={head} className="text-xs whitespace-nowrap">
+                    {head}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {data.map((order) => (
+                <OrderTableRow
+                  key={order.id}
+                  order={order}
+                  isSelected={selectedOrderTable?.id === order.id}
+                  isNewest={order.id === newestOrderId}
+                  onSelect={handleSelectTableOrder}
+                  onEdit={handleEditOrder}
+                  onDelete={onDelete}
+                  onOpenCloseDialog={handleOpenDialog}
+                />
               ))}
-            </TableRow>
-          </TableHeader>
+            </TableBody>
+          </Table>
 
-          <TableBody>
-            {data.map((order) => (
-              <OrderTableRow
-                key={order.id}
-                order={order}
-                isSelected={selectedOrderTable?.id === order.id}
-                isNewest={order.id === newestOrderId}
-                onSelect={handleSelectTableOrder}
-                onEdit={handleEditOrder}
-                onDelete={onDelete}
-                onOpenCloseDialog={handleOpenDialog}
-              />
-            ))}
-          </TableBody>
-        </Table>
+        {/* Footer: último hijo del flex-col → siempre al fondo del bloque */}
+        <div className="shrink-0 bg-background border-t border-border">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+          />
+        </div>
       </div>
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={onPageChange}
-      />
 
       <CloseOrderDialog
         order={selectedOrderModal}

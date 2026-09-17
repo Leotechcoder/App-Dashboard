@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useSalesHistory } from "./useSalesHistory";
 import { useCashRegister } from "./useCashRegister";
-import { SalesService } from "../../application/salesService";
+import { SalesService } from "../../application/SalesService";
 
 export function useSalesData() {
   const { orders, filters, loading } = useSalesHistory();

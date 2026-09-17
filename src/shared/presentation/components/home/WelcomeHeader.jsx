@@ -1,74 +1,63 @@
-"use client";
-import { motion } from "framer-motion";
-import { LayoutDashboard } from "lucide-react";
-import { useSelector } from "react-redux";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+
+import { motion } from "framer-motion"
+import { LayoutDashboard } from "lucide-react"
+import { useSelector } from "react-redux"
 
 const fadeDown = {
-  hidden: { opacity: 0, y: -15 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
-  exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
-};
+  hidden: {
+    opacity: 0,
+    y: -10,
+  },
+
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      ease: "easeOut",
+    },
+  },
+
+  exit: {
+    opacity: 0,
+    y: -10,
+    transition: {
+      duration: 0.2,
+      ease: "easeInOut",
+    },
+  },
+}
 
 const WelcomeHeader = () => {
-  const username = useSelector((store) => store.users.username);
+  const username = useSelector(
+    (store) => store.users.username
+  )
 
   return (
-    <motion.div variants={fadeDown}>
-      <Card
-        className="
-          bg-background
-          text-foreground
-          border-none
-          shadow-none
-        "
-      >
-        <CardHeader
-          className="
-            flex flex-row items-center gap-4 p-6
-          "
-        >
-          {/* ICON */}
-          <div
-            className="
-              rounded-xl p-3
-              bg-accent
-              text-blue
-              shadow-sm
-            "
-          >
-            <LayoutDashboard className="w-7 h-7" />
-          </div>
+    <motion.header
+      variants={fadeDown}
+      initial="hidden"
+      animate="show"
+      exit="exit"
+      className="mb-6 px-6 pt-2"
+    >
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+          <LayoutDashboard className="h-5 w-5 text-primary" />
+        </div>
 
-          {/* TEXT */}
-          <div>
-            <CardTitle
-              className="
-                text-2xl font-semibold
-                text-foreground
-              "
-            >
-              ¡Bienvenido, {username || "usuario"}!
-            </CardTitle>
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+            ¡Bienvenido, {username || "usuario"}!
+          </h1>
 
-            <CardDescription
-              className="
-                mt-1
-                text-muted-foreground
-              "
-            >
-              Aquí tienes el estado general del negocio en tiempo real.
-            </CardDescription>
-          </div>
-        </CardHeader>
-      </Card>
-    </motion.div>
-  );
-};
+          <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
+            A continuación, encontrarás una visión general de las operaciones más importantes.
+          </p>
+        </div>
+      </div>
+    </motion.header>
+  )
+}
 
-export default WelcomeHeader;
+export default WelcomeHeader

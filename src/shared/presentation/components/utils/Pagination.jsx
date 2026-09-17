@@ -4,11 +4,11 @@ const Pagination = ({ currentPage, totalPages, onPageChange, setScrollTo }) => {
 
   const handleScrollToChangePage = (value) =>{
     onPageChange(value)
-    setScrollTo(true)
+    setScrollTo?.(true)
   }
 
   return (
-    <div className="px-6 py-3 flex items-center justify-between border-t scale-95">
+    <div className="px-6 py-3 flex items-center justify-between scale-95">
       <div className="text-sm text-[hsl(var(--muted-foreground))] ml-2">
         Página {currentPage} de {totalPages}
       </div>

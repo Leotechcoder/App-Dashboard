@@ -19,7 +19,7 @@ import { AlertCircle, CheckCircle2, DollarSign, TrendingDown, TrendingUp, Bankno
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 import { motion, AnimatePresence } from "framer-motion"
-import { SalesService } from "@/sales/application/salesService"
+import { SalesService } from "@/sales/application/SalesService"
 
 export function CloseCashRegisterDialog({ open, onOpenChange, onConfirm, cashRegister, orders = [] }) {
   const [finalAmount, setFinalAmount] = useState("")

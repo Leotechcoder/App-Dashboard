@@ -1,30 +1,66 @@
+
+import { motion } from "framer-motion"
+import {
+  Activity,
+} from "lucide-react"
+
 import { CashStatusBlock } from "./CashStatusBlock"
 import { PendingOrdersBlock } from "./PendingOrdersBlock"
 import { DaySalesBlock } from "./DaySalesBlock"
 import { AlertsBlock } from "./AlertsBlock"
 
+const sectionAnimation = {
+  hidden: {
+    opacity: 0,
+    y: 10,
+  },
+
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      delay: 0.1,
+      ease: "easeOut",
+    },
+  },
+}
+
 export function OperationCenter() {
   return (
-    <section className="space-y-6 px-5 ">
+    <motion.section
+      variants={sectionAnimation}
+      initial="hidden"
+      animate="show"
+      className="px-6 pb-6"
+    >
+      {/* =====================================================
+          Encabezado
+      ====================================================== */}
 
-      <div>
-        <h2 className="text-xl font-bold">
-          Centro Operativo
-        </h2>
+      <header className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+            <Activity className="h-5 w-5 text-primary" />
+          </div>
 
-        {/* <p className="text-sm text-[hsl(var(--muted-foreground))]">
-          Estado general del negocio en tiempo real.
-        </p> */}
-      </div>
+          <div>
+            <h2 className="text-base font-semibold tracking-tight text-foreground">
+              Centro Operativo
+            </h2>
 
-      <div
-        className="
-          grid
-          gap-4
-          grid-cols-1
-          md:grid-cols-2
-        "
-      >
+            <p className="text-xs text-muted-foreground">
+              Información clave de tu negocio en tiempo real.
+            </p>
+          </div>
+        </div>
+      </header>
+
+      {/* =====================================================
+          Bloques operativos
+      ====================================================== */}
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <CashStatusBlock />
 
         <PendingOrdersBlock />
@@ -33,6 +69,6 @@ export function OperationCenter() {
 
         <AlertsBlock />
       </div>
-    </section>
+    </motion.section>
   )
 }

@@ -1,7 +1,7 @@
-// src/modules/sales/application/salesThunks.js
+
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { SalesRepository } from "../infrastructure/adapters/salesRepository"
-import { SalesService } from "../application/salesService"
+import { SalesRepository } from "../infrastructure/adapters/SalesRepository"
+import { SalesService } from "./SalesService"
 
 // Inyección de dependencias (instancia compartida)
 const repository = new SalesRepository()

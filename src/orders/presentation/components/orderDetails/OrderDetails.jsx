@@ -15,7 +15,7 @@ import {
   createDataOrder,
   updateDataOrder,
 } from "@/orders/application/orderSlice";
-import { Item } from "@/orders/domain/item";
+import { Item } from "@/orders/domain/Item";
 
 import ItemModal from "./ItemModal";
 import OrderItemsTable from "./OrderItemsTable";

@@ -1,5 +1,5 @@
-import { Order, OrderEntity } from "@/orders/domain/order";
-import { CashRegisterEntity } from "../domain/cashRegisterEntity";
+import { Order, OrderEntity } from "@/orders/domain/Order";
+import { CashRegisterEntity } from "../domain/CashRegisterEntity";
 
 export class SalesService {
   constructor(repository) {

@@ -69,7 +69,7 @@ export function CashStatusBlock() {
           </>
         ) : (
           <p className="text-sm text-[hsl(var(--muted-foreground))]">
-            La caja no está abierta todavía. Abrila desde Ventas para empezar a registrar.
+            La caja no está abierta todavía. Abrila desde Caja para empezar a registrar.
           </p>
         )}
 
@@ -77,9 +77,9 @@ export function CashStatusBlock() {
           variant="outline"
           size="sm"
           className="w-full mt-2 gap-1.5 hover:cursor-pointer"
-          onClick={() => navigate("/admin/ventas")}
+          onClick={() => navigate("/admin/caja")}
         >
-          Ir a Ventas <ArrowRight className="h-3.5 w-3.5" />
+          Ir a Caja <ArrowRight className="h-3.5 w-3.5" />
         </Button>
       </CardContent>
     </Card>

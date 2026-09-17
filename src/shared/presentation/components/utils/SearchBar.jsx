@@ -17,7 +17,7 @@ const SearchBar = ({ tipo, searchTerm, setSearchTerm, className }) => {
         value={searchTerm}
         onChange={handleSearch}
       />
-      <Search className="absolute left-3 top-2.5 h-4 w-4 text-foreground" />
+      <Search className="absolute left-3 top-2 h-4 w-4 text-foreground" />
     </div>
   )
 }
