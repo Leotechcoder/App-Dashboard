@@ -1,5 +1,5 @@
-// src/modules/sales/infrastructure/SalesRepository.js
-import { SalesApi } from "../SalesApi.js"
+
+import { SalesApi } from "@/shared/infrastructure/api/SalesApi.js";
 
 export class SalesRepository {
   async getPendingOrders() {
