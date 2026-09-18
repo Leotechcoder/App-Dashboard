@@ -1,4 +1,4 @@
-// orders/application/orderSlice.js
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { OrderRepository } from "../infrastructure/OrderRepository.js";
 import { OrderService } from "./OrderService.js";
