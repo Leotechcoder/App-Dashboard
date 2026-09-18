@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { itemApi } from "../../shared/infrastructure/api/itemApi"
+import { itemApi } from "../../shared/infrastructure/api/ItemApi"
 
 export const getData = createAsyncThunk("items/getData", itemApi.getItems.bind(itemApi))
 export const getDataById = createAsyncThunk("items/getDataById", itemApi.getItemById)
