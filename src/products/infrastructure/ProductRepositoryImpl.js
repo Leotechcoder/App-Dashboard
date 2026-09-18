@@ -1,5 +1,5 @@
 import { ProductRepository } from "../application/ProductRepository"
-import { productApi } from "../../shared/infrastructure/api/productApi"
+import { productApi } from "../../shared/infrastructure/api/ProductApi"
 
 export class ProductRepositoryImpl extends ProductRepository {
   constructor(api = productApi) {

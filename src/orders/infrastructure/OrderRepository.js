@@ -1,5 +1,5 @@
 import { Order } from "../domain/Order.js";
-import { orderApi } from "../../shared/infrastructure/api/orderApi.js";
+import { orderApi } from "../../shared/infrastructure/api/OrderApi.js";
 
 export class OrderRepository {
   async getAll() {

@@ -1,6 +1,6 @@
 
 import { UserRepository } from "../domain/UserRepository.js"
-import { userApi } from "../../shared/infrastructure/api/userApi.js"
+import { userApi } from "../../shared/infrastructure/api/UserApi.js"
 
 export class UserRepositoryImpl extends UserRepository {
   constructor(api = userApi) {

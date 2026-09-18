@@ -1,5 +1,5 @@
 import { TableRepository } from "../application/TableRepository"
-import { tableApi } from "../../shared/infrastructure/api/tableApi"
+import { tableApi } from "../../shared/infrastructure/api/TableApi"
 
 export class TableRepositoryImpl extends TableRepository {
   constructor(api = tableApi) {

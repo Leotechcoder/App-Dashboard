@@ -1,5 +1,5 @@
 import { AuthRepository } from "../domain/AuthRepository.js"
-import { authApi } from "../../shared/infrastructure/api/authApi.js"
+import { authApi } from "../../shared/infrastructure/api/AuthApi.js"
 
 export class AuthRepositoryImpl extends AuthRepository {
     constructor(api = authApi) {
