@@ -1,6 +1,6 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 import {
   setEditingUser,
   setFormView,
@@ -10,7 +10,6 @@ import {
 
 import {
   Card,
-  CardContent,
 } from "@/components/ui/card";
 
 import {
@@ -181,7 +180,11 @@ const UserCard = ({ user, onBack }) => {
       userOrders.reduce(
         (sum, order) =>
           sum +
-          (Number(order.total) || 0),
+          Number(
+            order.total ??
+              order.totalAmount ??
+              0
+          ),
         0
       ),
     [userOrders]
@@ -205,13 +208,17 @@ const UserCard = ({ user, onBack }) => {
       .filter((item) =>
         userOrders.some(
           (order) =>
-            order.id === item.orderId
+            String(order.id) ===
+            String(item.orderId)
         )
       )
       .forEach((item) => {
         if (!aggregated[item.productId]) {
           aggregated[item.productId] = {
-            name: item.productName,
+            name:
+              item.productName ||
+              item.name ||
+              "Producto",
             purchases: 0,
           };
         }
@@ -281,25 +288,14 @@ const UserCard = ({ user, onBack }) => {
         updateUserData(refactorForm)
       ).unwrap();
 
-      /*
-       * Refresh users from the database
-       * so Redux contains the persisted data.
-       */
       await dispatch(
         getUserData()
       ).unwrap();
 
-      /*
-       * Keep the form synchronized with
-       * the values that were just saved.
-       */
       setFormData({
-        username:
-          formData.username,
-        phone:
-          formData.phone,
-        address:
-          formData.address,
+        username: formData.username,
+        phone: formData.phone,
+        address: formData.address,
       });
     } catch (error) {
       console.error(
@@ -327,6 +323,16 @@ const UserCard = ({ user, onBack }) => {
     dispatch(
       setFormView(false)
     );
+  };
+
+  /*
+   * ─────────────────────────────────────────────
+   * Close order detail
+   * ─────────────────────────────────────────────
+   */
+
+  const handleCloseOrder = () => {
+    setSelectedOrder(null);
   };
 
   /*
@@ -611,13 +617,13 @@ const UserCard = ({ user, onBack }) => {
       </div>
 
       {/* ═══════════════════════════════════════
-          ORDER DETAIL
+          ORDER DETAIL OVERLAY
       ═══════════════════════════════════════ */}
 
       <AnimatePresence>
         {selectedOrder && (
           <motion.div
-            className="fixed inset-0 z-50 flex justify-end backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 lg:p-8"
             initial={{
               opacity: 0,
             }}
@@ -627,17 +633,70 @@ const UserCard = ({ user, onBack }) => {
             exit={{
               opacity: 0,
             }}
+            transition={{
+              duration: 0.18,
+            }}
           >
-            <OrderCard
-              order={
-                selectedOrder
-              }
-              onBack={() =>
-                setSelectedOrder(
-                  null
-                )
-              }
+            {/* Backdrop */}
+            <motion.div
+              className="absolute inset-0 bg-background/70 backdrop-blur-md"
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
             />
+
+            {/* Order detail */}
+            <motion.div
+              className="
+                relative
+                z-10
+                flex
+                h-[calc(100vh-1.5rem)]
+                max-h-[900px]
+                w-full
+                max-w-3xl
+                overflow-hidden
+                rounded-2xl
+                border
+                border-border
+                bg-bg-unit
+                shadow-2xl
+                sm:h-[calc(100vh-2.5rem)]
+                lg:h-[calc(100vh-4rem)]
+              "
+              initial={{
+                opacity: 0,
+                scale: 0.97,
+                y: 12,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.97,
+                y: 12,
+              }}
+              transition={{
+                duration: 0.2,
+                ease: "easeOut",
+              }}
+            >
+                <OrderCard
+                  order={selectedOrder}
+                  onBack={
+                    handleCloseOrder
+                  }
+                />
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -701,10 +760,7 @@ const PersonalInformation = ({
         </div>
       </div>
 
-      {/* ═══════════════════════════════════════
-          PERSONAL DATA
-      ═══════════════════════════════════════ */}
-
+      {/* Personal data */}
       <section>
         <SectionTitle
           icon={UserRound}
@@ -713,14 +769,11 @@ const PersonalInformation = ({
         />
 
         <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
-
           <FormField
             id="username"
             label="Nombre de usuario"
             icon={UserRound}
-            value={
-              formData.username
-            }
+            value={formData.username}
             onChange={(value) =>
               onChange(
                 "username",
@@ -757,9 +810,7 @@ const PersonalInformation = ({
             id="address"
             label="Dirección"
             icon={MapPin}
-            value={
-              formData.address
-            }
+            value={formData.address}
             onChange={(value) =>
               onChange(
                 "address",
@@ -795,10 +846,7 @@ const PersonalInformation = ({
 
       <Separator />
 
-      {/* ═══════════════════════════════════════
-          ACTIVITY
-      ═══════════════════════════════════════ */}
-
+      {/* Activity */}
       <section>
         <SectionTitle
           icon={ShoppingBag}
@@ -807,7 +855,6 @@ const PersonalInformation = ({
         />
 
         <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
-
           <MetricCard
             label="Órdenes"
             value={totalOrders}
@@ -829,10 +876,7 @@ const PersonalInformation = ({
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          TOP PRODUCTS
-      ═══════════════════════════════════════ */}
-
+      {/* Top products */}
       {topProducts.length > 0 && (
         <>
           <Separator />
@@ -1007,6 +1051,7 @@ const OrdersInformation = ({
   return (
     <div className="space-y-8">
 
+      {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">
           Órdenes
@@ -1017,6 +1062,7 @@ const OrdersInformation = ({
         </p>
       </div>
 
+      {/* Orders table */}
       <section>
         <div className="mb-4">
           <h3 className="text-base font-semibold">
@@ -1025,7 +1071,9 @@ const OrdersInformation = ({
 
           <p className="text-sm text-muted-foreground">
             {userOrders.length}{" "}
-            órdenes encontradas
+            {userOrders.length === 1
+              ? "orden encontrada"
+              : "órdenes encontradas"}
           </p>
         </div>
 
@@ -1048,15 +1096,17 @@ const OrdersInformation = ({
                 <TableHead className="text-right">
                   Total
                 </TableHead>
+
+                {/* Navigation indicator */}
+                <TableHead className="w-10" />
               </TableRow>
             </TableHeader>
 
             <TableBody>
-              {userOrders.length ===
-              0 ? (
+              {userOrders.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={4}
+                    colSpan={5}
                     className="h-32 text-center text-muted-foreground"
                   >
                     No hay órdenes para mostrar.
@@ -1072,12 +1122,18 @@ const OrdersInformation = ({
                           order
                         )
                       }
-                      className="cursor-pointer transition hover:bg-bg-unit-2"
+                      className="
+                        group
+                        cursor-pointer
+                        transition-colors
+                        hover:bg-bg-unit-2
+                      "
                     >
                       <TableCell className="font-medium">
                         #
                         {
-                          order.orderNumber
+                          order.orderNumber ??
+                          order.id
                         }
                       </TableCell>
 
@@ -1095,18 +1151,34 @@ const OrdersInformation = ({
                       </TableCell>
 
                       <TableCell>
-                        <Badge variant="outline">
-                          {
+                        <OrderStatusBadge
+                          status={
                             order.status
                           }
-                        </Badge>
+                        />
                       </TableCell>
 
                       <TableCell className="text-right font-medium">
                         $
                         {formatCurrency(
-                          order.total
+                          order.total ??
+                            order.totalAmount ??
+                            0
                         )}
+                      </TableCell>
+
+                      <TableCell className="w-10">
+                        <ChevronRight
+                          className="
+                            ml-auto
+                            h-4
+                            w-4
+                            text-muted-foreground/40
+                            transition-all
+                            group-hover:translate-x-0.5
+                            group-hover:text-primary
+                          "
+                        />
                       </TableCell>
                     </TableRow>
                   )
@@ -1117,6 +1189,80 @@ const OrdersInformation = ({
         </div>
       </section>
     </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════
+   ORDER STATUS
+═══════════════════════════════════════════════ */
+
+const ORDER_STATUS_CONFIG = {
+  pending: {
+    label: "Pendiente",
+    className:
+      "border-yellow-500/20 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
+    dot: "bg-yellow-500",
+  },
+
+  ready: {
+    label: "Listo",
+    className:
+      "border-blue-500/20 bg-blue-500/10 text-blue-600 dark:text-blue-400",
+    dot: "bg-blue-500",
+  },
+
+  "ready-to-pay": {
+    label: "Lista para cobrar",
+    className:
+      "border-yellow-500/20 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
+    dot: "bg-yellow-500",
+  },
+
+  paid: {
+    label: "Pagado",
+    className:
+      "border-green-500/20 bg-green-500/10 text-green-600 dark:text-green-400",
+    dot: "bg-green-500",
+  },
+
+  delivered: {
+    label: "Entregado",
+    className:
+      "border-green-500/20 bg-green-500/10 text-green-600 dark:text-green-400",
+    dot: "bg-green-500",
+  },
+
+  cancelled: {
+    label: "Cancelado",
+    className:
+      "border-red-500/20 bg-red-500/10 text-red-600 dark:text-red-400",
+    dot: "bg-red-500",
+  },
+};
+
+const OrderStatusBadge = ({
+  status,
+}) => {
+  const config =
+    ORDER_STATUS_CONFIG[status] ||
+    ORDER_STATUS_CONFIG.pending;
+
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium",
+        config.className
+      )}
+    >
+      <span
+        className={cn(
+          "h-1.5 w-1.5 rounded-full",
+          config.dot
+        )}
+      />
+
+      {config.label}
+    </span>
   );
 };
 

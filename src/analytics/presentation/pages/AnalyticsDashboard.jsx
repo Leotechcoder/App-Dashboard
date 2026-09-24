@@ -891,7 +891,7 @@ export function AnalyticsDashboard() {
               z-50
               flex
               items-center
-              justify-end
+              justify-center
               bg-background/40
               px-4
               backdrop-blur-sm
@@ -903,13 +903,21 @@ export function AnalyticsDashboard() {
 
             <motion.div
               className="
+                relative
+                z-10
+                flex
+                h-[calc(100vh-1.5rem)]
+                max-h-[900px]
                 w-full
-                max-w-5xl
-                max-h-[95vh]
+                max-w-3xl
                 overflow-hidden
-                rounded-lg
-                bg-card
-                shadow-xl
+                rounded-2xl
+                border
+                border-border
+                bg-bg-unit
+                shadow-2xl
+                sm:h-[calc(100vh-2.5rem)]
+                lg:h-[calc(100vh-4rem)]
               "
               initial={{
                 scale: 0.9,
@@ -935,7 +943,6 @@ export function AnalyticsDashboard() {
                 onBack={() =>
                   setSelectedOrderCard(null)
                 }
-                className="h-[calc(100dvh-145px)] overflow-y-auto"
               />
 
             </motion.div>

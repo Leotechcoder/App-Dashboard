@@ -40,8 +40,6 @@ const OrdersTableEnhanced = ({
   const buildFullOrder = (order) => ({
     ...order,
     items: dataItems.filter((item) => item.orderId === order.id),
-    createdAt: formatDate(order.createdAt),
-    updatedAt: formatDate(order.updatedAt || new Date()),
   });
 
   const handleSelectTableOrder = (order) => {
@@ -83,7 +81,7 @@ const OrdersTableEnhanced = ({
         
         {/* Área scrolleable: header sticky + filas */}
           <Table>
-            <TableHeader className="bg-accent sticky top-0 z-100">
+            <TableHeader className="bg-accent sticky top-0 z-1">
               <TableRow>
                 {TABLE_HEADERS.map((head) => (
                   <TableHead key={head} className="text-xs whitespace-nowrap">

@@ -1,12 +1,15 @@
 
 import { useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { ClipboardList, Wallet } from "lucide-react"
+import { ClipboardList, Wallet, History } from "lucide-react"
 import { useSelector } from "react-redux"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+import { CashRegisterHistoryList } from "../components/Cashregisterhistorylist"
+import { CashRegisterClosingDetail } from "../components/Cashregisterclosingdetail"
 
 import { CloseCashRegisterDialog } from "../components/CloseCashRegisterDialog"
 import { CashRegisterSummary } from "../components/CashRegisterSummary"
@@ -53,6 +56,7 @@ export function SalesDashboardView() {
     cashRegister,
     cashRegisterAnalysis,
     sessionOrders,
+    cashRegisterHistory
   } = useSalesData()
 
   const { pendingOrders } = useSelector((state) => state.sales)
@@ -67,6 +71,7 @@ export function SalesDashboardView() {
 
   const [closeDialog, setCloseDialog] = useState(false)
   const [selectedOrderCard, setSelectedOrderCard] = useState(null)
+  const [selectedClosing, setSelectedClosing] = useState(null)
 
   const {
     setScrollTo,
@@ -236,6 +241,22 @@ export function SalesDashboardView() {
                   )}
                 </TabsTrigger>
 
+                <TabsTrigger value="closures" 
+                    className="flex
+                    flex-1
+                    items-center
+                    justify-center
+                    gap-2
+                    md:flex-none
+                    data-[state=inactive]:border-accent
+                    data-[state=inactive]:hover:bg-accent/90
+                    data-[state=active]:bg-primary/5
+                    data-[state=active]:text-primary"
+                    >
+                  <History className="h-4 w-4" />
+                  Resumenes de caja
+                </TabsTrigger>
+
               </TabsList>
 
               {/* ==================================================
@@ -252,6 +273,22 @@ export function SalesDashboardView() {
                       setScrollTo={setScrollTo}
                     />
                   </section>
+                </motion.div>
+              </TabsContent>
+
+              <TabsContent value="closures">
+                <motion.div {...fadeSlide}>
+                  {selectedClosing ? (
+                    <CashRegisterClosingDetail
+                      register={selectedClosing}
+                      onBack={() => setSelectedClosing(null)}
+                    />
+                  ) : (
+                    <CashRegisterHistoryList
+                      history={cashRegisterHistory}
+                      onSelect={setSelectedClosing}
+                    />
+                  )}
                 </motion.div>
               </TabsContent>
 

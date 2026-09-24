@@ -112,3 +112,15 @@ export const fetchCashRegisterHistory = createAsyncThunk(
     }
   },
 )
+
+export const fetchCashRegisterOrders = createAsyncThunk(
+  "sales/fetchCashRegisterOrders",
+  async ({ startDate, endDate } = {}, { rejectWithValue }) => {
+    try {
+      const { orders } = await service.getClosedOrders(startDate, endDate)
+      return orders
+    } catch (error) {
+      return rejectWithValue(error?.message || "Error al obtener las órdenes de la caja")
+    }
+  },
+)

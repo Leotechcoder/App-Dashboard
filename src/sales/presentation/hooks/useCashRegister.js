@@ -5,6 +5,7 @@ import {
   fetchClosedOrders,
 } from "../../application/salesThunks";
 import { useDispatch, useSelector } from "react-redux";
+import { formatLocal } from "@/shared/utils/formatDateToArg";
 
 export function useCashRegister() {
   const dispatch = useDispatch();
@@ -26,16 +27,6 @@ export function useCashRegister() {
     if (!activeCashRegister) return;
 
     const now = new Date();
-    // 🔹 Retornar en formato local (no UTC)
-    const formatLocal = (d) => {
-      const local = new Date(d);
-      // Ajusta manualmente el desfase horario
-      const offsetMs = local.getTimezoneOffset() * 60 * 1000;
-      const localISOTime = new Date(local.getTime() - offsetMs)
-        .toISOString()
-        .slice(0, 19); // "YYYY-MM-DDTHH:mm:ss"
-      return `${localISOTime}-03:00`; // agrega el offset argentino
-    };
 
     // Obtener órdenes del rango de tiempo de la caja
     const ordersResult = await dispatch(

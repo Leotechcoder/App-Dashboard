@@ -1,4 +1,4 @@
-// src/modules/products/domain/Product.js (FRONTEND)
+
 
 export class Product {
   constructor({

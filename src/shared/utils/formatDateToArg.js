@@ -17,8 +17,8 @@ export function getMinutesAgo(date) {
 // 🔹 Retorna el color del semáforo según la antigüedad de la orden (en minutos)
 //    Pensado para usarse con CSS vars del tema
 export function getAgeColor(minutes) {
-  if (minutes < 10) return "green";   // var(--green)
-  if (minutes < 20) return "yellow";  // var(--yellow)
+  if (minutes < 30) return "green";   // var(--green)
+  if (minutes < 40) return "yellow";  // var(--yellow)
   return "destructive";               // var(--destructive)
 }
 
@@ -29,3 +29,14 @@ export function formatMinutesAgo(minutes) {
   const m = minutes % 60;
   return m > 0 ? `${h} h ${m} min` : `${h} h`;
 }
+
+//Otro formato de fecha para mostrar en la tabla de ordenes cerradas
+export const formatLocal = (d) => {
+      const local = new Date(d);
+      // Ajusta manualmente el desfase horario
+      const offsetMs = local.getTimezoneOffset() * 60 * 1000;
+      const localISOTime = new Date(local.getTime() - offsetMs)
+        .toISOString()
+        .slice(0, 19); // "YYYY-MM-DDTHH:mm:ss"
+      return `${localISOTime}-03:00`; // agrega el offset argentino
+    };

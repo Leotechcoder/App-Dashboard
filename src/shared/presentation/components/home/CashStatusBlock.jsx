@@ -77,7 +77,7 @@ export function CashStatusBlock() {
           variant="outline"
           size="sm"
           className="w-full mt-2 gap-1.5 hover:cursor-pointer"
-          onClick={() => navigate("/admin/caja")}
+          onClick={() => navigate("/admin/cash-register")}
         >
           Ir a Caja <ArrowRight className="h-3.5 w-3.5" />
         </Button>

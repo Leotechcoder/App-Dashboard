@@ -1,18 +1,21 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 import {
   fetchClosedOrders,
   fetchCashRegisterHistory,
   openCashRegister,
   closeCashRegister,
   fetchActiveCashRegister,
+  fetchCashRegisterOrders,
   fetchPendingOrders,
   closeOrder,
-} from "./salesThunks"
+} from "./salesThunks";
 
 const initialState = {
   closedOrders: [],
   pendingOrders: [],
   cashRegisterHistory: [],
+  closingSessionOrders: [], // 👈 nuevo — no comparte estado con closedOrders
+  loadingClosingSession: false,
   activeCashRegister: null,
   loading: false,
   error: null,
@@ -22,17 +25,17 @@ const initialState = {
     endDate: null,
     paymentMethod: "all", // nuevo filtro
   },
-}
+};
 
 const salesSlice = createSlice({
   name: "sales",
   initialState,
   reducers: {
     setFilters: (state, action) => {
-      state.filters = { ...state.filters, ...action.payload }
+      state.filters = { ...state.filters, ...action.payload };
     },
     clearError: (state) => {
-      state.error = null
+      state.error = null;
     },
     resetSales: () => initialState,
 
@@ -49,97 +52,115 @@ const salesSlice = createSlice({
     builder
       // Fetch closed orders
       .addCase(fetchClosedOrders.pending, (state) => {
-        state.loading = true
-        state.error = null
+        state.loading = true;
+        state.error = null;
       })
       .addCase(fetchClosedOrders.fulfilled, (state, action) => {
-        state.loading = false
-        state.closedOrders = action.payload
+        state.loading = false;
+        state.closedOrders = action.payload;
       })
       .addCase(fetchClosedOrders.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload
+        state.loading = false;
+        state.error = action.payload;
       })
 
       // Fetch cash register history
       .addCase(fetchCashRegisterHistory.pending, (state) => {
-        state.loading = true
+        state.loading = true;
       })
       .addCase(fetchCashRegisterHistory.fulfilled, (state, action) => {
-        state.loading = false
-        state.cashRegisterHistory = action.payload
+        state.loading = false;
+        state.cashRegisterHistory = action.payload;
       })
       .addCase(fetchCashRegisterHistory.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload
+        state.loading = false;
+        state.error = action.payload;
       })
 
       // Open cash register
       .addCase(openCashRegister.pending, (state) => {
-        state.loading = true
+        state.loading = true;
       })
       .addCase(openCashRegister.fulfilled, (state, action) => {
-        state.loading = false
-        state.activeCashRegister = action.payload
-        state.cashRegisterHistory.unshift(action.payload)
+        state.loading = false;
+        state.activeCashRegister = action.payload;
+        state.cashRegisterHistory.unshift(action.payload);
       })
       .addCase(openCashRegister.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload
+        state.loading = false;
+        state.error = action.payload;
       })
 
       // Close cash register
       .addCase(closeCashRegister.pending, (state) => {
-        state.loading = true
+        state.loading = true;
       })
       .addCase(closeCashRegister.fulfilled, (state, action) => {
-        state.loading = false
-        state.activeCashRegister = null
-        const index = state.cashRegisterHistory.findIndex((cr) => cr.id === action.payload.id)
+        state.loading = false;
+        state.activeCashRegister = null;
+        const index = state.cashRegisterHistory.findIndex(
+          (cr) => cr.id === action.payload.id,
+        );
         if (index !== -1) {
-          state.cashRegisterHistory[index] = action.payload
+          state.cashRegisterHistory[index] = action.payload;
         }
       })
       .addCase(closeCashRegister.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload
+        state.loading = false;
+        state.error = action.payload;
       })
 
       // Fetch active cash register
       .addCase(fetchActiveCashRegister.fulfilled, (state, action) => {
-        state.activeCashRegister = action.payload
+        state.activeCashRegister = action.payload;
       })
 
       // Fetch pending orders
       .addCase(fetchPendingOrders.pending, (state) => {
-        state.loading = true
+        state.loading = true;
       })
       .addCase(fetchPendingOrders.fulfilled, (state, action) => {
-        state.loading = false
-        state.pendingOrders = action.payload
+        state.loading = false;
+        state.pendingOrders = action.payload;
       })
       .addCase(fetchPendingOrders.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload
+        state.loading = false;
+        state.error = action.payload;
       })
 
       // Close order
       .addCase(closeOrder.pending, (state) => {
-        state.loading = true
+        state.loading = true;
       })
       .addCase(closeOrder.fulfilled, (state, action) => {
-        state.loading = false
+        state.loading = false;
         // Remover de pendientes
-        state.pendingOrders = state.pendingOrders.filter((o) => o.id !== action.payload.id)
+        state.pendingOrders = state.pendingOrders.filter(
+          (o) => o.id !== action.payload.id,
+        );
         // Agregar a órdenes cerradas
-        state.closedOrders.unshift(action.payload)
+        state.closedOrders.unshift(action.payload);
       })
       .addCase(closeOrder.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload
+        state.loading = false;
+        state.error = action.payload;
       })
-  },
-})
 
-export const { setFilters, clearError, resetSales, addPendingOrderFromSocket } = salesSlice.actions
-export default salesSlice.reducer
+      // Fetch cash register orders (for a specific closing session)
+      .addCase(fetchCashRegisterOrders.pending, (state) => {
+        state.loadingClosingSession = true;
+      })
+      .addCase(fetchCashRegisterOrders.fulfilled, (state, action) => {
+        state.loadingClosingSession = false;
+        state.closingSessionOrders = action.payload;
+      })
+      .addCase(fetchCashRegisterOrders.rejected, (state, action) => {
+        state.loadingClosingSession = false;
+        state.error = action.payload;
+      });
+  },
+});
+
+export const { setFilters, clearError, resetSales, addPendingOrderFromSocket } =
+  salesSlice.actions;
+export default salesSlice.reducer;

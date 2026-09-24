@@ -17,7 +17,6 @@ export function useSalesHistory() {
   // 📅 Carga las órdenes cerradas y el historial de caja
   const loadSalesData = () => {
     const { startDate, endDate } = getDateRange()
-    console.log("Loading sales data from", startDate, "to", endDate)
     dispatch(fetchClosedOrders({ startDate, endDate }))
     dispatch(fetchCashRegisterHistory())
   }

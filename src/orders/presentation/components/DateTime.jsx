@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 
-const DateTime = () => {
+const DateTime = ({ date } = {}) => {
   const dateFromStore = useSelector((store) => store.orders.date)
-  const [currentTime, setCurrentTime] = useState(dateFromStore)
+  const [currentTime, setCurrentTime] = useState(date || dateFromStore)
 
   useEffect(() => {
+    // Si nos pasan una fecha fija (ej. la de creación de una orden), la
+    // mostramos tal cual y no arrancamos el reloj en vivo.
+    if (date) {
+      setCurrentTime(date)
+      return
+    }
+
     const interval = setInterval(() => {
       setCurrentTime(new Date().toISOString())
     }, 1000)
     return () => clearInterval(interval)
-  }, [])
+  }, [date])
 
   const formatDateTime = (dateString) => {
     if (!dateString) return ""

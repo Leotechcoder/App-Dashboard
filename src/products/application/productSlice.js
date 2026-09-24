@@ -2,8 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   categorias,
   paginacionProducts,
-} from "../../shared/infrastructure/utils/stateInitial";
-import { createBaseSlice } from "../../shared/application/slices/baseSlice";
+} from "@/shared/infrastructure/utils/stateInitial";
+import { createBaseSlice } from "@/shared/application/slices/baseSlice";
 //Capas de la arquitectura limpia products
 import { ProductService } from "./ProductService";
 import { ProductRepositoryImpl } from "../infrastructure/ProductRepositoryImpl";

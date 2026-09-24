@@ -1,4 +1,3 @@
-// src/modules/products/application/ProductService.js
 
 import { Product } from "../domain/Product";
 

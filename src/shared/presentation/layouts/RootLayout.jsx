@@ -64,9 +64,11 @@ const RootLayout = () => {
       };
   
       socket.on("order:new", handleNewOrder);
+      socket.on("order:updated", handleNewOrder);
   
       return () => {
         socket.off("order:new", handleNewOrder);
+        socket.off("order:updated", handleNewOrder);
       };
     }, [socket, dispatch]);
 

@@ -1,140 +1,210 @@
-import { useEffect, useMemo, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { toast } from "sonner"
-import { Plus, Trash2, ReceiptText } from "lucide-react"
 
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog"
+  CheckCircle2,
+  Pencil,
+  ReceiptText,
+  ShoppingCart,
+  Trash2,
+  Utensils,
+  X,
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 import {
   createDataOrder,
   updateDataOrder,
-} from "@/orders/application/orderSlice"
+} from "@/orders/application/orderSlice";
 
-import { getData } from "@/orders/application/itemSlice"
+import { getData } from "@/orders/application/itemSlice";
 
-import { formatCurrency } from "@/shared/utils/formatPriceLocal"
-import { idGenerator } from "@/shared/infrastructure/utils/idGenerator"
+import { setSelectedProduct } from "@/products/application/productSlice";
 
-/**
- * Carga/edita los productos de la orden abierta de una mesa.
- *
- * Guardar dispara UNA sola request:
- *  - orden nueva      -> POST /orders (sin cambios)
- *  - orden existente  -> PATCH /orders/:id con `items` completo. El
- *    backend hace el diff (crear/actualizar/borrar) y recalcula el total;
- *    el front ya no arma ni manda ese diff.
- *  - "marcar lista para cobrar" va en el MISMO PATCH que guarda los items
- *    (manda `items` + `status` juntos), no en dos requests separadas.
- */
-export function TableOrderEditor({ table, order, onClose, onSaved }) {
-  const dispatch = useDispatch()
+import { formatCurrency } from "@/shared/utils/formatPriceLocal";
+import { idGenerator } from "@/shared/infrastructure/utils/idGenerator";
 
-  const products = useSelector((state) => state.products.data)
-  const allItems = useSelector((state) => state.items.data)
+import ItemModal from "@/orders/presentation/components/orderDetails/ItemModal";
+import ProductSelector from "@/orders/presentation/components/orderDetails/ProductSelector";
 
-  const [isSaving, setIsSaving] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState("all")
+const STATUS_CONFIG = {
+  occupied: {
+    label: "Ocupada",
+    dot: "bg-[hsl(var(--yellow))]",
+    text: "text-[hsl(var(--yellow))]",
+    background: "bg-[hsl(var(--yellow)/0.08)]",
+    border: "border-[hsl(var(--yellow)/0.2)]",
+  },
+
+  "ready-to-pay": {
+    label: "Lista para cobrar",
+    dot: "bg-[hsl(var(--blue))]",
+    text: "text-[hsl(var(--blue))]",
+    background: "bg-[hsl(var(--blue)/0.08)]",
+    border: "border-[hsl(var(--blue)/0.2)]",
+  },
+
+  available: {
+    label: "Disponible",
+    dot: "bg-[hsl(var(--green))]",
+    text: "text-[hsl(var(--green))]",
+    background: "bg-[hsl(var(--green)/0.08)]",
+    border: "border-[hsl(var(--green)/0.2)]",
+  },
+};
+
+function getTableStatus(order) {
+  if (!order) return "available";
+
+  if (order.status === "ready-to-pay") {
+    return "ready-to-pay";
+  }
+
+  return "occupied";
+}
+
+function TableOrderEditor({ table, order, onClose, onSaved }) {
+  const dispatch = useDispatch();
+
+  const allItems = useSelector((state) => state.items.data);
+
+  const { activeCashRegister } = useSelector((state) => state.sales);
+
+  const [isSaving, setIsSaving] = useState(false);
+
+  const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+
+  const [updateItem, setUpdateItem] = useState(false);
 
   const originalItems = useMemo(
-    () => (order ? allItems.filter((item) => item.orderId === order.id) : []),
-    [allItems, order]
-  )
+    () =>
+      order
+        ? allItems.filter((item) => item.orderId === order.id)
+        : [],
+    [allItems, order],
+  );
 
-  const [cart, setCart] = useState([])
+  /*
+   * Los items de la mesa son un borrador local.
+   *
+   * ProductSelector selecciona productos.
+   * ItemModal agrega o edita items.
+   * Este componente solamente mantiene el draft y lo persiste.
+   */
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
-    setCart(
+    setItems(
       originalItems.map((item) => ({
-        dbId: item.id,
+        id: item.id,
         productId: item.productId,
         productName: item.productName,
         unitPrice: item.unitPrice,
         quantity: Number(item.quantity),
         description: item.description || "",
-      }))
-    )
-  }, [originalItems])
-
-  const categories = useMemo(
-    () =>
-      [...new Set(products.map((p) => p.category).filter(Boolean))].sort((a, b) =>
-        String(a).localeCompare(String(b))
-      ),
-    [products]
-  )
-
-  const filteredProducts = useMemo(
-    () =>
-      selectedCategory === "all"
-        ? products
-        : products.filter((p) => p.category === selectedCategory),
-    [products, selectedCategory]
-  )
+      })),
+    );
+  }, [originalItems]);
 
   const total = useMemo(
-    () => cart.reduce((sum, i) => sum + Number(i.unitPrice) * Number(i.quantity), 0),
-    [cart]
-  )
+    () =>
+      items.reduce(
+        (sum, item) =>
+          sum +
+          Number(item.unitPrice) * Number(item.quantity),
+        0,
+      ),
+    [items],
+  );
 
-  const addProduct = (product) => {
-    setCart((prev) => {
-      const existing = prev.find((i) => i.productId === product.id)
-      if (existing) {
-        return prev.map((i) =>
-          i.productId === product.id ? { ...i, quantity: Number(i.quantity) + 1 } : i
-        )
-      }
-      return [
-        ...prev,
-        { dbId: null, productId: product.id, productName: product.name, unitPrice: product.price, quantity: 1, description: "" },
-      ]
-    })
-  }
+  const totalItems = useMemo(
+    () =>
+      items.reduce(
+        (sum, item) => sum + Number(item.quantity || 0),
+        0,
+      ),
+    [items],
+  );
 
-  const removeProduct = (productId) => {
-    setCart((prev) =>
-      prev.flatMap((i) => {
-        if (i.productId !== productId) return [i]
-        return Number(i.quantity) > 1 ? [{ ...i, quantity: Number(i.quantity) - 1 }] : []
-      })
-    )
-  }
+  const tableStatus = getTableStatus(order);
 
-  // Payload para PATCH /orders/:id → item con `id` (existente) o sin `id`
-  // (nuevo). El backend decide qué crear/actualizar/borrar.
+  const statusConfig =
+    STATUS_CONFIG[tableStatus] || STATUS_CONFIG.available;
+
+  /*
+   * Abre ItemModal para editar un item existente.
+   *
+   * ItemModal trabaja con products.selectedProduct,
+   * por eso le pasamos el item actual con su id.
+   */
+  const handleEditItem = (item) => {
+    dispatch(
+      setSelectedProduct({
+        id: item.id,
+        productId: item.productId,
+        productName: item.productName,
+        description: item.description || "",
+        unitPrice: item.unitPrice,
+        quantity: Number(item.quantity),
+      }),
+    );
+
+    setUpdateItem(true);
+    setIsItemModalOpen(true);
+  };
+
+  /*
+   * Elimina el item completo del borrador.
+   *
+   * La cantidad se modifica desde ItemModal.
+   */
+  const handleRemoveItem = (itemId) => {
+    setItems((prev) =>
+      prev.filter((item) => item.id !== itemId),
+    );
+  };
+
+  /*
+   * Adapter para actualizar una orden existente.
+   *
+   * El backend recibe los items completos.
+   */
   const itemsForSync = () =>
-    cart.map((i) => ({
-      ...(i.dbId ? { id: i.dbId } : {}),
-      productId: i.productId,
-      productName: i.productName,
-      description: i.description,
-      unitPrice: i.unitPrice,
-      quantity: i.quantity,
-    }))
+    items.map((item) => ({
+      ...(item.id ? { id: item.id } : {}),
+      productId: item.productId,
+      productName: item.productName,
+      description: item.description || "",
+      unitPrice: item.unitPrice,
+      quantity: Number(item.quantity),
+    }));
 
-  // Payload para POST /orders (orden nueva) → acá `id` es obligatorio para
-  // todos los items, se genera en el cliente como en el resto de la app.
+  /*
+   * Adapter para crear una orden nueva.
+   *
+   * Los items todavía no existen en DB,
+   * por eso generamos sus ids acá.
+   */
   const itemsForCreate = () =>
-    cart.map((i) => ({
-      id: idGenerator("Items"),
-      productId: i.productId,
-      productName: i.productName,
-      description: i.description,
-      unitPrice: i.unitPrice,
-      quantity: i.quantity,
-    }))
+    items.map((item) => ({
+      id: item.id || idGenerator("Items"),
+      productId: item.productId,
+      productName: item.productName,
+      description: item.description || "",
+      unitPrice: item.unitPrice,
+      quantity: Number(item.quantity),
+    }));
 
   const handleSave = async ({ markReady = false } = {}) => {
-    if (!cart.length) return false
-    setIsSaving(true)
+    if (!items.length) {
+      return false;
+    }
+
+    setIsSaving(true);
+
     try {
       if (!order) {
         await dispatch(
@@ -147,214 +217,709 @@ export function TableOrderEditor({ table, order, onClose, onSaved }) {
             source: "pos",
             items: itemsForCreate(),
             totalAmount: total,
-          })
-        ).unwrap()
+          }),
+        ).unwrap();
       } else {
+        /*
+         * Cuando se marca lista para cobrar,
+         * solamente enviamos el nuevo status.
+         *
+         * Los items no deben viajar en este PATCH.
+         */
         const data = markReady
-            ? { status: "ready-to-pay" }
-            : { items: itemsForSync() }
-        
-        await dispatch(updateDataOrder({ id: order.id, data })).unwrap()
+          ? { status: "ready-to-pay" }
+          : { items: itemsForSync() };
+
+        await dispatch(
+          updateDataOrder({
+            id: order.id,
+            data,
+          }),
+        ).unwrap();
       }
 
-      dispatch(getData())
-      toast.success(markReady ? `Mesa ${table.number} lista para cobrar` : "Orden de la mesa guardada")
-      onSaved?.()
-      return true
+      /*
+       * Actualizamos los items globales después de guardar.
+       * El draft local sigue siendo la fuente durante la edición.
+       */
+      dispatch(getData());
+
+      toast.success(
+        markReady
+          ? `Mesa ${table.number} lista para cobrar`
+          : "Orden de la mesa guardada",
+      );
+
+      onSaved?.();
+
+      return true;
     } catch (error) {
-      toast.error(error?.message || "No se pudo guardar la orden")
-      return false
+      toast.error(
+        error?.message || "No se pudo guardar la orden",
+      );
+
+      return false;
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleMarkReadyToPay = () => {
-    if (!order || !cart.length || isSaving) return
-    handleSave({ markReady: true })
-  }
+    if (!order || !items.length || isSaving) {
+      return;
+    }
+
+    handleSave({
+      markReady: true,
+    });
+  };
+
+  const handleItemModalClose = () => {
+    if (isSaving) return;
+
+    setIsItemModalOpen(false);
+    setUpdateItem(false);
+  };
 
   return (
-    <Dialog open onOpenChange={onClose}>
-      <DialogContent
-        className="
-          flex
-          h-[80vh]
-          w-[calc(100%-2rem)]
-          max-w-3xl
-          flex-col
-          overflow-hidden
-        "
-      >
-        {/* =================================
-            HEADER
-        ================================== */}
-        <DialogHeader className="shrink-0">
-          <DialogTitle>Mesa {table.number}</DialogTitle>
-          <DialogDescription>Agregá productos a la orden de esta mesa.</DialogDescription>
-        </DialogHeader>
-
-        {/* =================================
-            CONTENIDO PRINCIPAL — ALTURA FIJA
-        ================================== */}
+    <>
+      <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-[hsl(var(--dialog-overlay))] p-4">
         <div
+          showCloseButton = {false}
           className="
-            grid
+            flex
             min-h-0
-            flex-1
-            grid-cols-1
-            gap-6
+            h-[82vh]
+            w-[calc(100%-1.5rem)]
+            max-w-4xl
+            flex-col
+            gap-0
             overflow-hidden
-            md:grid-cols-2
+            rounded-2xl
+            border-[hsl(var(--border))]
+            bg-[hsl(var(--background-unit-2))]
+            p-0
           "
         >
-          {/* =================================
-              PRODUCTOS
-          ================================== */}
-          <section className="flex min-h-0 flex-col overflow-hidden">
-            <div className="shrink-0">
-              <h3 className="mb-3 text-sm font-semibold text-foreground">Productos</h3>
+          {/* ============================================================ */}
+          {/* HEADER                                                       */}
+          {/* ============================================================ */}
 
-              <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={selectedCategory === "all" ? "default" : "outline"}
-                  onClick={() => setSelectedCategory("all")}
-                  className="shrink-0"
-                >
-                  Todos
-                </Button>
+          <header
+            className="
+              flex
+              shrink-0
+              items-center
+              justify-between
+              gap-4
+              border-b
+              border-[hsl(var(--border))]
+              px-5
+              py-4
+            "
+          >
+            <div className="flex min-w-0 items-center gap-3">
+              <div
+                className="
+                  flex
+                  h-10
+                  w-10
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-[hsl(var(--blue)/0.1)]
+                  text-[hsl(var(--blue))]
+                "
+              >
+                <Utensils className="h-5 w-5" />
+              </div>
 
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    type="button"
-                    size="sm"
-                    variant={selectedCategory === category ? "default" : "outline"}
-                    onClick={() => setSelectedCategory(category)}
-                    className="shrink-0"
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2
+                    className="
+                      truncate
+                      text-base
+                      font-semibold
+                      text-[hsl(var(--foreground))]
+                    "
                   >
-                    {category}
-                  </Button>
-                ))}
+                    Mesa {table.number}
+                  </h2>
+
+                  <span
+                    className={`
+                      inline-flex
+                      shrink-0
+                      items-center
+                      gap-1.5
+                      rounded-full
+                      border
+                      px-2.5
+                      py-1
+                      text-[11px]
+                      font-medium
+                      ${statusConfig.background}
+                      ${statusConfig.border}
+                      ${statusConfig.text}
+                    `}
+                  >
+                    <span
+                      className={`
+                        h-1.5
+                        w-1.5
+                        rounded-full
+                        ${statusConfig.dot}
+                      `}
+                    />
+
+                    {statusConfig.label}
+                  </span>
+                </div>
+
+                <p
+                  className="
+                    mt-0.5
+                    text-xs
+                    text-[hsl(var(--muted-foreground))]
+                  "
+                >
+                  {order
+                    ? "Editá los productos de la orden"
+                    : "Agregá productos para comenzar la orden"}
+                </p>
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-2">
-              <div className="grid gap-2">
-                {filteredProducts.length === 0 ? (
-                  <div className="flex min-h-32 items-center justify-center rounded-xl border border-dashed border-border px-4 text-center text-sm text-muted-foreground">
-                    No hay productos para este filtro.
-                  </div>
-                ) : (
-                  filteredProducts.map((product) => (
-                    <button
-                      key={product.id}
-                      type="button"
-                      onClick={() => addProduct(product)}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              disabled={isSaving}
+              className="
+                shrink-0
+                rounded-xl
+                text-[hsl(var(--muted-foreground))]
+                hover:bg-[hsl(var(--background-unit-3))]
+                hover:text-[hsl(var(--foreground))]
+              "
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </header>
+
+          {/* ============================================================ */}
+          {/* MAIN                                                         */}
+          {/* ============================================================ */}
+
+          <main
+            className="
+              min-h-0
+              flex-1
+              overflow-hidden
+              p-4
+              sm:p-5
+            "
+          >
+            <section
+              className="
+                grid
+                h-full
+                min-h-0
+                min-w-0
+                grid-cols-1
+                gap-4
+                lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)]
+              "
+            >
+              {/* ======================================================== */}
+              {/* PRODUCTS                                                  */}
+              {/* ======================================================== */}
+
+              <div
+                className="
+                  min-h-0
+                  min-w-0
+                  overflow-hidden
+                  rounded-2xl
+                  border
+                  border-[hsl(var(--border))]
+                  bg-[hsl(var(--background-unit))]
+                "
+              >
+                <ProductSelector
+                  setIsModalOpen={setIsItemModalOpen}
+                  setUpdateItem={setUpdateItem}
+                />
+              </div>
+
+              {/* ======================================================== */}
+              {/* ORDER DETAIL                                              */}
+              {/* ======================================================== */}
+
+              <div
+                className="
+                  flex
+                  min-h-0
+                  min-w-0
+                  flex-col
+                  overflow-hidden
+                  rounded-2xl
+                  border
+                  border-[hsl(var(--border))]
+                  bg-[hsl(var(--background-unit))]
+                "
+              >
+                <div
+                  className="
+                    flex
+                    shrink-0
+                    items-center
+                    justify-between
+                    gap-3
+                    border-b
+                    border-[hsl(var(--border))]
+                    px-4
+                    py-3
+                  "
+                >
+                  <div className="flex items-center gap-2">
+                    <ReceiptText
                       className="
-                        flex items-center justify-between gap-3 rounded-xl border border-border
-                        bg-background px-4 py-3 text-left transition
-                        hover:cursor-pointer hover:border-primary/50 hover:bg-primary/5
+                        h-4
+                        w-4
+                        text-[hsl(var(--blue))]
+                      "
+                    />
+
+                    <h3
+                      className="
+                        text-sm
+                        font-semibold
+                        text-[hsl(var(--foreground))]
                       "
                     >
-                      <span className="min-w-0">
-                        <span className="block truncate text-sm font-medium text-foreground">
-                          {product.name}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          ${formatCurrency(product.price)}
-                        </span>
-                      </span>
-                      <Plus className="size-4 shrink-0 text-primary" />
-                    </button>
-                  ))
-                )}
-              </div>
-            </div>
-          </section>
+                      Detalle de la orden
+                    </h3>
+                  </div>
 
-          {/* =================================
-              DETALLE
-          ================================== */}
-          <section className="flex min-h-0 flex-col overflow-hidden">
-            <div className="mb-3 flex shrink-0 items-center justify-between">
-              <h3 className="text-sm font-semibold text-foreground">Detalle de la orden</h3>
-              <span className="text-xs text-muted-foreground">{cart.length} productos</span>
-            </div>
-
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-2">
-              {cart.length === 0 ? (
-                <div className="flex min-h-32 flex-col items-center justify-center text-center text-sm text-muted-foreground">
-                  <ReceiptText className="mb-2 size-6" />
-                  Aún no hay productos
+                  <span
+                    className="
+                      rounded-full
+                      bg-[hsl(var(--background-unit-2))]
+                      px-2.5
+                      py-1
+                      text-[11px]
+                      font-medium
+                      text-[hsl(var(--muted-foreground))]
+                    "
+                  >
+                    {totalItems}{" "}
+                    {totalItems === 1
+                      ? "producto"
+                      : "productos"}
+                  </span>
                 </div>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  {cart.map((item) => (
+
+                <div
+                  className="
+                    min-h-0
+                    flex-1
+                    overflow-y-auto
+                    overscroll-contain
+                    p-3
+                  "
+                >
+                  {items.length === 0 ? (
                     <div
-                      key={item.productId}
-                      className="flex items-center justify-between gap-3 rounded-lg bg-secondary/60 px-3 py-2"
+                      className="
+                        flex
+                        h-full
+                        min-h-40
+                        flex-col
+                        items-center
+                        justify-center
+                        rounded-xl
+                        border
+                        border-dashed
+                        border-[hsl(var(--border))]
+                        px-4
+                        text-center
+                      "
                     >
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-foreground">{item.productName}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {item.quantity} × ${formatCurrency(item.unitPrice)}
-                        </p>
+                      <div
+                        className="
+                          mb-3
+                          flex
+                          h-10
+                          w-10
+                          items-center
+                          justify-center
+                          rounded-xl
+                          bg-[hsl(var(--background-unit-2))]
+                          text-[hsl(var(--muted-foreground))]
+                        "
+                      >
+                        <ReceiptText className="h-5 w-5" />
                       </div>
 
-                      <div className="flex shrink-0 items-center gap-3">
-                        <span className="text-sm font-semibold text-foreground">
-                          ${formatCurrency(Number(item.unitPrice) * Number(item.quantity))}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => removeProduct(item.productId)}
-                          aria-label={`Quitar ${item.productName}`}
-                          className="text-muted-foreground transition hover:cursor-pointer hover:text-destructive"
-                        >
-                          <Trash2 className="size-4" />
-                        </button>
-                      </div>
+                      <p
+                        className="
+                          text-sm
+                          font-medium
+                          text-[hsl(var(--foreground))]
+                        "
+                      >
+                        Aún no hay productos
+                      </p>
+
+                      <p
+                        className="
+                          mt-1
+                          text-xs
+                          text-[hsl(var(--muted-foreground))]
+                        "
+                      >
+                        Seleccioná un producto para
+                        agregarlo a la mesa.
+                      </p>
                     </div>
-                  ))}
+                  ) : (
+                    <div className="space-y-2">
+                      {items.map((item) => {
+                        const itemTotal =
+                          Number(item.unitPrice) *
+                          Number(item.quantity);
+
+                        return (
+                          <div
+                            key={item.id || item.productId}
+                            className="
+                              group
+                              rounded-xl
+                              border
+                              border-[hsl(var(--border))]
+                              bg-[hsl(var(--background-unit-2))]
+                              px-3
+                              py-3
+                              transition
+                              hover:border-[hsl(var(--blue)/0.25)]
+                            "
+                          >
+                            <div className="flex items-center gap-3">
+                              <div
+                                className="
+                                  flex
+                                  h-9
+                                  w-9
+                                  shrink-0
+                                  items-center
+                                  justify-center
+                                  rounded-lg
+                                  bg-[hsl(var(--blue)/0.08)]
+                                  text-xs
+                                  font-semibold
+                                  text-[hsl(var(--blue))]
+                                "
+                              >
+                                {item.quantity}
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleEditItem(item)
+                                }
+                                className="
+                                  min-w-0
+                                  flex-1
+                                  text-left
+                                "
+                              >
+                                <p
+                                  className="
+                                    truncate
+                                    text-sm
+                                    font-medium
+                                    text-[hsl(var(--foreground))]
+                                  "
+                                >
+                                  {item.productName}
+                                </p>
+
+                                <p
+                                  className="
+                                    mt-0.5
+                                    truncate
+                                    text-xs
+                                    text-[hsl(var(--muted-foreground))]
+                                  "
+                                >
+                                  {item.description
+                                    ? item.description
+                                    : `${formatCurrency(
+                                        item.unitPrice,
+                                      )} × ${
+                                        item.quantity
+                                      }`}
+                                </p>
+                              </button>
+
+                              <div
+                                className="
+                                  flex
+                                  shrink-0
+                                  items-center
+                                  gap-2
+                                "
+                              >
+                                <span
+                                  className="
+                                    text-sm
+                                    font-semibold
+                                    text-[hsl(var(--foreground))]
+                                  "
+                                >
+                                  {formatCurrency(itemTotal)}
+                                </span>
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleEditItem(item)
+                                  }
+                                  aria-label={`Editar ${item.productName}`}
+                                  className="
+                                    flex
+                                    h-7
+                                    w-7
+                                    items-center
+                                    justify-center
+                                    rounded-lg
+                                    text-[hsl(var(--muted-foreground))]
+                                    opacity-70
+                                    transition
+                                    hover:bg-[hsl(var(--blue)/0.08)]
+                                    hover:text-[hsl(var(--blue))]
+                                    group-hover:opacity-100
+                                  "
+                                >
+                                  <Pencil className="h-3.5 w-3.5" />
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleRemoveItem(item.id)
+                                  }
+                                  aria-label={`Quitar ${item.productName}`}
+                                  className="
+                                    flex
+                                    h-7
+                                    w-7
+                                    items-center
+                                    justify-center
+                                    rounded-lg
+                                    text-[hsl(var(--muted-foreground))]
+                                    opacity-70
+                                    transition
+                                    hover:bg-[hsl(var(--salmon)/0.08)]
+                                    hover:text-[hsl(var(--salmon))]
+                                    group-hover:opacity-100
+                                  "
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                            </div>
+
+                            {item.description && (
+                              <div
+                                className="
+                                  mt-2
+                                  border-t
+                                  border-[hsl(var(--border))]
+                                  pt-2
+                                "
+                              >
+                                <p
+                                  className="
+                                    text-xs
+                                    text-[hsl(var(--muted-foreground))]
+                                  "
+                                >
+                                  {item.description}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </section>
-        </div>
+              </div>
+            </section>
+          </main>
 
-        {/* =================================
-            TOTAL FIJO
-        ================================== */}
-        <div className="mb-4 flex shrink-0 items-center justify-between border-t border-border pt-4">
-          <span className="font-semibold text-foreground">Total</span>
-          <span className="text-2xl font-semibold text-primary">${formatCurrency(total)}</span>
-        </div>
+          {/* ============================================================ */}
+          {/* TOTAL                                                        */}
+          {/* ============================================================ */}
 
-        {/* =================================
-            FOOTER FIJO
-        ================================== */}
-        <div className="flex shrink-0 flex-wrap justify-end gap-3">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Cancelar
-          </Button>
-
-          <Button
-            type="button"
-            variant="outline"
-            disabled={!order || !cart.length || isSaving}
-            onClick={handleMarkReadyToPay}
+          <div
+            className="
+              shrink-0
+              border-t
+              border-[hsl(var(--border))]
+              bg-[hsl(var(--background-unit-2))]
+              px-5
+              py-3
+            "
           >
-            Marcar lista para cobrar
-          </Button>
+            <div
+              className="
+                flex
+                items-center
+                justify-between
+                gap-4
+              "
+            >
+              <div className="flex items-center gap-2">
+                <ShoppingCart
+                  className="
+                    h-4
+                    w-4
+                    text-[hsl(var(--muted-foreground))]
+                  "
+                />
 
-          <Button type="button" disabled={!cart.length || isSaving} onClick={() => handleSave()}>
-            {isSaving ? "Guardando..." : "Guardar orden"}
-          </Button>
+                <span
+                  className="
+                    text-sm
+                    text-[hsl(var(--muted-foreground))]
+                  "
+                >
+                  Total de la orden
+                </span>
+              </div>
+
+              <span
+                className="
+                  text-xl
+                  font-bold
+                  tracking-tight
+                  text-[hsl(var(--foreground))]
+                "
+              >
+                {formatCurrency(total)}
+              </span>
+            </div>
+          </div>
+
+          {/* ============================================================ */}
+          {/* FOOTER                                                       */}
+          {/* ============================================================ */}
+
+          <footer
+            className="
+              flex
+              shrink-0
+              flex-col
+              gap-2
+              border-t
+              border-[hsl(var(--border))]
+              bg-[hsl(var(--background-unit-2))]
+              px-5
+              py-3
+              sm:flex-row
+              sm:items-center
+              sm:justify-end
+            "
+          >
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onClose}
+              disabled={isSaving}
+              className="
+                rounded-xl
+                text-[hsl(var(--muted-foreground))]
+                hover:bg-[hsl(var(--background-unit-3))]
+                hover:text-[hsl(var(--foreground))]
+              "
+            >
+              Cancelar
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              disabled={
+                !order ||
+                !items.length ||
+                isSaving ||
+                !activeCashRegister
+              }
+              onClick={handleMarkReadyToPay}
+              className="
+                rounded-xl
+                border-[hsl(var(--border))]
+                bg-transparent
+                text-[hsl(var(--foreground))]
+                hover:bg-[hsl(var(--background-unit-3))]
+                disabled:cursor-not-allowed
+                disabled:opacity-50
+              "
+            >
+              <CheckCircle2 className="mr-2 h-4 w-4" />
+
+              Marcar lista para cobrar
+            </Button>
+
+            <Button
+              type="button"
+              disabled={
+                !items.length ||
+                isSaving ||
+                !activeCashRegister
+              }
+              onClick={() => handleSave()}
+              className="
+                rounded-xl
+                bg-[hsl(var(--blue))]
+                px-5
+                text-white
+                shadow-sm
+                hover:bg-[hsl(var(--blue)/0.9)]
+                disabled:cursor-not-allowed
+                disabled:opacity-50
+              "
+            >
+              {isSaving
+                ? "Guardando..."
+                : "Guardar orden"}
+            </Button>
+          </footer>
         </div>
-      </DialogContent>
-    </Dialog>
-  )
+      </div>
+
+      {/* ================================================================ */}
+      {/* ITEM MODAL                                                       */}
+      {/* ================================================================ */}
+
+      {isItemModalOpen && (
+        <ItemModal
+          setModal={handleItemModalClose}
+          setUpdateItem={setUpdateItem}
+          updateItem={updateItem}
+          setItems={setItems}
+          items={items}
+        />
+      )}
+    </>
+  );
 }
+
+export { TableOrderEditor };

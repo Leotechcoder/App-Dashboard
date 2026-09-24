@@ -1,6 +1,12 @@
-import { Trash2, ShoppingBag, Pencil } from "lucide-react";
+import {
+  Package,
+  Pencil,
+  ShoppingCart,
+  Trash2,
+} from "lucide-react";
+
 import { ScrollArea } from "@/components/ui/scroll-area";
-import SearchItemsProduct from "./SearchItemsProduct";
+
 import { formatCurrency } from "@/shared/utils/formatPriceLocal";
 
 const OrderItemsTable = ({
@@ -8,180 +14,526 @@ const OrderItemsTable = ({
   removeProduct,
   updateProduct,
   calculateSubTotal,
-  setIsModalOpen,
 }) => {
+  const totalItems = items.reduce(
+    (total, item) => total + Number(item.quantity || 0),
+    0
+  );
+
   return (
-    <div
+    <section
       className="
-        lg:col-span-2
+        flex
+        h-full
+        min-h-0
+        min-w-0
+        flex-1
+        flex-col
+        overflow-hidden
         rounded-xl
-        shadow-md
-        flex flex-col
         border
-        bg-[hsl(var(--background-unit)/0.8)]
         border-[hsl(var(--border))]
+        bg-[hsl(var(--background-unit)/0.8)]
         backdrop-blur-md
       "
     >
-      {/* 🔍 Buscador de productos */}
+
+      {/* =====================================================
+          COLUMN HEADER
+      ===================================================== */}
+
       <div
         className="
-          py-4 px-3 border-b
+          hidden
+          shrink-0
+          grid-cols-[minmax(0,1fr)_80px_110px_72px]
+          items-center
+          gap-3
+          border-b
           border-[hsl(var(--border))]
+          bg-[hsl(var(--background-unit-2))]
+          px-4
+          py-2
+          text-[10px]
+          font-medium
+          uppercase
+          tracking-wide
+          text-[hsl(var(--muted-foreground))]
+          sm:grid
         "
       >
-        <h4
-          className="
-            text-base font-semibold mb-2
-            flex items-center gap-2
-            text-[hsl(var(--foreground))]
-          "
-        >
-          <ShoppingBag
-            className="w-5 h-5 text-[hsl(var(--green))]"
-          />
-          Agregar Producto
-        </h4>
+        <span>Producto</span>
 
-        <SearchItemsProduct
-          tipo="producto"
-          setIsModalOpen={setIsModalOpen}
-        />
+        <span className="text-center">
+          Cant.
+        </span>
+
+        <span className="text-right">
+          Total
+        </span>
+
+        <span className="text-center">
+          Acción
+        </span>
       </div>
 
-      {/* 🧾 Tabla de productos */}
-      <ScrollArea className="flex-1 max-h-[45vh]">
-        <table className="min-w-full text-sm border-t border-[hsl(var(--border))]">
-          <thead
-            className="
-              sticky top-0 text-xs
-              bg-[hsl(var(--dashboard)/0.7)]
-            "
-          >
-            <tr>
-              {[
-                "ID",
-                "Producto",
-                "Descripción",
-                "Precio",
-                "Cantidad",
-                "Total",
-                "Acción",
-              ].map((h) => (
-                <th
-                  key={h}
-                  className="
-                    px-3 py-2 text-left
-                    font-medium uppercase
-                    text-[hsl(var(--foreground))]
-                  "
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
+      {/* =====================================================
+          ITEMS
+      ===================================================== */}
 
-          <tbody className="divide-y divide-[hsl(var(--border))]">
-            {items.length === 0 ? (
-              <tr>
-                <td
-                  colSpan="7"
+      <ScrollArea
+        className="
+          min-h-0
+          min-w-0
+          flex-1
+          overflow-hidden
+        "
+      >
+        <div className="space-y-2 p-3">
+          {items.length === 0 ? (
+            <div
+              className="
+                flex
+                min-h-56
+                flex-col
+                items-center
+                justify-center
+                rounded-xl
+                border
+                border-dashed
+                border-[hsl(var(--border))]
+                bg-[hsl(var(--background-unit-2))]
+                px-6
+                text-center
+              "
+            >
+              <div
+                className="
+                  mb-3
+                  flex
+                  size-12
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-[hsl(var(--green)/0.08)]
+                "
+              >
+                <ShoppingCart
                   className="
-                    text-center py-8 font-medium
-                    bg-[hsl(var(--green)/0.25)]
+                    size-5
                     text-[hsl(var(--green))]
                   "
-                >
-                  Agrega productos al carrito 🛒
-                </td>
-              </tr>
-            ) : (
-              items.map((item) => (
-                <tr
+                />
+              </div>
+
+              <h4
+                className="
+                  text-sm
+                  font-semibold
+                  text-[hsl(var(--foreground))]
+                "
+              >
+                La orden está vacía
+              </h4>
+
+              <p
+                className="
+                  mt-1
+                  max-w-xs
+                  text-xs
+                  leading-relaxed
+                  text-[hsl(var(--muted-foreground))]
+                "
+              >
+                Buscá un producto en el panel de
+                selección para agregarlo a la orden.
+              </p>
+            </div>
+          ) : (
+            items.map((item) => {
+              const quantity = Number(item.quantity || 0);
+              const unitPrice = Number(item.unitPrice || 0);
+              const itemTotal = unitPrice * quantity;
+
+              return (
+                <article
                   key={item.id}
                   className="
-                    transition-colors
-                    hover:bg-[hsl(var(--muted))]
+                    group
+                    rounded-lg
+                    border
+                    border-[hsl(var(--border))]
+                    bg-[hsl(var(--background-unit-2))]
+                    p-3
+                    transition-all
+                    hover:border-[hsl(var(--blue)/0.35)]
+                    hover:bg-[hsl(var(--blue)/0.025)]
                   "
                 >
-                  <td className="pl-3 py-2 truncate text-[hsl(var(--muted-foreground))]">
-                    {item.id}
-                  </td>
+                  {/* =================================================
+                      DESKTOP
+                  ================================================= */}
 
-                  <td className="pl-3 py-2 font-medium truncate text-[hsl(var(--foreground))]">
-                    {item.productName}
-                  </td>
+                  <div
+                    className="
+                      hidden
+                      grid-cols-[minmax(0,1fr)_80px_110px_72px]
+                      items-center
+                      gap-3
+                      sm:grid
+                    "
+                  >
+                    {/* Product */}
 
-                  <td className="pl-3 py-2 truncate text-[hsl(var(--muted-foreground))]">
-                    {item.description}
-                  </td>
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div
+                        className="
+                          flex
+                          size-9
+                          shrink-0
+                          items-center
+                          justify-center
+                          rounded-lg
+                          bg-[hsl(var(--blue)/0.08)]
+                        "
+                      >
+                        <Package
+                          className="
+                            size-4
+                            text-[hsl(var(--blue))]
+                          "
+                        />
+                      </div>
 
-                  <td className="text-center text-[hsl(var(--foreground))]">
-                    {formatCurrency(item.unitPrice)}
-                  </td>
+                      <div className="min-w-0">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <h4
+                            className="
+                              truncate
+                              text-xs
+                              font-semibold
+                              text-[hsl(var(--foreground))]
+                            "
+                            title={item.productName}
+                          >
+                            {item.productName}
+                          </h4>
+                        </div>
 
-                  <td className="text-center font-semibold text-[hsl(var(--foreground))]">
-                    {item.quantity}
-                  </td>
+                        {item.description ? (
+                          <p
+                            className="
+                              mt-0.5
+                              truncate
+                              text-[10px]
+                              text-[hsl(var(--muted-foreground))]
+                            "
+                            title={item.description}
+                          >
+                            {item.description}
+                          </p>
+                        ) : (
+                          <p
+                            className="
+                              mt-0.5
+                              text-[10px]
+                              text-[hsl(var(--muted-foreground))]
+                            "
+                          >
+                            {formatCurrency(unitPrice)}{" "}
+                            por unidad
+                          </p>
+                        )}
+                      </div>
+                    </div>
 
-                  <td className="text-center font-semibold text-[hsl(var(--order-table-total)/0.9)]">
-                    {formatCurrency(item.unitPrice * item.quantity)}
-                  </td>
+                    {/* Quantity */}
 
-                  <td className="flex items-center justify-center gap-2 py-2">
-                    <button
-                      onClick={() => updateProduct(item.id)}
+                    <div className="flex justify-center">
+                      <span
+                        className="
+                          inline-flex
+                          min-w-10
+                          items-center
+                          justify-center
+                          rounded-md
+                          border
+                          border-[hsl(var(--border))]
+                          bg-[hsl(var(--background-unit))]
+                          px-2
+                          py-1.5
+                          text-xs
+                          font-semibold
+                          text-[hsl(var(--foreground))]
+                        "
+                      >
+                        ×{quantity}
+                      </span>
+                    </div>
+
+                    {/* Total */}
+
+                    <div className="text-right">
+                      <span
+                        className="
+                          text-sm
+                          font-semibold
+                          text-[hsl(var(--green))]
+                        "
+                      >
+                        {formatCurrency(itemTotal)}
+                      </span>
+
+                      <p
+                        className="
+                          mt-0.5
+                          text-[9px]
+                          text-[hsl(var(--muted-foreground))]
+                        "
+                      >
+                        {formatCurrency(unitPrice)} c/u
+                      </p>
+                    </div>
+
+                    {/* Actions */}
+
+                    <div className="flex items-center justify-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateProduct(item.id)
+                        }
+                        className="
+                          flex
+                          size-8
+                          items-center
+                          justify-center
+                          rounded-md
+                          text-[hsl(var(--blue))]
+                          transition-colors
+                          hover:bg-[hsl(var(--blue)/0.1)]
+                        "
+                        title="Editar producto"
+                      >
+                        <Pencil className="size-3.5" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          removeProduct(item.id)
+                        }
+                        className="
+                          flex
+                          size-8
+                          items-center
+                          justify-center
+                          rounded-md
+                          text-[hsl(var(--destructive))]
+                          transition-colors
+                          hover:bg-[hsl(var(--destructive)/0.1)]
+                        "
+                        title="Eliminar producto"
+                      >
+                        <Trash2 className="size-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* =================================================
+                      MOBILE
+                  ================================================= */}
+
+                  <div className="flex gap-3 sm:hidden">
+                    <div
                       className="
-                        p-1.5 rounded-md transition
-                        hover:bg-[hsl(var(--dashboard))]
+                        flex
+                        size-9
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-lg
+                        bg-[hsl(var(--blue)/0.08)]
                       "
-                      title="Editar producto"
                     >
-                      <Pencil
-                        className="w-4 h-4 text-[hsl(var(--blue))]"
+                      <Package
+                        className="
+                          size-4
+                          text-[hsl(var(--blue))]
+                        "
                       />
-                    </button>
+                    </div>
 
-                    <button
-                      onClick={() => removeProduct(item.id)}
-                      className="
-                        p-1.5 rounded-md transition
-                        hover:bg-[hsl(var(--destructive)/0.2)]
-                      "
-                      title="Eliminar producto"
-                    >
-                      <Trash2
-                        className="w-4 h-4 text-[hsl(var(--destructive))]"
-                      />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <h4
+                            className="
+                              truncate
+                              text-xs
+                              font-semibold
+                              text-[hsl(var(--foreground))]
+                            "
+                          >
+                            {item.productName}
+                          </h4>
+
+                          {item.description && (
+                            <p
+                              className="
+                                mt-0.5
+                                truncate
+                                text-[10px]
+                                text-[hsl(var(--muted-foreground))]
+                              "
+                            >
+                              {item.description}
+                            </p>
+                          )}
+                        </div>
+
+                        <span
+                          className="
+                            shrink-0
+                            text-sm
+                            font-semibold
+                            text-[hsl(var(--green))]
+                          "
+                        >
+                          {formatCurrency(itemTotal)}
+                        </span>
+                      </div>
+
+                      <div className="mt-2 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="
+                              rounded-md
+                              border
+                              border-[hsl(var(--border))]
+                              bg-[hsl(var(--background-unit))]
+                              px-2
+                              py-1
+                              text-[10px]
+                              font-semibold
+                            "
+                          >
+                            ×{quantity}
+                          </span>
+
+                          <span
+                            className="
+                              text-[10px]
+                              text-[hsl(var(--muted-foreground))]
+                            "
+                          >
+                            {formatCurrency(unitPrice)} c/u
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              updateProduct(item.id)
+                            }
+                            className="
+                              flex
+                              size-8
+                              items-center
+                              justify-center
+                              rounded-md
+                              text-[hsl(var(--blue))]
+                              hover:bg-[hsl(var(--blue)/0.1)]
+                            "
+                            title="Editar producto"
+                          >
+                            <Pencil className="size-3.5" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              removeProduct(item.id)
+                            }
+                            className="
+                              flex
+                              size-8
+                              items-center
+                              justify-center
+                              rounded-md
+                              text-[hsl(var(--destructive))]
+                              hover:bg-[hsl(var(--destructive)/0.1)]
+                            "
+                            title="Eliminar producto"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              );
+            })
+          )}
+        </div>
       </ScrollArea>
 
-      {/* 💰 Total */}
+      {/* =====================================================
+          TOTAL
+      ===================================================== */}
+{/* 
       <div
         className="
-          p-4 border-t
-          flex justify-between items-center
-          bg-[hsl(var(--background-unit)/0.8)]
+          shrink-0
+          border-t
           border-[hsl(var(--border))]
-          rounded-b-xl
+          bg-[hsl(var(--background-unit-2)/0.9)]
+          px-4
+          py-3
         "
       >
-        <span className="text-base font-semibold text-[hsl(var(--foreground))]">
-          Total Neto
-        </span>
+        <div className="flex items-center justify-between">
+          <div>
+            <p
+              className="
+                text-[10px]
+                font-medium
+                uppercase
+                tracking-wide
+                text-[hsl(var(--muted-foreground))]
+              "
+            >
+              Total neto
+            </p>
 
-        <span className="text-2xl font-bold text-[hsl(var(--order-table-total)/0.9)]">
-          {formatCurrency(calculateSubTotal)}
-        </span>
-      </div>
-    </div>
+            <p
+              className="
+                mt-0.5
+                text-[10px]
+                text-[hsl(var(--muted-foreground))]
+              "
+            >
+              {totalItems}{" "}
+              {totalItems === 1
+                ? "unidad"
+                : "unidades"}
+            </p>
+          </div>
+
+          <span
+            className="
+              text-xl
+              font-bold
+              text-[hsl(var(--green))]
+            "
+          >
+            {formatCurrency(calculateSubTotal)}
+          </span>
+        </div>
+      </div> */}
+    </section>
   );
 };
 
