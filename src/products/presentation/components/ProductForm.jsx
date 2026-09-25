@@ -1,5 +1,3 @@
-
-import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/text-area";
@@ -16,7 +14,7 @@ export function ProductForm({
   categories = [],
   onChange,
 }) {
-  const [formData, setFormData] = useState({
+  const formData = {
     name: initialData.name || "",
     description: initialData.description || "",
     price: initialData.price ?? "",
@@ -26,15 +24,13 @@ export function ProductForm({
       initialData.available !== undefined
         ? String(initialData.available)
         : "true",
-  });
-
-  useEffect(() => {
-    onChange?.(formData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData]);
+  };
 
   const updateField = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    onChange?.({
+      ...formData,
+      [field]: value,
+    });
   };
 
   return (
@@ -42,6 +38,7 @@ export function ProductForm({
       {/* NOMBRE */}
       <div className="space-y-2">
         <Label htmlFor="name">Nombre</Label>
+
         <Input
           id="name"
           value={formData.name}
@@ -52,6 +49,7 @@ export function ProductForm({
       {/* DESCRIPCIÓN */}
       <div className="space-y-2">
         <Label htmlFor="description">Descripción</Label>
+
         <Textarea
           id="description"
           rows={4}
@@ -64,6 +62,7 @@ export function ProductForm({
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="price">Precio</Label>
+
           <Input
             id="price"
             type="number"
@@ -76,6 +75,7 @@ export function ProductForm({
 
         <div className="space-y-2">
           <Label htmlFor="stock">Stock</Label>
+
           <Input
             id="stock"
             type="number"
@@ -89,9 +89,12 @@ export function ProductForm({
       {/* CATEGORÍA */}
       <div className="space-y-2">
         <Label>Categoría</Label>
+
         <Select
           value={formData.category}
-          onValueChange={(value) => updateField("category", value)}
+          onValueChange={(value) =>
+            updateField("category", value)
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder="Seleccionar categoría" />
@@ -110,17 +113,25 @@ export function ProductForm({
       {/* ESTADO */}
       <div className="space-y-2">
         <Label>Estado</Label>
+
         <Select
           value={String(formData.available)}
-          onValueChange={(value) => updateField("available", value)}
+          onValueChange={(value) =>
+            updateField("available", value)
+          }
         >
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
 
           <SelectContent>
-            <SelectItem value="true">Disponible</SelectItem>
-            <SelectItem value="false">No disponible</SelectItem>
+            <SelectItem value="true">
+              Disponible
+            </SelectItem>
+
+            <SelectItem value="false">
+              No disponible
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
