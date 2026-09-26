@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ClipboardList, ArrowRight, AlertTriangle } from "lucide-react"
 import { getMinutesAgo, getAgeColor, formatMinutesAgo } from "@/shared/utils/formatDateToArg"
+import { PATH } from "@/shared/infrastructure/utils/PATH"
 
 const DOT_CLASSES = {
   green:       "bg-[hsl(var(--green))]",
@@ -78,7 +79,7 @@ export function PendingOrdersBlock() {
           variant="outline"
           size="sm"
           className="w-full mt-2 gap-1.5 hover:cursor-pointer"
-          onClick={() => navigate("/admin/ventas")}
+          onClick={() => navigate(PATH.cashRegister)}
         >
           Ver todas <ArrowRight className="h-3.5 w-3.5" />
         </Button>

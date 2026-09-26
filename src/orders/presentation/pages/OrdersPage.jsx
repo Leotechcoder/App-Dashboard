@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
+
 import {
   Monitor,
   Smartphone,
@@ -49,7 +50,7 @@ import {
 
 /* ==========================================================================
    ORDER SOURCES
-============================================================================ */
+========================================================================== */
 
 export const ORDER_SOURCES = {
   pos: {
@@ -66,6 +67,14 @@ export const ORDER_SOURCES = {
     icon: Smartphone,
     badgeClass: "source-badge--app",
     description: "Ingresada desde la app móvil",
+  },
+
+  store: {
+    key: "store",
+    label: "Tienda",
+    icon: LayoutGrid,
+    badgeClass: "source-badge--store",
+    description: "Pedido desde la tienda",
   },
 
   whatsapp: {
@@ -87,7 +96,7 @@ export const ORDER_SOURCES = {
 
 /* ==========================================================================
    DELIVERY TABS
-============================================================================ */
+========================================================================== */
 
 const DELIVERY_TABS = [
   {
@@ -108,32 +117,8 @@ const DELIVERY_TABS = [
 ];
 
 /* ==========================================================================
-   NORMALIZADORES
-============================================================================ */
-
-const normalizeDeliveryType = (type) => {
-  const value = String(type || "")
-    .toLowerCase()
-    .trim();
-
-  if (
-    ["table", "mesa", "salon", "dine-in"].includes(value)
-  ) {
-    return "table";
-  }
-
-  if (
-    ["local", "pickup", "takeaway"].includes(value)
-  ) {
-    return "local";
-  }
-
-  return value;
-};
-
-/* ==========================================================================
    SOURCE FILTERS
-============================================================================ */
+========================================================================== */
 
 const ALL_SOURCE_FILTERS = [
   {
@@ -156,17 +141,54 @@ const ALL_SOURCE_FILTERS = [
     label: "WhatsApp",
     icon: MessageCircle,
   },
+  {
+    value: "store",
+    label: "Tienda",
+    icon: LayoutGrid,
+  },
 ];
 
 const SOURCE_FILTERS_BY_DELIVERY = {
-  delivery: ["all", "pos", "whatsapp"],
-  local: ["all", "pos", "whatsapp"],
+  delivery: ["all", "pos", "whatsapp", "store"],
+  local: ["all", "pos", "whatsapp", "store"],
   table: ["all", "pos", "app"],
 };
 
 /* ==========================================================================
+   NORMALIZADORES
+========================================================================== */
+
+const normalizeDeliveryType = (type) => {
+  const value = String(type || "")
+    .toLowerCase()
+    .trim();
+
+  if (
+    ["table", "mesa", "salon", "dine-in"].includes(value)
+  ) {
+    return "table";
+  }
+
+  if (
+    ["local", "pickup", "takeaway"].includes(value)
+  ) {
+    return "local";
+  }
+
+  return value;
+};
+
+const normalizeSource = (source) => {
+  const value = String(source || "")
+    .toLowerCase()
+    .trim();
+
+  return ORDER_SOURCES[value] ? value : "other";
+};
+
+/* ==========================================================================
    STATUS SEMAPHORE
-============================================================================ */
+========================================================================== */
 
 const STATUS_DOT_CLASSES = {
   green: "bg-green",
@@ -213,7 +235,7 @@ const getOrdersAgeColor = (orders = []) => {
 
 /* ==========================================================================
    COMPONENT
-============================================================================ */
+========================================================================== */
 
 const OrdersPage = ({ setScrollTo }) => {
   const dispatch = useDispatch();
@@ -228,7 +250,9 @@ const OrdersPage = ({ setScrollTo }) => {
     message,
   } = useSelector((state) => state.orders);
 
-  const { activeCashRegister } = useSelector((state) => state.sales);
+  const { activeCashRegister } = useSelector(
+    (state) => state.sales
+  );
 
   const dataOrders = useSelector(
     (state) => state.orders.data
@@ -262,17 +286,23 @@ const OrdersPage = ({ setScrollTo }) => {
   const pendingOrdersForDelivery = (
     dataOrders || []
   ).filter((order) => {
+    const deliveryType = normalizeDeliveryType(
+      order.deliveryType
+    );
+
+    /*
+     * Las órdenes de App Mesero pertenecen exclusivamente
+     * al flujo de mesas.
+     */
     if (
-      order.source === "app" &&
+      normalizeSource(order.source) === "app" &&
       activeDelivery !== "table"
     ) {
       return false;
     }
 
     return (
-      normalizeDeliveryType(
-        order.deliveryType
-      ) === activeDelivery &&
+      deliveryType === activeDelivery &&
       OPEN_ORDER_STATUSES.includes(order.status)
     );
   });
@@ -287,17 +317,24 @@ const OrdersPage = ({ setScrollTo }) => {
     for (const tab of DELIVERY_TABS) {
       const orders = (dataOrders || []).filter(
         (order) => {
+          const source = normalizeSource(
+            order.source
+          );
+
+          const deliveryType =
+            normalizeDeliveryType(
+              order.deliveryType
+            );
+
           if (
-            order.source === "app" &&
+            source === "app" &&
             tab.value !== "table"
           ) {
             return false;
           }
 
           return (
-            normalizeDeliveryType(
-              order.deliveryType
-            ) === tab.value &&
+            deliveryType === tab.value &&
             OPEN_ORDER_STATUSES.includes(
               order.status
             )
@@ -339,15 +376,27 @@ const OrdersPage = ({ setScrollTo }) => {
         count: 0,
         orders: [],
       },
+
+      store: {
+        count: 0,
+        orders: [],
+      },
+
+      other: {
+        count: 0,
+        orders: [],
+      },
     };
 
     for (const order of pendingOrdersForDelivery) {
-      const key = order.source || "other";
+      const source = normalizeSource(order.source);
 
-      if (stats[key]) {
-        stats[key].orders.push(order);
-        stats[key].count += 1;
+      if (!stats[source]) {
+        continue;
       }
+
+      stats[source].orders.push(order);
+      stats[source].count += 1;
     }
 
     for (const key of Object.keys(stats)) {
@@ -387,17 +436,28 @@ const OrdersPage = ({ setScrollTo }) => {
     setCurrentPage: setCurrentPageOrders,
 
     externalFilter: (order) => {
+      const source = normalizeSource(
+        order.source
+      );
+
+      const deliveryType =
+        normalizeDeliveryType(
+          order.deliveryType
+        );
+
+      /*
+       * App Mesero solamente se muestra
+       * dentro del contexto de mesas.
+       */
       if (
-        order.source === "app" &&
+        source === "app" &&
         activeDelivery !== "table"
       ) {
         return false;
       }
 
       if (
-        normalizeDeliveryType(
-          order.deliveryType
-        ) !== activeDelivery
+        deliveryType !== activeDelivery
       ) {
         return false;
       }
@@ -414,10 +474,7 @@ const OrdersPage = ({ setScrollTo }) => {
         return true;
       }
 
-      return (
-        (order.source || "other") ===
-        activeSource
-      );
+      return source === activeSource;
     },
   });
 
@@ -442,7 +499,9 @@ const OrdersPage = ({ setScrollTo }) => {
 
       const timeout = setTimeout(() => {
         shownMessageRef.current = message;
+
         dispatch(setClearMessage());
+
         shownMessageRef.current = "";
       }, 2000);
 
@@ -461,6 +520,7 @@ const OrdersPage = ({ setScrollTo }) => {
 
   const handleOpenOrderDetails = (order) => {
     dispatch(setSelectedOrder(order));
+
     setCreateOrder(false);
     setOpenOrderDetails(true);
   };
@@ -513,9 +573,30 @@ const OrdersPage = ({ setScrollTo }) => {
   const handleActiveDelivery = (value) => {
     setActiveDelivery(value);
 
+    /*
+     * Al cambiar de tipo de entrega,
+     * volvemos al filtro general de origen.
+     */
     setActiveSource("all");
 
     setScrollTo?.(true);
+  };
+
+  const handleActiveSource = (value) => {
+    /*
+     * Evita seleccionar accidentalmente un source
+     * que no pertenece al contexto actual.
+     */
+    const allowedSources =
+      SOURCE_FILTERS_BY_DELIVERY[
+        activeDelivery
+      ] || ["all"];
+
+    if (!allowedSources.includes(value)) {
+      return;
+    }
+
+    setActiveSource(value);
   };
 
   /* ------------------------------------------------------------------------
@@ -592,6 +673,7 @@ const OrdersPage = ({ setScrollTo }) => {
                       text-xs font-medium
                       transition-all
                       cursor-pointer
+
                       ${
                         activeDelivery === value
                           ? "bg-accent/90 text-primary border border-primary shadow-sm"
@@ -698,6 +780,12 @@ const OrdersPage = ({ setScrollTo }) => {
                         ]
                       : null;
 
+                  const sourceConfig =
+                    ORDER_SOURCES[value];
+
+                  const isActive =
+                    activeSource === value;
+
                   return (
                     <motion.button
                       key={value}
@@ -719,7 +807,7 @@ const OrdersPage = ({ setScrollTo }) => {
                       }}
                       type="button"
                       onClick={() =>
-                        setActiveSource(
+                        handleActiveSource(
                           value
                         )
                       }
@@ -735,37 +823,11 @@ const OrdersPage = ({ setScrollTo }) => {
                         cursor-pointer
 
                         ${
-                          activeSource ===
-                          value
+                          isActive
                             ? value === "all"
                               ? "bg-primary/10 border-primary/40 text-primary"
-                              : ""
+                              : sourceConfig?.badgeClass || ""
                             : "bg-background border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                        }
-
-                        ${
-                          activeSource ===
-                            "pos" &&
-                          value === "pos"
-                            ? "source-badge--pos"
-                            : ""
-                        }
-
-                        ${
-                          activeSource ===
-                            "app" &&
-                          value === "app"
-                            ? "source-badge--app"
-                            : ""
-                        }
-
-                        ${
-                          activeSource ===
-                            "whatsapp" &&
-                          value ===
-                            "whatsapp"
-                            ? "source-badge--whatsapp"
-                            : ""
                         }
                       `}
                     >
@@ -898,9 +960,11 @@ const OrdersPage = ({ setScrollTo }) => {
       ==================================================================== */}
 
       <AnimatePresence>
-        {((openOrderDetails &&
-          selectedOrder) ||
-          createOrder) && (
+        {(
+          (openOrderDetails &&
+            selectedOrder) ||
+          createOrder
+        ) && (
           <>
             {/* OVERLAY */}
 
@@ -1007,7 +1071,7 @@ const OrdersPage = ({ setScrollTo }) => {
 
 /* ==========================================================================
    MESSAGE
-============================================================================ */
+========================================================================== */
 
 const Message = ({
   text,

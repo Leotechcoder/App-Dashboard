@@ -42,6 +42,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { idGenerator } from "@/shared/infrastructure/utils/idGenerator";
 
 const DELIVERY_OPTIONS = [
   {
@@ -123,7 +124,7 @@ function OrderDetails({ onBack }) {
     selectedOrder?.deliveryAddress || ""
   );
 
-  const [customerSearch, setCustomerSearch] = useState("");
+  const [customerSearch, setCustomerSearch] = useState(selectedOrder?.userName || "");
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isCustomerListOpen, setIsCustomerListOpen] = useState(false);
   const customerFieldRef = useRef(null);
@@ -290,7 +291,7 @@ function OrderDetails({ onBack }) {
         userId:
           selectedCustomer?.id ||
           selectedOrder?.userId ||
-          null,
+          idGenerator("pos"),
         // El backend valida userName y status como requeridos en el
         // alta (POST /orders). El editar funcionaba porque ahí solo se
         // manda un PATCH parcial que no los exige — pero al crear, si

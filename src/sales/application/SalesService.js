@@ -12,6 +12,7 @@ export class SalesService {
 
   async getPendingOrders() {
     const data = await this.repository.getPendingOrders();
+    
     return data.map((order) => new Order(order).toObject());
   }
 

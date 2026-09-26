@@ -30,6 +30,7 @@ export const AGE_STYLES = {
 export const SOURCE_ICON_MAP = {
   pos: Monitor,
   app: Smartphone,
+  store: LayoutGrid,
   whatsapp: MessageCircle,
   other: LayoutGrid,
 };

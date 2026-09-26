@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Banknote, ArrowRight, Clock } from "lucide-react"
 import { formatCurrency } from "@/shared/utils/formatPriceLocal"
 import { useEffect, useState } from "react"
+import { PATH } from "@/shared/infrastructure/utils/PATH"
 
 /**
  * CashStatusBlock
@@ -77,7 +78,7 @@ export function CashStatusBlock() {
           variant="outline"
           size="sm"
           className="w-full mt-2 gap-1.5 hover:cursor-pointer"
-          onClick={() => navigate("/admin/cash-register")}
+          onClick={() => navigate(PATH.cashRegister)}
         >
           Ir a Caja <ArrowRight className="h-3.5 w-3.5" />
         </Button>
